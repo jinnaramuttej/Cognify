@@ -1,0 +1,736 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  grade        String?  // "11" or "12"
+  targetExam   String?  // "JEE", "NEET", or "Both"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // User Preferences for Personalization
+  preferredDifficulty String? @default("Intermediate")
+  dailyGoalMinutes     Int?    @default(30)
+  studyReminderEnabled Boolean @default(true)
+  preferredStudyTime   String? // "morning", "afternoon", "evening", "night"
+  
+  bookmarks         LibraryBookmark[]
+  views             LibraryView[]
+  revisionSchedules RevisionSchedule[]
+  weakTopics        WeakTopic[]
+  resourceRatings   ResourceRating[]
+  userNotes         UserNote[]
+  highlights        Highlight[]
+  flashcardProgress FlashcardProgress[]
+  pathEnrollments   LearningPathEnrollment[]
+  studyStreak       StudyStreak?
+  achievements      UserAchievement[]
+  searchHistory     SearchHistory[]
+  masteryRecords    ResourceMastery[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== Subject & Chapter Reference ====================
+
+model Subject {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  code           String   @unique
+  exam           String   // "JEE", "NEET", or "Both"
+  icon           String?
+  color          String?
+  createdAt      DateTime @default(now())
+  
+  chapters       Chapter[]
+}
+
+model Chapter {
+  id                 String   @id @default(cuid())
+  subjectId          String
+  name               String
+  number             Int
+  description        String?
+  weightage          Float    @default(0) // Percentage in exam
+  difficulty         String   @default("Intermediate")
+  commonMistakeRate  Float    @default(0)
+  createdAt          DateTime @default(now())
+  
+  subject            Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  resources          LibraryResource[]
+  pyqs               PYQ[]
+  
+  @@unique([subjectId, number])
+}
+
+// ==================== Library Resources ====================
+
+model LibraryResource {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  subjectId    String
+  chapterId    String
+  grade        String   // "11" or "12"
+  exam         String   // "JEE", "NEET", or "Both"
+  difficulty   String   // "Beginner", "Intermediate", "Advanced"
+  resourceType String   // "Notes", "PYQ", "Concept Sheet", "Video", "Audio", "Interactive", etc.
+  fileUrl      String?
+  thumbnailUrl String?
+  content      String?  // For rich text content
+  tags         String   // JSON string of array
+  viewCount    Int      @default(0)
+  readingTime  Int      @default(5) // minutes
+  isTrending   Boolean  @default(false)
+  allowDownload Boolean @default(true)
+  year         Int?     // For PYQs
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Multimedia fields
+  mediaType      String?  // "video", "audio", "pdf", "text", "interactive"
+  duration       Int?     // seconds for video/audio
+  videoChapters  String?  // JSON array of {time, title}
+  transcript     String?  // Full transcript for video/audio
+  hasQuiz        Boolean  @default(false)
+  hasFlashcards  Boolean  @default(false)
+  
+  // Intelligence Layer Fields
+  masteryWeight      Float   @default(1.0)  // Importance weight for recommendations
+  estimatedTime      Int     @default(15)   // Estimated completion time in minutes
+  completionRate     Float   @default(0)    // Average completion percentage
+  averageRating      Float   @default(0)    // Average user rating
+  recommendationScore Float  @default(0)    // Computed recommendation score
+  searchKeywords     String? // Additional searchable keywords
+  prerequisiteIds    String? // JSON array of prerequisite resource IDs
+  relatedResourceIds String? // JSON array of related resource IDs
+  
+  // Curriculum Alignment
+  curriculumCode     String? // Mapping to official curriculum codes
+  weightageInExam    Float   @default(0) // Importance in exam (%)
+  
+  chapter      Chapter         @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  bookmarks    LibraryBookmark[]
+  views        LibraryView[]
+  revisions    RevisionSchedule[]
+  ratings      ResourceRating[]
+  notes        UserNote[]
+  highlights   Highlight[]
+  flashcardDecks FlashcardDeck[]
+  stageResources StageResource[]
+  masteryRecords  ResourceMastery[]
+  
+  @@index([grade])
+  @@index([exam])
+  @@index([difficulty])
+  @@index([resourceType])
+  @@index([subjectId])
+  @@index([chapterId])
+  @@index([isTrending])
+  @@index([masteryWeight])
+  @@index([recommendationScore])
+}
+
+// ==================== PYQs (Previous Year Questions) ====================
+
+model PYQ {
+  id            String   @id @default(cuid())
+  question      String
+  solution      String?
+  subjectId     String
+  chapterId     String
+  year          Int
+  exam          String   // "JEE" or "NEET"
+  difficulty    String   // "Beginner", "Intermediate", "Advanced"
+  marks         Int      @default(1)
+  topic         String?
+  attemptCount  Int      @default(0)
+  correctRate   Float    @default(0)
+  createdAt     DateTime @default(now())
+  
+  chapter       Chapter         @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  bookmarks     LibraryBookmark[]
+}
+
+// ==================== User Tracking ====================
+
+model LibraryBookmark {
+  id           String   @id @default(cuid())
+  userId       String
+  resourceId   String?
+  pyqId        String?
+  sectionTitle String?
+  createdAt    DateTime @default(now())
+  
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource     LibraryResource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  pyq          PYQ?             @relation(fields: [pyqId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, resourceId])
+  @@index([userId])
+}
+
+model LibraryView {
+  id             String   @id @default(cuid())
+  userId         String
+  resourceId     String
+  duration       Int      @default(0) // seconds
+  scrollProgress Float    @default(0) // 0-100
+  viewedAt       DateTime @default(now())
+  
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource       LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([resourceId])
+}
+
+model RevisionSchedule {
+  id             String   @id @default(cuid())
+  userId         String
+  resourceId     String
+  lastRevisedAt  DateTime @default(now())
+  nextRevisionAt DateTime
+  revisionCount  Int      @default(0)
+  interval       Int      @default(1) // days
+  confidence     Int      @default(50) // 0-100
+  
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource       LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([nextRevisionAt])
+}
+
+model WeakTopic {
+  id               String   @id @default(cuid())
+  userId           String
+  subjectId        String
+  chapterId        String
+  topic            String
+  accuracy         Float    @default(0)
+  lastAttemptAt    DateTime @default(now())
+  suggestedAction  String?
+  
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([subjectId])
+}
+
+// ==================== User Content ====================
+
+model ResourceRating {
+  id         String   @id @default(cuid())
+  userId     String
+  resourceId String
+  rating     Int      // 1-5
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource   LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, resourceId])
+}
+
+model UserNote {
+  id         String   @id @default(cuid())
+  userId     String
+  resourceId String
+  content    String
+  highlights String?  // JSON string of highlight positions
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource   LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([resourceId])
+}
+
+// ==================== Learning Paths ====================
+
+model LearningPath {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  subjectId      String
+  difficulty     String   @default("Beginner") // "Beginner", "Intermediate", "Advanced"
+  totalStages    Int      @default(0)
+  estimatedHours Int      @default(0)
+  icon           String?
+  color          String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  stages       LearningPathStage[]
+  enrollments  LearningPathEnrollment[]
+}
+
+model LearningPathStage {
+  id                  String   @id @default(cuid())
+  pathId              String
+  name                String
+  description         String?
+  order               Int
+  estimatedMinutes    Int      @default(30)
+  prerequisiteStageId String?
+  createdAt           DateTime @default(now())
+  
+  path         LearningPath        @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  resources    StageResource[]
+  completions  StageCompletion[]
+  
+  @@unique([pathId, order])
+}
+
+model StageResource {
+  id         String   @id @default(cuid())
+  stageId    String
+  resourceId String
+  order      Int
+  isRequired Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  
+  stage      LearningPathStage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  resource   LibraryResource   @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@unique([stageId, resourceId])
+}
+
+model LearningPathEnrollment {
+  id            String    @id @default(cuid())
+  userId        String
+  pathId        String
+  currentStage  Int       @default(1)
+  progress      Float     @default(0)
+  enrolledAt    DateTime  @default(now())
+  completedAt   DateTime?
+  
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  path          LearningPath      @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  completions   StageCompletion[]
+  
+  @@unique([userId, pathId])
+  @@index([userId])
+}
+
+model StageCompletion {
+  id            String   @id @default(cuid())
+  enrollmentId  String
+  stageId       String
+  completedAt   DateTime @default(now())
+  timeSpent     Int      @default(0) // seconds
+  
+  enrollment    LearningPathEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  stage         LearningPathStage      @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  
+  @@unique([enrollmentId, stageId])
+}
+
+// ==================== Flashcards ====================
+
+model FlashcardDeck {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  chapterId   String
+  resourceId  String?
+  cardCount   Int      @default(0)
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  flashcards  Flashcard[]
+  progresses  FlashcardProgress[]
+  resource    LibraryResource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+}
+
+model Flashcard {
+  id         String   @id @default(cuid())
+  deckId     String
+  front      String
+  back       String
+  hint       String?
+  imageUrl   String?
+  tags       String   // JSON array
+  order      Int
+  createdAt  DateTime @default(now())
+  
+  deck       FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  progresses FlashcardProgress[]
+  
+  @@index([deckId])
+}
+
+model FlashcardProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  cardId        String
+  deckId        String
+  easeFactor    Float     @default(2.5)
+  interval      Int       @default(0) // days
+  repetitions   Int       @default(0)
+  nextReviewAt  DateTime  @default(now())
+  lastReviewAt  DateTime?
+  
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card          Flashcard  @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  deck          FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, cardId])
+  @@index([nextReviewAt])
+}
+
+// ==================== Highlights & Annotations ====================
+
+model Highlight {
+  id            String   @id @default(cuid())
+  userId        String
+  resourceId    String
+  startPosition Int      // Character position
+  endPosition   Int
+  text          String   // Highlighted text
+  color         String   @default("yellow") // "yellow", "green", "pink", "blue", "orange"
+  note          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource      LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([resourceId])
+}
+
+// ==================== Study Streaks & Gamification ====================
+
+model StudyStreak {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastStudyAt    DateTime?
+  totalXP        Int       @default(0)
+  level          Int       @default(1)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyLogs      StudyDayLog[]
+}
+
+model StudyDayLog {
+  id                 String   @id @default(cuid())
+  streakId           String
+  date               DateTime
+  resourcesViewed    Int      @default(0)
+  quizzesCompleted   Int      @default(0)
+  flashcardsReviewed Int      @default(0)
+  xpEarned           Int      @default(0)
+  studyMinutes       Int      @default(0)
+  goalMet            Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  
+  streak             StudyStreak @relation(fields: [streakId], references: [id], onDelete: Cascade)
+  
+  @@unique([streakId, date])
+}
+
+model Achievement {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  name         String
+  description  String
+  icon         String
+  category     String   // "streak", "content", "quiz", "flashcard", "path"
+  requirement  String   // JSON e.g., {"type": "streak", "value": 7}
+  xpReward     Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  
+  unlocks      UserAchievement[]
+  challengeRewards Challenge[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+  
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement  @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// ==================== Concept Maps ====================
+
+model ConceptNode {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  chapterId    String
+  subjectId    String
+  importance   Int      @default(50) // 0-100
+  resourceIds  String?  // JSON array of linked resource IDs
+  createdAt    DateTime @default(now())
+  
+  outgoing     ConceptEdge[] @relation("FromConcept")
+  incoming     ConceptEdge[] @relation("ToConcept")
+  
+  @@index([chapterId])
+  @@index([subjectId])
+}
+
+model ConceptEdge {
+  id           String   @id @default(cuid())
+  fromNodeId   String
+  toNodeId     String
+  relationship String   // "prerequisite", "related", "applies", "example"
+  createdAt    DateTime @default(now())
+  
+  fromConcept  ConceptNode @relation("FromConcept", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toConcept    ConceptNode @relation("ToConcept", fields: [toNodeId], references: [id], onDelete: Cascade)
+  
+  @@unique([fromNodeId, toNodeId, relationship])
+}
+
+// ==================== Challenges & Contests ====================
+
+model Challenge {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  type          String    // "reading", "quizzes", "streak", "xp", "badges"
+  target        Int       // Target value to achieve
+  unit          String    // "hours", "quizzes", "days", "xp", "badges"
+  startDate     DateTime
+  endDate       DateTime
+  rewardXP      Int       @default(0)
+  rewardBadgeId String?   // Badge awarded on completion
+  maxParticipants Int?
+  isActive      Boolean   @default(true)
+  isPublic      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  participants  ChallengeParticipant[]
+  badge         Achievement? @relation(fields: [rewardBadgeId], references: [id])
+}
+
+model ChallengeParticipant {
+  id           String   @id @default(cuid())
+  challengeId  String
+  userId       String
+  progress     Float    @default(0)
+  currentValue Int      @default(0)
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+  joinedAt     DateTime @default(now())
+  
+  challenge    Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  
+  @@unique([challengeId, userId])
+  @@index([userId])
+}
+
+// ==================== Reading Contests ====================
+
+model ReadingContest {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  targetType  String   // "hours", "pages", "resources"
+  targetValue Int
+  prizePool   Int      @default(0) // XP pool
+  isPublic    Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  participants ContestParticipant[]
+}
+
+model ContestParticipant {
+  id         String   @id @default(cuid())
+  contestId  String
+  userId     String
+  score      Float    @default(0)
+  rank       Int?
+  joinedAt   DateTime @default(now())
+  
+  contest    ReadingContest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  
+  @@unique([contestId, userId])
+  @@index([userId])
+}
+
+// ==================== Habit Tracking ====================
+
+model Habit {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  icon        String
+  target      Int
+  unit        String   // "minutes", "pages", "resources", "quizzes"
+  color       String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  logs        HabitLog[]
+  
+  @@index([userId])
+}
+
+model HabitLog {
+  id         String   @id @default(cuid())
+  habitId    String
+  userId     String
+  date       DateTime
+  current    Int      @default(0)
+  completed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  habit      Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  
+  @@unique([habitId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+// ==================== Test Analytics Integration ====================
+
+model TestResult {
+  id              String   @id @default(cuid())
+  userId          String
+  testId          String?
+  subjectId       String?
+  chapterId       String?
+  score           Float
+  totalQuestions  Int
+  correctAnswers  Int
+  timeSpent       Int      // seconds
+  takenAt         DateTime  @default(now())
+  
+  topicResults    TestTopicResult[]
+  
+  @@index([userId])
+  @@index([subjectId])
+  @@index([takenAt])
+}
+
+model TestTopicResult {
+  id            String   @id @default(cuid())
+  testResultId  String
+  topic         String
+  accuracy      Float
+  questions     Int
+  correct       Int
+  timeSpent     Int
+  weakness      Float    @default(0) // 0-100 weakness score
+  
+  testResult    TestResult @relation(fields: [testResultId], references: [id], onDelete: Cascade)
+  
+  @@index([testResultId])
+}
+
+// ==================== Resource Mastery ====================
+
+model ResourceMastery {
+  id              String   @id @default(cuid())
+  userId          String
+  resourceId      String
+  masteryLevel    Float    @default(0) // 0-100
+  timeSpent       Int      @default(0) // seconds
+  lastAccessedAt  DateTime @default(now())
+  revisionCount   Int      @default(0)
+  quizScores      String?  // JSON array of quiz scores
+  
+  // Enhanced Progress Tracking
+  scrollPosition  Float    @default(0) // Last scroll position (0-100)
+  currentPage     Int      @default(1) // For PDF/video
+  totalPages      Int      @default(1)
+  completionPercentage Float @default(0)
+  lastStudyDuration Int    @default(0) // seconds in last session
+  
+  // Learning Metrics
+  recallStrength  Float    @default(0) // Based on SRS
+  nextReviewDue   DateTime?
+  confidenceLevel Int      @default(50) // User's self-reported confidence
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource        LibraryResource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, resourceId])
+  @@index([userId])
+  @@index([resourceId])
+  @@index([masteryLevel])
+  @@index([nextReviewDue])
+}
+
+// ==================== Search History ====================
+
+model SearchHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  query       String
+  filters     String?  // JSON of applied filters
+  resultsCount Int     @default(0)
+  clickedResourceId String?
+  searchedAt  DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([searchedAt])
+}
+
+// ==================== Leaderboard Snapshots ====================
+
+model LeaderboardSnapshot {
+  id           String   @id @default(cuid())
+  type         String   // "weekly", "monthly", "all_time"
+  subject      String?  // null for overall
+  userId       String
+  rank         Int
+  score        Float
+  xp           Int
+  hoursStudied Float
+  streak       Int
+  badges       Int
+  capturedAt   DateTime @default(now())
+  
+  @@unique([type, subject, userId, capturedAt])
+  @@index([type, subject, capturedAt])
+}

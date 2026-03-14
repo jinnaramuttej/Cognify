@@ -1,0 +1,428 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { z } from 'zod'
+import { 
+  calculateInformation,
+  estimateThetaEAP,
+  shouldStop
+} from '@/modules/tests/utils/irt'
+
+// Validation schema
+const AdaptiveNextSchema = z.object({
+  sessionId: z.string(),
+  currentAnswer: z.object({
+    questionId: z.string(),
+    answer: z.string(),
+    isCorrect: z.boolean(),
+    timeTaken: z.number(),
+    hintUsed: z.boolean().default(false),
+  }).optional(),
+})
+
+// 3PL IRT parameters estimation from item stats
+function estimateIRTParams(item: any) {
+  const stats = item.itemStats
+  if (!stats) {
+    return { a: 1.0, b: 0, c: 0.25 } // Default params
+  }
+
+  // Use calibrated values if available
+  if (stats.irtA && stats.irtB && stats.irtC) {
+    return {
+      a: stats.irtA,
+      b: stats.irtB,
+      c: stats.irtC,
+    }
+  }
+
+  // Estimate from classical statistics
+  const p = stats.pValue || 0.5
+  const discrimination = stats.discriminationIndex || 0.5
+
+  // Convert p-value to b-parameter (difficulty)
+  const b = Math.log((1 - p) / p) || 0
+
+  // Scale discrimination to a-parameter
+  const a = Math.max(0.5, Math.min(2.5, discrimination * 2))
+
+  // Guessing parameter for MCQ
+  const c = 0.25
+
+  return { a, b, c }
+}
+
+// Select next item using maximum information criterion
+async function selectNextItem(
+  currentTheta: number,
+  session: any,
+  constraints: {
+    subjectIds?: string[]
+    chapterIds?: string[]
+    excludeItemIds: string[]
+    maxExposureRate: number
+    minCoverage: number
+  }
+) {
+  // Get all live items matching constraints
+  const candidateItems = await db.question.findMany({
+    where: {
+      itemStatus: 'live',
+      ...(constraints.subjectIds?.length && { subjectId: { in: constraints.subjectIds } }),
+      ...(constraints.chapterIds?.length && { chapterId: { in: constraints.chapterIds } }),
+      id: { notIn: constraints.excludeItemIds },
+    },
+    include: {
+      itemStats: true,
+      subject: true,
+      chapter: true,
+    },
+    take: 100, // Limit for performance
+  })
+
+  if (candidateItems.length === 0) {
+    return null
+  }
+
+  // Calculate information for each item at current theta
+  const itemsWithInfo = candidateItems.map(item => {
+    const params = estimateIRTParams(item)
+    const information = calculateInformation(currentTheta, params)
+    
+    // Penalize over-exposed items
+    const exposureCount = item.itemStats?.usageCount || 0
+    const exposurePenalty = exposureCount > 500 ? 0.5 : 1.0
+    
+    // Penalize if same chapter as last 2 questions (coverage constraint)
+    const sameChapterPenalty = constraints.excludeItemIds.slice(-2).includes(item.chapterId) ? 0.7 : 1.0
+
+    return {
+      item,
+      params,
+      information: information * exposurePenalty * sameChapterPenalty,
+      rawInfo: information,
+    }
+  })
+
+  // Sort by information (descending)
+  itemsWithInfo.sort((a, b) => b.information - a.information)
+
+  // Apply randomization among top 5 for security
+  const topItems = itemsWithInfo.slice(0, Math.min(5, itemsWithInfo.length))
+  const selectedItem = topItems[Math.floor(Math.random() * topItems.length)]
+
+  return {
+    question: selectedItem.item,
+    irtParams: selectedItem.params,
+    information: selectedItem.rawInfo,
+  }
+}
+
+// POST /api/adaptive/next
+export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  
+  try {
+    const body = await request.json()
+    const { sessionId, currentAnswer } = AdaptiveNextSchema.parse(body)
+
+    // Get or create adaptive session
+    let session = await db.adaptiveSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        attempt: {
+          include: {
+            test: true,
+            answers: {
+              include: {
+                question: {
+                  include: { itemStats: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!session) {
+      return NextResponse.json({
+        success: false,
+        error: 'session_not_found',
+      }, { status: 404 })
+    }
+
+    // Parse current state
+    let thetaHistory: any[] = JSON.parse(session.thetaHistory || '[]')
+    let selectedItems: string[] = JSON.parse(session.selectedItems || '[]')
+    let knowledgeState: Record<string, number> = JSON.parse(session.knowledgeState || '{}')
+
+    // Process answer if provided
+    if (currentAnswer) {
+      // Update theta using EAP estimation
+      const responses = thetaHistory.map((h: any) => ({
+        isCorrect: h.isCorrect,
+        params: h.params,
+      }))
+
+      // Add current answer
+      const question = await db.question.findUnique({
+        where: { id: currentAnswer.questionId },
+        include: { itemStats: true, chapter: true },
+      })
+
+      if (question) {
+        const params = estimateIRTParams(question)
+        responses.push({
+          isCorrect: currentAnswer.isCorrect,
+          params,
+        })
+
+        // Estimate new theta
+        const { theta, standardError } = estimateThetaEAP(responses)
+
+        // Update history
+        thetaHistory.push({
+          theta,
+          se: standardError,
+          questionId: currentAnswer.questionId,
+          isCorrect: currentAnswer.isCorrect,
+          timeTaken: currentAnswer.timeTaken,
+          params,
+          timestamp: new Date().toISOString(),
+        })
+
+        // Update knowledge state (topic mastery)
+        if (question.chapter) {
+          const chapterId = question.chapterId
+          const currentMastery = knowledgeState[chapterId] || 0.5
+          const newMastery = currentMastery + (currentAnswer.isCorrect ? 0.05 : -0.03)
+          knowledgeState[chapterId] = Math.max(0, Math.min(1, newMastery))
+        }
+
+        selectedItems.push(currentAnswer.questionId)
+
+        // Update session
+        session = await db.adaptiveSession.update({
+          where: { id: sessionId },
+          data: {
+            thetaCurrent: theta,
+            thetaHistory: JSON.stringify(thetaHistory),
+            selectedItems: JSON.stringify(selectedItems),
+            knowledgeState: JSON.stringify(knowledgeState),
+            standardError,
+            currentItem: { increment: 1 },
+          },
+          include: {
+            attempt: {
+              include: {
+                test: true,
+                answers: true,
+              }
+            }
+          }
+        })
+      }
+    }
+
+    // Check stopping rules
+    const stopResult = shouldStop(
+      session.standardError,
+      10, // min items
+      50, // max items
+      selectedItems.length,
+      0.3 // target SE
+    )
+
+    if (stopResult.stop) {
+      // Finalize session
+      await db.adaptiveSession.update({
+        where: { id: sessionId },
+        data: {
+          isComplete: true,
+          terminationReason: stopResult.reason,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        complete: true,
+        reason: stopResult.reason,
+        finalTheta: session.thetaCurrent,
+        standardError: session.standardError,
+        totalItems: selectedItems.length,
+        knowledgeState,
+        processingTime: Date.now() - startTime,
+      })
+    }
+
+    // Select next item
+    const testSettings = session.attempt?.test
+    const nextItem = await selectNextItem(
+      session.thetaCurrent,
+      session,
+      {
+        subjectIds: testSettings?.subjectId ? [testSettings.subjectId] : undefined,
+        excludeItemIds: selectedItems,
+        maxExposureRate: 0.3,
+        minCoverage: 0.8,
+      }
+    )
+
+    if (!nextItem) {
+      return NextResponse.json({
+        success: false,
+        error: 'no_items_available',
+        message: 'No more items available for selection',
+      }, { status: 400 })
+    }
+
+    // Get item options
+    const options = JSON.parse(nextItem.question.options || '[]')
+
+    // Check latency
+    const processingTime = Date.now() - startTime
+
+    return NextResponse.json({
+      success: true,
+      complete: false,
+      question: {
+        id: nextItem.question.id,
+        text: nextItem.question.text,
+        imageUrl: nextItem.question.imageUrl,
+        passage: nextItem.question.passage,
+        options,
+        difficulty: nextItem.question.difficulty,
+        subject: nextItem.question.subject?.name,
+        chapter: nextItem.question.chapter?.name,
+        marks: nextItem.question.marks,
+        negativeMarks: nextItem.question.negativeMarks,
+      },
+      sessionState: {
+        theta: session.thetaCurrent,
+        standardError: session.standardError,
+        itemsCompleted: selectedItems.length,
+        informationGain: nextItem.information,
+      },
+      processingTime,
+    })
+  } catch (error) {
+    console.error('Error in adaptive next:', error)
+    
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({
+        success: false,
+        error: 'validation_error',
+        details: error.errors,
+      }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      success: false,
+      error: 'internal_error',
+      processingTime: Date.now() - startTime,
+    }, { status: 500 })
+  }
+}
+
+// GET /api/adaptive/next - Start new adaptive session
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const testId = searchParams.get('testId')
+
+    if (!testId) {
+      return NextResponse.json({
+        success: false,
+        error: 'test_id_required',
+      }, { status: 400 })
+    }
+
+    // Get test
+    const test = await db.test.findUnique({
+      where: { id: testId },
+      include: {
+        subject: true,
+      }
+    })
+
+    if (!test) {
+      return NextResponse.json({
+        success: false,
+        error: 'test_not_found',
+      }, { status: 404 })
+    }
+
+    // Create test attempt
+    const attempt = await db.testAttempt.create({
+      data: {
+        userId: 'demo-user', // TODO: Get from auth
+        testId: test.id,
+        status: 'in_progress',
+        totalMarks: test.totalMarks,
+      },
+    })
+
+    // Create adaptive session
+    const session = await db.adaptiveSession.create({
+      data: {
+        attemptId: attempt.id,
+        thetaCurrent: 0, // Start at middle ability
+        thetaHistory: JSON.stringify([]),
+        selectedItems: JSON.stringify([]),
+        knowledgeState: JSON.stringify({}),
+        standardError: 1.0,
+      },
+    })
+
+    // Get first item (medium difficulty to start)
+    const firstItem = await selectNextItem(0, session, {
+      subjectIds: test.subjectId ? [test.subjectId] : undefined,
+      excludeItemIds: [],
+      maxExposureRate: 0.3,
+      minCoverage: 0.8,
+    })
+
+    if (!firstItem) {
+      return NextResponse.json({
+        success: false,
+        error: 'no_items_available',
+      }, { status: 400 })
+    }
+
+    const options = JSON.parse(firstItem.question.options || '[]')
+
+    return NextResponse.json({
+      success: true,
+      sessionId: session.id,
+      attemptId: attempt.id,
+      test: {
+        id: test.id,
+        name: test.name,
+        timeLimit: test.timeLimit,
+      },
+      question: {
+        id: firstItem.question.id,
+        text: firstItem.question.text,
+        imageUrl: firstItem.question.imageUrl,
+        passage: firstItem.question.passage,
+        options,
+        difficulty: firstItem.question.difficulty,
+        subject: firstItem.question.subject?.name,
+        chapter: firstItem.question.chapter?.name,
+        marks: firstItem.question.marks,
+        negativeMarks: firstItem.question.negativeMarks,
+      },
+      sessionState: {
+        theta: 0,
+        standardError: 1.0,
+        itemsCompleted: 0,
+      },
+    })
+  } catch (error) {
+    console.error('Error starting adaptive session:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'internal_error',
+    }, { status: 500 })
+  }
+}

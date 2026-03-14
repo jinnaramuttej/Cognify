@@ -1,0 +1,246 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { z } from 'zod'
+
+// Validation schema for test creation
+const CreateTestSchema = z.object({
+  name: z.string().min(3).max(200).optional(),
+  grade: z.enum(['11th', '12th']),
+  targetExam: z.enum(['JEE', 'NEET', 'Boards']),
+  subjectIds: z.array(z.string()).min(1),
+  chapterIds: z.array(z.string()).min(1),
+  difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']),
+  questionCount: z.number().min(5).max(100),
+  timeLimit: z.number().min(10).max(300),
+  includePYQ: z.boolean().default(true),
+  includeConceptual: z.boolean().default(true),
+  testType: z.enum(['practice', 'exam', 'adaptive', 'pyq']).default('practice'),
+  isAutoBalanced: z.boolean().default(true),
+  proctorMode: z.enum(['none', 'lightweight', 'full']).default('none'),
+})
+
+// Item availability check
+async function checkItemAvailability(params: z.infer<typeof CreateTestSchema>) {
+  const { subjectIds, chapterIds, difficulty, questionCount, includePYQ, includeConceptual } = params
+
+  // Build filter conditions
+  const whereConditions: any = {
+    itemStatus: 'live',
+    subjectId: { in: subjectIds },
+  }
+
+  if (chapterIds.length > 0) {
+    whereConditions.chapterId = { in: chapterIds }
+  }
+
+  if (difficulty !== 'mixed') {
+    whereConditions.difficulty = difficulty
+  }
+
+  // Count available items
+  const availableCount = await db.question.count({
+    where: whereConditions,
+  })
+
+  // Get chapter breakdown
+  const chapterBreakdown = await db.question.groupBy({
+    by: ['chapterId'],
+    where: whereConditions,
+    _count: {
+      id: true,
+    },
+  })
+
+  // Get subject breakdown
+  const subjectBreakdown = await db.question.groupBy({
+    by: ['subjectId'],
+    where: whereConditions,
+    _count: {
+      id: true,
+    },
+  })
+
+  // Check for content gaps
+  const chaptersWithGaps = chapterBreakdown.filter(c => c._count.id < 10)
+
+  return {
+    availableCount,
+    isSufficient: availableCount >= questionCount,
+    shortfall: Math.max(0, questionCount - availableCount),
+    chapterBreakdown: chapterBreakdown.map(c => ({
+      chapterId: c.chapterId,
+      count: c._count.id,
+    })),
+    subjectBreakdown: subjectBreakdown.map(s => ({
+      subjectId: s.subjectId,
+      count: s._count.id,
+    })),
+    chaptersWithGaps: chaptersWithGaps.map(c => ({
+      chapterId: c.chapterId,
+      count: c._count.id,
+    })),
+    suggestions: generateSuggestions(availableCount, questionCount, chaptersWithGaps),
+  }
+}
+
+function generateSuggestions(available: number, needed: number, gaps: any[]) {
+  const suggestions: string[] = []
+
+  if (available < needed) {
+    suggestions.push(`Insufficient items: need ${needed}, have ${available}`)
+    suggestions.push('Consider expanding chapter selection or reducing question count')
+  }
+
+  if (gaps.length > 0) {
+    suggestions.push(`${gaps.length} chapters have fewer than 10 items`)
+    suggestions.push('Consider adding more chapters for better coverage')
+  }
+
+  return suggestions
+}
+
+// POST /api/tests/create
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validated = CreateTestSchema.parse(body)
+
+    // Check item availability first
+    const availability = await checkItemAvailability(validated)
+
+    if (!availability.isSufficient) {
+      return NextResponse.json({
+        success: false,
+        error: 'insufficient_items',
+        message: `Not enough items available. Need ${validated.questionCount}, have ${availability.availableCount}`,
+        availability,
+        suggestions: availability.suggestions,
+      }, { status: 400 })
+    }
+
+    // Mock user ID for demo (in production, get from auth)
+    const userId = 'demo-user'
+
+    // Create the test
+    const test = await db.test.create({
+      data: {
+        name: validated.name || `${validated.targetExam} ${validated.testType} Test`,
+        testType: validated.testType,
+        grade: validated.grade,
+        targetExam: validated.targetExam,
+        timeLimit: validated.timeLimit,
+        difficulty: validated.difficulty,
+        questionCount: validated.questionCount,
+        chapters: JSON.stringify(validated.chapterIds),
+        subjectDistribution: JSON.stringify(
+          availability.subjectBreakdown.reduce((acc, s) => {
+            acc[s.subjectId] = Math.ceil((s.count / availability.availableCount) * validated.questionCount)
+            return acc
+          }, {} as Record<string, number>)
+        ),
+        isPublic: true,
+        isInstitutional: false,
+        status: 'active',
+        createdBy: userId,
+      },
+    })
+
+    // Select questions for the test
+    const questions = await db.question.findMany({
+      where: {
+        itemStatus: 'live',
+        subjectId: { in: validated.subjectIds },
+        chapterId: { in: validated.chapterIds },
+        ...(validated.difficulty !== 'mixed' && { difficulty: validated.difficulty }),
+      },
+      take: validated.questionCount,
+      orderBy: {
+        timesAttempted: 'asc', // Prioritize less-used questions
+      },
+    })
+
+    // Create test-question relationships
+    await db.testQuestion.createMany({
+      data: questions.map((q, index) => ({
+        testId: test.id,
+        questionId: q.id,
+        order: index + 1,
+        marks: q.marks,
+      })),
+    })
+
+    // Update test with total marks
+    const totalMarks = questions.reduce((sum, q) => sum + q.marks, 0)
+    await db.test.update({
+      where: { id: test.id },
+      data: { totalMarks },
+    })
+
+    return NextResponse.json({
+      success: true,
+      test: {
+        id: test.id,
+        name: test.name,
+        questionCount: questions.length,
+        timeLimit: test.timeLimit,
+        totalMarks,
+      },
+      availability: {
+        availableCount: availability.availableCount,
+        coverageScore: Math.round((questions.length / validated.questionCount) * 100),
+      },
+    })
+  } catch (error) {
+    console.error('Error creating test:', error)
+    
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({
+        success: false,
+        error: 'validation_error',
+        details: error.errors,
+      }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      success: false,
+      error: 'internal_error',
+      message: 'Failed to create test',
+    }, { status: 500 })
+  }
+}
+
+// GET /api/tests/create/availability - Check item availability before creating
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    
+    const params = {
+      subjectIds: searchParams.get('subjectIds')?.split(',') || [],
+      chapterIds: searchParams.get('chapterIds')?.split(',') || [],
+      difficulty: (searchParams.get('difficulty') || 'mixed') as 'easy' | 'medium' | 'hard' | 'mixed',
+      questionCount: parseInt(searchParams.get('questionCount') || '30'),
+      includePYQ: searchParams.get('includePYQ') === 'true',
+      includeConceptual: searchParams.get('includeConceptual') === 'true',
+    }
+
+    const availability = await checkItemAvailability({
+      ...params,
+      grade: '12th',
+      targetExam: 'JEE',
+      timeLimit: 60,
+      testType: 'practice',
+      isAutoBalanced: true,
+    })
+
+    return NextResponse.json({
+      success: true,
+      availability,
+    })
+  } catch (error) {
+    console.error('Error checking availability:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'internal_error',
+    }, { status: 500 })
+  }
+}

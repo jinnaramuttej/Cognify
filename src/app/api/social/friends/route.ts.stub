@@ -1,0 +1,363 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET /api/social/friends - Get friends list and comparisons
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+    const action = searchParams.get('action') || 'list' // list, requests, comparisons
+
+    if (action === 'requests') {
+      // Get pending friend requests
+      const requests = await db.friendship.findMany({
+        where: {
+          addresseeId: userId,
+          status: 'pending'
+        }
+      })
+
+      const requesterIds = requests.map(r => r.requesterId)
+      const requesters = await db.user.findMany({
+        where: { id: { in: requesterIds } }
+      })
+
+      const requestsWithUsers = requests.map(req => {
+        const requester = requesters.find(u => u.id === req.requesterId)
+        return {
+          id: req.id,
+          userId: req.requesterId,
+          userName: requester?.name || 'Unknown',
+          avatar: requester?.avatar,
+          requestedAt: req.requestedAt.toISOString()
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        data: requestsWithUsers
+      })
+    }
+
+    if (action === 'comparisons') {
+      // Get friends with comparison data
+      return getFriendComparisons(userId)
+    }
+
+    // Get accepted friends list
+    const friendships = await db.friendship.findMany({
+      where: {
+        OR: [
+          { requesterId: userId, status: 'accepted' },
+          { addresseeId: userId, status: 'accepted' }
+        ]
+      }
+    })
+
+    const friendIds = friendships.map(f => 
+      f.requesterId === userId ? f.addresseeId : f.requesterId
+    )
+
+    const friends = await db.user.findMany({
+      where: { id: { in: friendIds } }
+    })
+
+    const friendStats = await db.userStats.findMany({
+      where: { userId: { in: friendIds } }
+    })
+
+    const friendsList = friends.map(friend => {
+      const stats = friendStats.find(s => s.userId === friend.id)
+      return {
+        id: friend.id,
+        name: friend.name || 'Anonymous',
+        avatar: friend.avatar,
+        points: stats?.totalPoints || 0,
+        rank: stats?.currentRank || 0,
+        streak: 0 // Will get from streak data
+      }
+    })
+
+    // If no friends, return mock data
+    if (friendsList.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: generateMockFriends(),
+        isMockData: true
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: friendsList
+    })
+  } catch (error) {
+    console.error('Error fetching friends:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch friends' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/social/friends - Send friend request
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId, friendId, action = 'request' } = body
+
+    if (action === 'accept') {
+      // Accept friend request
+      const friendship = await db.friendship.findFirst({
+        where: {
+          requesterId: friendId,
+          addresseeId: userId,
+          status: 'pending'
+        }
+      })
+
+      if (!friendship) {
+        return NextResponse.json(
+          { success: false, error: 'Friend request not found' },
+          { status: 404 }
+        )
+      }
+
+      await db.friendship.update({
+        where: { id: friendship.id },
+        data: {
+          status: 'accepted',
+          respondedAt: new Date()
+        }
+      })
+
+      // Update friends count for both users
+      await db.userStats.updateMany({
+        where: { userId: { in: [userId, friendId] } },
+        data: { friendsCount: { increment: 1 } }
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Friend request accepted'
+      })
+    }
+
+    if (action === 'reject') {
+      // Reject friend request
+      await db.friendship.updateMany({
+        where: {
+          requesterId: friendId,
+          addresseeId: userId,
+          status: 'pending'
+        },
+        data: {
+          status: 'rejected',
+          respondedAt: new Date()
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Friend request rejected'
+      })
+    }
+
+    // Send new friend request
+    // Check if already exists
+    const existing = await db.friendship.findFirst({
+      where: {
+        OR: [
+          { requesterId: userId, addresseeId: friendId },
+          { requesterId: friendId, addresseeId: userId }
+        ]
+      }
+    })
+
+    if (existing) {
+      return NextResponse.json(
+        { success: false, error: 'Friend request already exists' },
+        { status: 400 }
+      )
+    }
+
+    const friendship = await db.friendship.create({
+      data: {
+        requesterId: userId,
+        addresseeId: friendId,
+        status: 'pending'
+      }
+    })
+
+    // Create notification for the recipient
+    const requester = await db.user.findUnique({ where: { id: userId } })
+    await db.socialNotification.create({
+      data: {
+        userId: friendId,
+        type: 'friend_request',
+        title: 'New Friend Request',
+        message: `${requester?.name || 'Someone'} wants to be your friend!`,
+        relatedType: 'friendship',
+        relatedId: friendship.id,
+        actionUrl: '/social?tab=friends',
+        actionLabel: 'View Request'
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Friend request sent'
+    })
+  } catch (error) {
+    console.error('Error managing friends:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to manage friends' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE /api/social/friends - Remove friend
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+    const friendId = searchParams.get('friendId')
+
+    if (!userId || !friendId) {
+      return NextResponse.json(
+        { success: false, error: 'Missing userId or friendId' },
+        { status: 400 }
+      )
+    }
+
+    await db.friendship.deleteMany({
+      where: {
+        OR: [
+          { requesterId: userId, addresseeId: friendId },
+          { requesterId: friendId, addresseeId: userId }
+        ]
+      }
+    })
+
+    // Update friends count
+    await db.userStats.updateMany({
+      where: { userId: { in: [userId, friendId] } },
+      data: { friendsCount: { decrement: 1 } }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Friend removed'
+    })
+  } catch (error) {
+    console.error('Error removing friend:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to remove friend' },
+      { status: 500 }
+    )
+  }
+}
+
+async function getFriendComparisons(userId: string) {
+  // Get friends
+  const friendships = await db.friendship.findMany({
+    where: {
+      OR: [
+        { requesterId: userId, status: 'accepted' },
+        { addresseeId: userId, status: 'accepted' }
+      ]
+    }
+  })
+
+  const friendIds = friendships.map(f => 
+    f.requesterId === userId ? f.addresseeId : f.requesterId
+  )
+
+  if (friendIds.length === 0) {
+    return NextResponse.json({
+      success: true,
+      data: generateMockComparisons(),
+      isMockData: true
+    })
+  }
+
+  // Get user's performance
+  const userPerformances = await db.subjectPerformance.findMany({
+    where: { userId }
+  })
+
+  // Get friends' performance
+  const friendPerformances = await db.subjectPerformance.findMany({
+    where: { userId: { in: friendIds } }
+  })
+
+  // Get subjects
+  const subjectIds = [...new Set([
+    ...userPerformances.map(p => p.subjectId),
+    ...friendPerformances.map(p => p.subjectId)
+  ])]
+
+  const subjects = await db.subject.findMany({
+    where: { id: { in: subjectIds } }
+  })
+
+  // Get friend users
+  const friends = await db.user.findMany({
+    where: { id: { in: friendIds } }
+  })
+
+  // Build comparisons
+  const comparisons = []
+  for (const friendId of friendIds) {
+    const friend = friends.find(f => f.id === friendId)
+    
+    for (const subject of subjects) {
+      const userPerf = userPerformances.find(p => p.subjectId === subject.id)
+      const friendPerf = friendPerformances.find(p => 
+        p.userId === friendId && p.subjectId === subject.id
+      )
+
+      if (userPerf && friendPerf) {
+        const yourScore = Math.round(userPerf.accuracy)
+        const friendScore = Math.round(friendPerf.accuracy)
+        const diff = yourScore - friendScore
+
+        comparisons.push({
+          friendId,
+          friendName: friend?.name || 'Unknown',
+          friendAvatar: friend?.avatar,
+          yourScore,
+          friendScore,
+          difference: diff,
+          subject: subject.name,
+          comparison: diff > 0 ? 'ahead' : diff < 0 ? 'behind' : 'tied'
+        })
+      }
+    }
+  }
+
+  // Sort by biggest differences
+  comparisons.sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference))
+
+  return NextResponse.json({
+    success: true,
+    data: comparisons.slice(0, 10) // Top 10 comparisons
+  })
+}
+
+function generateMockFriends() {
+  return [
+    { id: 'f1', name: 'Ananya Roy', avatar: null, points: 2050, rank: 7, streak: 4 },
+    { id: 'f2', name: 'Meera Iyer', avatar: null, points: 1950, rank: 9, streak: 6 },
+    { id: 'f3', name: 'Karthik Nair', avatar: null, points: 1990, rank: 8, streak: 3 }
+  ]
+}
+
+function generateMockComparisons() {
+  return [
+    { friendId: 'f1', friendName: 'Ananya Roy', friendAvatar: null, yourScore: 87, friendScore: 86.5, difference: 0.5, subject: 'Physics', comparison: 'ahead' },
+    { friendId: 'f2', friendName: 'Meera Iyer', friendAvatar: null, yourScore: 78, friendScore: 84.2, difference: -6.2, subject: 'Chemistry', comparison: 'behind' },
+    { friendId: 'f3', friendName: 'Karthik Nair', friendAvatar: null, yourScore: 92, friendScore: 85, difference: 7, subject: 'Mathematics', comparison: 'ahead' }
+  ]
+}

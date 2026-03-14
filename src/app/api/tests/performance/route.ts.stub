@@ -1,0 +1,133 @@
+import { NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+export async function GET() {
+  try {
+    // Get demo user's attempts
+    const attempts = await db.testAttempt.findMany({
+      where: {
+        userId: 'demo-user',
+        status: { in: ['submitted', 'auto_submitted'] }
+      },
+      include: {
+        test: {
+          include: {
+            subject: true
+          }
+        }
+      },
+      orderBy: { startedAt: 'desc' },
+      take: 10
+    })
+
+    if (attempts.length === 0) {
+      return NextResponse.json({
+        success: true,
+        performance: {
+          overallAccuracy: 0,
+          testsAttempted: 0,
+          totalQuestions: 0,
+          strongestSubject: '-',
+          strongestSubjectAccuracy: 0,
+          weakestSubject: '-',
+          weakestSubjectAccuracy: 0,
+          averageTimePerQuestion: 0,
+          improvementTrend: 'stable',
+          recentScores: [],
+          recommendedAction: 'Start by taking a diagnostic test to assess your current level'
+        }
+      })
+    }
+
+    // Calculate overall stats
+    const totalQuestions = attempts.reduce((sum, a) => 
+      sum + a.correctCount + a.incorrectCount + a.unattemptedCount, 0
+    )
+    const totalCorrect = attempts.reduce((sum, a) => sum + a.correctCount, 0)
+    const overallAccuracy = totalQuestions > 0 
+      ? Math.round((totalCorrect / totalQuestions) * 100) 
+      : 0
+
+    // Calculate subject-wise performance
+    const subjectStats = new Map<string, { correct: number; total: number; name: string }>()
+    
+    attempts.forEach((attempt) => {
+      if (attempt.test.subject) {
+        const subjectId = attempt.test.subjectId
+        if (!subjectStats.has(subjectId!)) {
+          subjectStats.set(subjectId!, {
+            correct: 0,
+            total: 0,
+            name: attempt.test.subject.name
+          })
+        }
+        const stats = subjectStats.get(subjectId!)!
+        stats.correct += attempt.correctCount
+        stats.total += attempt.correctCount + attempt.incorrectCount + attempt.unattemptedCount
+      }
+    })
+
+    // Find strongest and weakest subjects
+    let strongestSubject = { name: '-', accuracy: 0 }
+    let weakestSubject = { name: '-', accuracy: 100 }
+
+    subjectStats.forEach((stats) => {
+      const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
+      if (accuracy > strongestSubject.accuracy) {
+        strongestSubject = { name: stats.name, accuracy }
+      }
+      if (accuracy < weakestSubject.accuracy) {
+        weakestSubject = { name: stats.name, accuracy }
+      }
+    })
+
+    // Calculate average time per question
+    const totalTime = attempts.reduce((sum, a) => sum + a.timeSpent, 0)
+    const avgTimePerQuestion = totalQuestions > 0 
+      ? Math.round(totalTime / totalQuestions) 
+      : 0
+
+    // Calculate improvement trend
+    const recentScores = attempts.slice(0, 5).map((a) => a.percentage)
+    let improvementTrend: 'up' | 'down' | 'stable' = 'stable'
+    if (recentScores.length >= 3) {
+      const recent = recentScores.slice(0, 2).reduce((a, b) => a + b, 0) / 2
+      const older = recentScores.slice(2).reduce((a, b) => a + b, 0) / (recentScores.length - 2)
+      if (recent > older + 5) improvementTrend = 'up'
+      else if (recent < older - 5) improvementTrend = 'down'
+    }
+
+    // Generate recommended action
+    let recommendedAction = ''
+    if (weakestSubject.name !== '-' && weakestSubject.accuracy < 60) {
+      recommendedAction = `Focus on ${weakestSubject.name} - your current accuracy is ${weakestSubject.accuracy}%. Try practicing chapter-wise tests.`
+    } else if (overallAccuracy > 80) {
+      recommendedAction = 'Great progress! Try attempting more challenging tests to push your limits.'
+    } else {
+      recommendedAction = 'Continue practicing regularly to improve your accuracy and speed.'
+    }
+
+    return NextResponse.json({
+      success: true,
+      performance: {
+        overallAccuracy,
+        testsAttempted: attempts.length,
+        totalQuestions,
+        strongestSubject: strongestSubject.name,
+        strongestSubjectAccuracy: strongestSubject.accuracy,
+        weakestSubject: weakestSubject.name,
+        weakestSubjectAccuracy: weakestSubject.accuracy,
+        averageTimePerQuestion: avgTimePerQuestion,
+        improvementTrend,
+        recentScores,
+        recommendedAction
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching performance:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch performance' },
+      { status: 500 }
+    )
+  }
+}

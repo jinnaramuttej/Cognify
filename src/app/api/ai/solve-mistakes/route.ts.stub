@@ -1,0 +1,129 @@
+import { NextRequest, NextResponse } from 'next/server'
+import ZAI from 'z-ai-web-dev-sdk'
+import { db } from '@/lib/db'
+
+interface SolveMistakesRequest {
+  attemptId: string
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: SolveMistakesRequest = await request.json()
+    const { attemptId } = body
+
+    // Get attempt with incorrect answers
+    const attempt = await db.testAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        answers: {
+          where: { isCorrect: false },
+          include: {
+            question: true
+          }
+        }
+      }
+    })
+
+    if (!attempt) {
+      return NextResponse.json(
+        { success: false, error: 'Attempt not found' },
+        { status: 404 }
+      )
+    }
+
+    const incorrectQuestions = attempt.answers.map((answer) => ({
+      question: answer.question.text,
+      options: JSON.parse(answer.question.options),
+      selectedAnswer: answer.selectedAnswer,
+      correctAnswer: answer.question.correctAnswer,
+      explanation: answer.question.explanation,
+      subject: answer.question.subject,
+      chapter: answer.question.chapter
+    }))
+
+    // Initialize ZAI
+    const zai = await ZAI.create()
+
+    // Generate AI explanations
+    const systemPrompt = `You are Cogni, an expert AI tutor for competitive exam preparation (JEE, NEET, etc.). 
+Your role is to help students understand their mistakes and improve their conceptual understanding.
+For each incorrect answer, provide:
+1. Clear explanation of the correct approach
+2. Why the student's answer was wrong
+3. Key concepts they should review
+4. A similar practice question with answer
+
+Be encouraging but thorough. Use simple language and step-by-step explanations.`
+
+    const userPrompt = `Here are questions the student got wrong:
+
+${incorrectQuestions.map((q, i) => `
+Question ${i + 1}: ${q.question}
+Options: ${q.options.map((o: { label: string; text: string }) => `${o.label}. ${o.text}`).join(', ')}
+Student selected: ${q.selectedAnswer}
+Correct answer: ${q.correctAnswer}
+Subject: ${q.subject}
+Chapter: ${q.chapter}
+`).join('\n---\n')}
+
+Please analyze these mistakes and provide detailed explanations for each.`
+
+    const completion = await zai.chat.completions.create({
+      messages: [
+        { role: 'assistant', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      thinking: { type: 'disabled' }
+    })
+
+    const aiExplanation = completion.choices[0]?.message?.content
+
+    // Generate similar practice questions
+    const practicePrompt = `Based on these incorrect questions, generate 2 similar practice questions that would help the student practice:
+
+${incorrectQuestions.map((q) => `- ${q.subject}: ${q.chapter} - ${q.question}`).join('\n')}
+
+For each practice question, provide:
+- Question text
+- 4 options (A, B, C, D)
+- Correct answer
+- Brief explanation
+
+Format as JSON array.`
+
+    const practiceCompletion = await zai.chat.completions.create({
+      messages: [
+        { role: 'assistant', content: 'You are a question generator for competitive exams. Generate questions in JSON format.' },
+        { role: 'user', content: practicePrompt }
+      ],
+      thinking: { type: 'disabled' }
+    })
+
+    const practiceQuestions = practiceCompletion.choices[0]?.message?.content
+
+    return NextResponse.json({
+      success: true,
+      analysis: {
+        explanation: aiExplanation,
+        practiceQuestions,
+        summary: {
+          totalMistakes: incorrectQuestions.length,
+          subjectBreakdown: incorrectQuestions.reduce((acc, q) => {
+            acc[q.subject] = (acc[q.subject] || 0) + 1
+            return acc
+          }, {} as Record<string, number>),
+          chapterBreakdown: incorrectQuestions.reduce((acc, q) => {
+            acc[q.chapter] = (acc[q.chapter] || 0) + 1
+            return acc
+          }, {} as Record<string, number>)
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Error in AI solve mistakes:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to analyze mistakes' },
+      { status: 500 }
+    )
+  }
+}

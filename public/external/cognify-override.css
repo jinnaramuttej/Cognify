@@ -1,0 +1,992 @@
+/* 
+ * Cognify Theme Override for External Pages 
+ * Forces gold/black theme on ALL external content 
+ */
+
+/* ============================================
+   1. COLOR OVERRIDES 
+   ============================================ */
+
+:root {
+  --cognify-gold: #D4AF37;
+  --cognify-black: #1a1a1a;
+  --cognify-dark: #0a0a0a;
+  --cognify-white: #ffffff;
+  --cognify-gray: #a0a0a0;
+  --cognify-light-gray: #d0d0d0;
+}
+
+/* ============================================
+   2. GLOBAL RESET
+   ============================================ */
+
+* {
+  background-color: var(--cognify-black) !important;
+  color: var(--cognify-white) !important;
+  border-color: var(--cognify-gold) !important;
+}
+
+/* ============================================
+   3. BUTTONS
+   ============================================ */
+
+button, .btn, [role="button"], .btn-primary, .btn-secondary, .btn-gold {
+  background-color: var(--cognify-gold) !important;
+  color: #000 !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+button:hover {
+  background-color: #f0ad42 !important;
+  transform: scale(1.02) !important;
+}
+
+.btn-secondary {
+  background-color: var(--cognify-dark) !important;
+  border-color: var(--cognify-gold) !important;
+  color: var(--cognify-white) !important;
+}
+
+/* ============================================
+   4. INPUTS & FORMS
+   ============================================ */
+
+input, textarea, select, input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="number"] {
+  background-color: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  font-size:  16px !important;
+  font-family: inherit !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cognify-gold) !important;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.2) !important;
+  outline: none !important;
+}
+
+input::placeholder, textarea::placeholder, select::placeholder {
+  color: var(--cognify-gray) !important;
+}
+
+/* ============================================
+   5. CARDS & CONTAINERS
+   ============================================ */
+
+.card, .box, [class*="card"], [class*="container"], .glass-panel, .glass-panel.rounded, .glass-panel.rounded-3xl, .glass-panel.rounded-full {
+  background-color: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  box-shadow:  pages !important;
+}
+
+/* ============================================
+   6. TABLES
+   ============================================ */
+
+table, th, td {
+  background-color: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border-color: rgba(212,175,55,0.3) !important;
+}
+
+th {
+  background-color: var(--cognify-gold) !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+}
+
+td {
+  border-color: rgba(212,175,55,0.3) !important;
+  padding: 10px 12px !important;
+}
+
+/* ============================================
+   7. HEADINGS
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--cognify-gold) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.5em !important;
+}
+
+h1 {
+  font-size: 32px !important;
+}
+
+h2 {
+  font-size: 24px !important;
+}
+
+h3 {
+  font-size: 20px !important;
+}
+
+h4 {
+  font-size: 18px !important;
+}
+
+h5 {
+  font-size: 16px !important;
+}
+
+h6 {
+  font-size: 14px !important;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+small {
+  font-size: 14px !important;
+}
+
+/* ============================================
+   8. LAYOUT & SPACING
+   ============================================ */
+
+.container {
+  max-width: 1200px !important;
+  padding: 40px !important;
+}
+
+section {
+  padding: 40px !important;
+}
+
+.card, .box {
+  padding: 24px !important;
+}
+
+/* ============================================
+   9. NAVIGATION & SIDEBAR
+   ============================================ */
+
+.cognify-nav {
+  background: linear-gradient(135deg, var(--cognify-black) 0%, var(--cognify-dark) 100%) !important;
+  border-bottom: 1px solid var(--cognify-gold) !important;
+  height: 60px !important;
+}
+
+/* ============================================
+   10. ANIMATIONS
+   ============================================ */
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out forwards !important;
+}
+
+/* ============================================
+   11. EXTERNAL PAGE SPECIFIC OVERRIDES
+   ============================================ */
+
+/* Main container for external content */
+.cognify-container {
+  background-color: var(--cognify-black) !important;
+  min-height: calc(100vh - 60px) !important;
+  padding: 0 !important;
+}
+
+/* Content area */
+.cognify-content {
+  max-width: 1200px;
+  margin: 0 auto !important;
+  padding: 24px !important;
+}
+
+/* ============================================
+   12. EXTERNAL PAGE COMPONENT STYLES
+   ============================================ */
+
+/* Button styles */
+.cognify-btn-primary {
+  background-color: var(--cognify-gold) !important;
+  color: #000 !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.cognify-btn-primary:hover {
+  background-color: #f0ad42 !important;
+  transform: scale(1.02) !important;
+}
+
+.cognify-btn-secondary {
+  background-color: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border: 1px solid var(--cognify-gold) !important;
+}
+
+/* Form inputs */
+.cognify-input {
+  background-color: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.cognify-input:focus {
+  border-color: var(--cognify-gold) !important;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.2) !important;
+}
+
+/* Cards */
+.cognify-card {
+  background-color: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0,0.4) !important;
+  overflow: hidden !important;
+}
+
+.cognify-card:hover {
+  border-color: var(--cognify-gold) !important;
+  box-shadow: 0 10px 30px rgba(212,175,55,0.4) !important;
+}
+
+/* ============================================
+   13. EXTERNAL PAGE LOADING & ERROR STATES
+   ============================================ */
+
+.cognify-loading {
+  background-color: var(--cognify-dark) !important;
+  border: 2px dashed var(--cognify-gold) !important;
+  border-radius: 8px !important;
+  padding: 40px !important;
+  color: var(--cognify-gray) !important;
+  text-align: center !important;
+}
+
+.cognify-error {
+  border: 2px solid #dc2626 !important;
+  background-color: rgba(220, 38, 38, 1, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+}
+
+/* ============================================
+   14. RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 24px !important;
+  }
+
+  .cognify-nav {
+    height: auto !important;
+    flex-direction: column !important;
+  }
+
+  @media (max-width: 768px) {
+    .card {
+      margin-bottom: 16px !important;
+  }
+}
+
+/* ============================================
+   15. UTILITY CLASSES
+   ============================================ */
+
+.cognify-text-gradient {
+  background: linear-gradient(135deg, var(--cognify-gold), #1a1a1a) 100%) !important;
+  -webkit-background-clip-text;
+  -webkit-text-fill-color: transparent !important;
+  color: #000 !important;
+  background-clip: text !important;
+}
+
+.cognify-glass-panel {
+  background: rgba(255,255,255,255, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,255,0.6) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0,0.4) !important;
+}
+
+.cognify-glass-panel:hover {
+  background: rgba(212,189,248,0.10) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 24px 8px #38bdf8, 0 0 16px #2563eb55, 0 4px 20px rgba(0,0,0,0.1) !important;
+}
+
+.cognify-glass-panel.dark .cognify-glass-panel:hover {
+  background: rgba(37, 99, 235, 0.10) !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 32px 8px #60a5fa, 0 0 64px 12px #2563eb88, 0 4px 20px rgba(0,0,0,0.25) !important;
+}
+
+/* ============================================
+   16. CUSTOM COMPONENTS
+   ============================================ */
+
+.cognify-breadcrumb {
+  background-color: var(--cognify-dark) !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  display: flex;
+  align-items: center;
+  color: var(--cognify-gray) !important;
+}
+
+.cognify-page-header {
+  background: linear-gradient(135deg, var(--cognify-gold), #1a1a1a 100%) !important;
+  border-bottom: 2px solid var(--cognify-gold) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  text-align: center !important;
+  border-bottom: 2px solid var(--cognify-gold) !important;
+}
+
+.cognify-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 24px !important;
+  margin: 32px 0 !important;
+}
+
+.cognify-stat-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  text-align: center !important;
+}
+
+.cognify-stat-value {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: var(--cognify-gold) !important;
+}
+
+.cognify-stat-label {
+  color: var(--cognify-gray) !important;
+  font-size: 14px !important;
+  margin-top: 8px !important;
+}
+
+/* ============================================
+   17. EXTERNAL PAGE THEMES
+   ============================================ */
+
+/* Notes page theme */
+.cognify-notes-page .cognify-notes-header {
+  background: linear-gradient(135deg, #D4AF37, #1a1a1a) 100%) !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-notes-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.cognify-note-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+}
+
+.cognify-note-card:hover {
+  border-color: var(--cognify-gold) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 25px rgba(212,175,55,0.25) !important;
+}
+
+/* Videos page theme */
+.cognify-videos-page .cognify-videos-header {
+  background: linear-gradient(231deg, #D4AF37, #1a1a1a 80%, #1a1a1a 100%) !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-video-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.cognify-video-thumbnail {
+  aspect-ratio: 16/9 !important;
+  background: #000 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.cognify-video-play {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 50px !important;
+  height: 50px !important;
+  background: rgba(0,0,0,0,0.6) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+.cognify-video-play::after {
+  content: '▶' !important;
+  font-size: 24px !important;
+  color: var(--cognify-gold) !important;
+}
+
+.cognify-video-card:hover .cognify-video-play {
+  background-color: rgba(0,0,0,0,0.8) !important;
+}
+
+/* Quizzes page theme */
+.cognify-quizzes-page .cognify-quizzes-header {
+  background: linear-gradient(231deg, #D4AF37, #1a1a1a 80%, #1a1a1a 100%) !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-quiz-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  text-align: center !important;
+}
+
+/* Formulas page theme */
+.cognify-formulas-page .cognify-formulas-header {
+  background: linear-gradient(231deg, #D4AF37, #1a1a1a 80%, #1a1a1a 100%) !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-formula-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+}
+
+/* Profile page theme */
+.cognify-profile-page .cognify-profile-header {
+  background: linear-gradient(135deg, #D4AF37, #1a1a1a 100%) !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-profile-section {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  padding: 32px !important;
+  margin-bottom: 32px !important;
+}
+
+.cognify-stat-card.profile-page {
+  text-align: center !important;
+}
+
+/* ============================================
+   18. UTILITIES
+   ============================================ */
+
+/* Gold text gradient */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #D4AF37, #f0ad42) 100%, #D4AF37) 100%) !important;
+  -webkit-background-clip-text;
+  -webkit-text-fill-color: transparent !important;
+  color: #000 !important;
+  background-clip: text !important;
+}
+
+.text-gradient-gold span {
+  background-clip: text !important;
+}
+
+/* Card hover effects */
+.hover-lift {
+  transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(212,175,55,0.25) !important;
+}
+
+/* ============================================
+   19. SCROLLBAR
+   ============================================ */
+
+/* Custom scrollbar for external pages */
+.cognify-scrollbar::-webkit-scrollbar {
+  width: 10px !important;
+  background: transparent !important;
+}
+
+.cognify-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #D4AF37 0%, #2563eb55 100%) !important;
+  border-radius: 8px !important;
+}
+
+.cognify-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb88 100%) !important;
+}
+
+.cognify-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #D4AF37 0%, #2563eb55 100%) !important;
+}
+
+/* Firefox */
+.cognify-scrollbar {
+  scrollbar-color: #D4AF37 #e0e7ef !important;
+  scrollbar-width: thin !important;
+}
+
+.cognify-scrollbar::-webkit-scrollbar-thumb {
+  background: #2563eb !important;
+  border-radius: 8px !important;
+}
+
+.cognify-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8 !important;
+}
+
+/* ============================================
+   20. ACCESSIBILITY
+   ============================================ */
+
+/* Focus indicators */
+.cognify-input:focus, .cognify-btn:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.2) !important;
+}
+
+/* ============================================
+   21. ANIMATIONS
+   ============================================ */
+
+/* Fade in animation */
+@keyframes cognify-fadeIn {
+   from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cognify-animate-fade-in {
+  animation: cognify-fadeIn 0.3s ease-out forwards !important;
+}
+
+/* ============================================
+   22. RESPONSIVE DESIGN
+   ============================================ */
+
+.cognify-container {
+  padding: 16px !important;
+}
+
+@media (max-width: 768px) {
+  .cognify-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .cognify-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+.cognify-notes-grid {
+  grid-template-columns: 1fr !important;
+  }
+}
+
+.cognify-videos-grid {
+  grid-template-columns: 1fr !important;
+  }
+}
+
+.cognify-quizzes-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.cognify-formulas-grid {
+  grid-template-columns: 1fr !important;
+}
+
+/* ============================================
+   23. BRAND ELEMENTS
+   ============================================ */
+
+.cognify-logo {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--cognify-gold) !important;
+}
+
+.cognify-brand-text {
+  font-weight: 600 !important;
+  color: var(--cognify-white) !important;
+}
+
+.cognify-accent-text {
+  color: var(--cognify-gold) !important;
+}
+
+/* ============================================
+   24. DARK MODE
+   ============================================ */
+
+.dark .cognify-glass-panel {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255,255,255,255,0.1) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0,0.4) !important;
+}
+
+.dark .cognify-glass-panel:hover {
+  background: rgba(37, 99, 235, 0.10) !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 32px 8px #60a5fa, 0 0 64px 12px #2563eb88, 0 4px 20px rgba(0,0,0,0.25) !important;
+}
+
+/* Dark hover effects */
+.dark .cognify-glass-panel:hover .cognify-glass-panel {
+  background: rgba(37, 99, 235,  system-ui, sans-serif !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 32px 8px #60a5fa, 0 0 64px 12px #2563eb88, 0 4px 20px rgba(0,0,0,0.25) !important;
+}
+
+/* ============================================
+   25. PAGE HEADERS
+   ============================================ */
+
+.cognify-page-header {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  margin-bottom: 24px !important;
+}
+
+.cognify-section-title {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: var(--cognify-gold) !important;
+  margin-bottom: 16px !important;
+}
+
+.cognify-card-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--cognify-white) !important;
+  margin-bottom: 8px !important;
+}
+
+.cognify-text-body {
+  color: var(--cognify-gray) !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+.cognify-text-muted {
+  color: rgba(255,255,255,255,0.7) !important;
+  font-size: 14px !important;
+}
+
+/* ============================================
+   26. NAVIGATION
+   ============================================ */
+
+.cognify-nav-link {
+  color: var(--cognify-white) !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.cognify-nav-link:hover {
+  color: var(--cognify-gold) !important;
+  text-decoration: underline !important;
+}
+
+/* ============================================
+   27. FORM ELEMENTS
+   ============================================ */
+
+.cognify-form-label {
+  color: var(--cognify-gold) !important;
+  font-weight: 600 !important;
+  display: block !important;
+  margin-bottom: 8px !important;
+}
+
+.cognify-input, .cognify-textarea {
+  width: 100% !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  color: var(--cognify-white) !important;
+  font-size: 16px !important;
+  transition: border-color 0.3s ease !important;
+}
+
+.cognify-input:focus, .cognify-textarea:focus {
+  border-color: var(--cognify-gold) !important;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.2) !important;
+}
+
+/* ============================================
+   28. BUTTONS SPECIFIC
+   ============================================ */
+
+.cognify-btn-primary {
+  background: var(--cognify-gold) !important;
+  color: #000 !important;
+  border: 1px solid var(--cognify-gold) !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.cognify-btn-primary:hover {
+  background: #f0ad42 !important;
+  transform: scale(1.02) !important;
+}
+
+.cognify-btn-secondary {
+  background: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border: 1px solid var(--cognify-gold) !important;
+}
+
+.cognify-btn-outline {
+  background: transparent !important;
+  color: var(--cognify-gold) !important;
+  border: 1px solid var(--cognify-gold) !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.cognify-btn-outline:hover {
+  background: rgba(212,175,55,0.1) !important;
+}
+
+.cognify-btn-gold {
+  background: var(--cognify-gold) !important;
+  color: #000 !important;
+  border: 1px solid #000 !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 15px rgba(212,175,55,0.15) !important;
+}
+
+.cognify-btn-gold:hover {
+  background: #f0ad42 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(212,175,55,0.3) !important;
+}
+
+/* ============================================
+   29. CARD COMPONENTS
+   ============================================ */
+
+.cognify-card {
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0,0.4) !important;
+  overflow: hidden !important;
+}
+
+.cognify-card:hover {
+  border-color: var(--cognify-gold) !important;
+  box-shadow:  pages !important;
+  transform: translateY(-4px) !important;
+}
+
+/* ============================================
+  30. TABLE COMPONENTS
+   ============================================ */
+
+.cognify-data-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 24px 0 !important;
+  background: var(--cognify-dark) !important;
+  border: 1px solid rgba(212,175,55,0.3) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.cognify-data-table th {
+  background: linear-gradient(135deg, var(--cognify-gold), #1a1a1a 100%) !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  border-bottom: 2px solid #D4AF37 !important;
+}
+
+.cognify-data-table td {
+  border-color: rgba(212,175,55,0.3) !important;
+  padding: 10px 12px !important;
+  color: var(--cognify-white) !important;
+}
+
+.cognify-data-table tr:hover td {
+  background: rgba(212,175,55,0.08) !important;
+}
+
+/* ============================================
+   31. ANIMATION CLASSES
+   ============================================ */
+
+/* Slide up animation */
+.cognify-slide-up {
+  animation: slideUp 0.4s ease-out forwards !important;
+}
+
+/* Fade in animation */
+.cognify-fade-in {
+  animation: fadeIn 0.3s ease-out forwards !important;
+}
+
+/* Scale in animation */
+.cognify-scale-in {
+  animation: scaleIn 0.3s ease-out forwards !important;
+}
+
+/* Hover lift effect */
+.cognify-hover-lift {
+  transition: all 0.3s ease !important;
+}
+
+/* ============================================
+   32. DARK MODE OVERRIDES
+   ============================================ */
+
+.dark {
+  --cognify-gold: #f0ad42 !important;
+  --cognify-black: #0a0a0a !important;
+  --cognify-dark: #0a0a0a !important;
+  --cognify-white: #ffffff !important;
+  --cognify-gray: #a0a0a0 !important;
+  --cognify-light-gray: #d0d0d0 !important;
+}
+
+.dark body {
+  background-color: var(--cognify-black) !important;
+  color: var(--cognify-white) !important;
+}
+
+.dark .cognify-glass-panel {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255,255,255,255,0.1) !important;
+}
+
+.dark .cognify-glass-panel:hover {
+  background: rgba(37, 99, 235, 0.10) !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 32px 8px #60a5fa, 0 0 64px 12px #2563eb88, 0 4px 20px rgba(0,0,0,0,0.25) !important;
+}
+
+.dark .cognify-card {
+  background: var(--cognify-dark) !important;
+  border-color: rgba(212,175,55,0.3) !important;
+}
+
+.dark .cognify-card:hover {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4) !important;
+}
+
+.dark .cognify-input {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255,255,255,255,0.2) !important;
+  color: var(--cognify-white) !important;
+}
+
+.dark .cognify-input:focus {
+  border-color: var(--cognify-gold) !important;
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.2) !important;
+}
+
+.dark .cognify-btn-primary {
+  background: var(--cognify-gold) !important;
+  color: #000 !important;
+}
+
+.dark .cognify-btn-primary:hover {
+  background: #f0ad42 !important;
+}
+
+.dark .cognify-btn-secondary {
+  background: var(--cognify-dark) !important;
+  color: var(--cognify-white) !important;
+  border: 1px solid var(--cognify-gold) !important;
+}
+
+.dark .cognify-btn-outline {
+  background: transparent !important;
+  color: var(--cognify-gold) !important;
+  border: 1px solid var(--cognify-gold) !important;
+}
+
+.dark .cognify-text-gradient {
+  background: linear-gradient(135deg, var(--cognify-gold), #1a1a1a 100%) !important;
+  -webkit-background-clip-text;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.dark .cognify-text-gradient span {
+  background-clip: text !important;
+}
+
+/* ============================================
+   END OF CSS FILE
+   ============================================ */

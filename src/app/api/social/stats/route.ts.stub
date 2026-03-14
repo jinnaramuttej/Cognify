@@ -1,0 +1,321 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET /api/social/stats - Get user social stats
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+
+    // Get user stats
+    const userStats = await db.userStats.findUnique({
+      where: { userId }
+    })
+
+    // Get streak data
+    const streak = await db.studyStreak.findUnique({
+      where: { userId }
+    })
+
+    // Get badges
+    const badges = await db.userBadge.findMany({
+      where: { userId },
+      orderBy: { earnedAt: 'desc' }
+    })
+
+    // Get notification count
+    const unreadNotifications = await db.socialNotification.count({
+      where: { userId, isRead: false }
+    })
+
+    // If no stats, return mock data
+    if (!userStats) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...generateMockStats(),
+          streak: generateMockStreak(),
+          badges: generateMockBadges(),
+          unreadNotifications: 3
+        },
+        isMockData: true
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...userStats,
+        streak: {
+          currentStreak: streak?.currentStreak || 0,
+          longestStreak: streak?.longestStreak || 0,
+          lastActivityDate: streak?.lastActivityAt?.toISOString() || null,
+          weeklyActivity: generateWeeklyActivity(streak?.currentStreak || 0)
+        },
+        badges: badges.map(b => ({
+          id: b.id,
+          key: b.badgeKey,
+          name: b.badgeName,
+          icon: b.badgeIcon,
+          color: b.badgeColor,
+          rarity: b.rarity,
+          earnedAt: b.earnedAt.toISOString()
+        })),
+        unreadNotifications
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching stats:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch stats' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/social/stats - Update user stats (called after test completion)
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { 
+      userId, 
+      pointsEarned, 
+      accuracy, 
+      timeSpent,
+      correctAnswers,
+      totalQuestions
+    } = body
+
+    // Get or create user stats
+    let userStats = await db.userStats.findUnique({
+      where: { userId }
+    })
+
+    if (!userStats) {
+      userStats = await db.userStats.create({
+        data: {
+          userId,
+          totalPoints: pointsEarned || 0,
+          avgAccuracy: accuracy || 0,
+          avgSpeed: timeSpent || 0,
+          testsCompleted: 1,
+          weeklyPoints: pointsEarned || 0,
+          monthlyPoints: pointsEarned || 0
+        }
+      })
+    } else {
+      const newTestsCompleted = userStats.testsCompleted + 1
+      const newAvgAccuracy = ((userStats.avgAccuracy * userStats.testsCompleted) + (accuracy || 0)) / newTestsCompleted
+      const newAvgSpeed = ((userStats.avgSpeed * userStats.testsCompleted) + (timeSpent || 0)) / newTestsCompleted
+
+      userStats = await db.userStats.update({
+        where: { userId },
+        data: {
+          totalPoints: userStats.totalPoints + (pointsEarned || 0),
+          avgAccuracy: newAvgAccuracy,
+          avgSpeed: newAvgSpeed,
+          testsCompleted: newTestsCompleted,
+          weeklyPoints: userStats.weeklyPoints + (pointsEarned || 0),
+          monthlyPoints: userStats.monthlyPoints + (pointsEarned || 0)
+        }
+      })
+    }
+
+    // Update streak
+    await updateStreak(userId)
+
+    // Check for badge awards
+    await checkAndAwardBadges(userId, userStats)
+
+    return NextResponse.json({
+      success: true,
+      data: userStats
+    })
+  } catch (error) {
+    console.error('Error updating stats:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to update stats' },
+      { status: 500 }
+    )
+  }
+}
+
+async function updateStreak(userId: string) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  let streak = await db.studyStreak.findUnique({
+    where: { userId }
+  })
+
+  if (!streak) {
+    streak = await db.studyStreak.create({
+      data: {
+        userId,
+        currentStreak: 1,
+        longestStreak: 1,
+        lastActivityAt: today,
+        weekStartDate: getWeekStart(today)
+      }
+    })
+  } else {
+    const lastActivity = streak.lastActivityAt
+    const lastActivityDate = lastActivity ? new Date(lastActivity) : null
+    
+    if (lastActivityDate) {
+      lastActivityDate.setHours(0, 0, 0, 0)
+    }
+
+    if (!lastActivityDate || lastActivityDate.getTime() < today.getTime()) {
+      // It's a new day
+      const yesterday = new Date(today)
+      yesterday.setDate(yesterday.getDate() - 1)
+
+      const isConsecutive = lastActivityDate && lastActivityDate.getTime() === yesterday.getTime()
+      
+      const newCurrentStreak = isConsecutive ? streak.currentStreak + 1 : 1
+      const newLongestStreak = Math.max(streak.longestStreak, newCurrentStreak)
+
+      streak = await db.studyStreak.update({
+        where: { userId },
+        data: {
+          currentStreak: newCurrentStreak,
+          longestStreak: newLongestStreak,
+          lastActivityAt: today
+        }
+      })
+
+      // Check for streak badges
+      if (newCurrentStreak === 7) {
+        await awardBadge(userId, 'streaker', 'streak', '7-day')
+      } else if (newCurrentStreak === 30) {
+        await awardBadge(userId, 'champion', 'streak', '30-day')
+      }
+    }
+  }
+
+  return streak
+}
+
+async function checkAndAwardBadges(userId: string, stats: any) {
+  // Check for accuracy-based badges
+  if (stats.avgAccuracy >= 95 && stats.testsCompleted >= 10) {
+    await awardBadge(userId, 'perfectionist', 'accuracy', `${stats.avgAccuracy}%`)
+  }
+
+  // Check for speed badges
+  if (stats.avgSpeed < 30 && stats.testsCompleted >= 10) {
+    await awardBadge(userId, 'speedster', 'speed', `${stats.avgSpeed}s`)
+  }
+
+  // Check for genius badge (high accuracy + many tests)
+  if (stats.avgAccuracy >= 90 && stats.testsCompleted >= 50) {
+    await awardBadge(userId, 'genius', 'performance', `${stats.testsCompleted} tests`)
+  }
+
+  // Check for points-based badges
+  if (stats.totalPoints >= 10000) {
+    await awardBadge(userId, 'warrior', 'points', '10000')
+  }
+}
+
+async function awardBadge(userId: string, badgeKey: string, earnedFrom: string, earnedFromId: string) {
+  const badgeInfo: Record<string, { name: string; icon: string; color: string; rarity: string }> = {
+    speedster: { name: 'Speed Demon', icon: '⚡', color: '#00D4FF', rarity: 'rare' },
+    perfectionist: { name: 'Perfect Score', icon: '✨', color: '#A855F7', rarity: 'epic' },
+    streaker: { name: 'Streak Master', icon: '🔥', color: '#F97316', rarity: 'rare' },
+    genius: { name: 'Genius', icon: '🧠', color: '#EC4899', rarity: 'epic' },
+    champion: { name: 'Champion', icon: '👑', color: '#FFD700', rarity: 'legendary' },
+    warrior: { name: 'Warrior', icon: '⚔️', color: '#EF4444', rarity: 'rare' }
+  }
+
+  const badge = badgeInfo[badgeKey]
+  if (!badge) return
+
+  // Check if already has this badge
+  const existing = await db.userBadge.findUnique({
+    where: { userId_badgeKey: { userId, badgeKey } }
+  })
+
+  if (existing) return
+
+  await db.userBadge.create({
+    data: {
+      userId,
+      badgeKey,
+      badgeName: badge.name,
+      badgeIcon: badge.icon,
+      badgeColor: badge.color,
+      rarity: badge.rarity,
+      earnedFrom,
+      earnedFromId
+    }
+  })
+
+  // Create notification
+  await db.socialNotification.create({
+    data: {
+      userId,
+      type: 'badge_earned',
+      title: 'New Badge Earned!',
+      message: `You earned the "${badge.name}" badge! ${badge.icon}`,
+      relatedType: 'badge',
+      relatedId: badgeKey
+    }
+  })
+}
+
+function getWeekStart(date: Date): Date {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  return new Date(d.setDate(diff))
+}
+
+function generateWeeklyActivity(currentStreak: number) {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  return days.map((day, i) => ({
+    day,
+    completed: i < currentStreak % 7 || (currentStreak >= 7 && i < 6)
+  }))
+}
+
+function generateMockStats() {
+  return {
+    totalPoints: 2100,
+    currentRank: 6,
+    previousRank: 7,
+    bestRank: 3,
+    percentile: 87,
+    percentileRank: 1250,
+    totalParticipants: 10000,
+    competitionsWon: 2,
+    competitionsJoined: 5,
+    squadContributions: 820,
+    challengesCompleted: 12,
+    perfectChallenges: 3,
+    friendsCount: 15,
+    followersCount: 28,
+    avgAccuracy: 87.5,
+    avgSpeed: 45,
+    testsCompleted: 48,
+    weeklyPoints: 450,
+    monthlyPoints: 1800
+  }
+}
+
+function generateMockStreak() {
+  return {
+    currentStreak: 7,
+    longestStreak: 15,
+    lastActivityDate: new Date().toISOString(),
+    weeklyActivity: generateWeeklyActivity(7)
+  }
+}
+
+function generateMockBadges() {
+  return [
+    { id: 'b1', key: 'warrior', name: 'Warrior', icon: '⚔️', color: '#EF4444', rarity: 'rare', earnedAt: new Date().toISOString() },
+    { id: 'b2', key: 'streaker', name: 'Streak Master', icon: '🔥', color: '#F97316', rarity: 'rare', earnedAt: new Date(Date.now() - 86400000).toISOString() }
+  ]
+}

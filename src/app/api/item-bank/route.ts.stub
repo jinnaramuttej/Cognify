@@ -1,0 +1,316 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET - List all items with filtering
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status')
+    const subject = searchParams.get('subject')
+    const difficulty = searchParams.get('difficulty')
+    const search = searchParams.get('search')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = parseInt(searchParams.get('offset') || '0')
+
+    // Build where clause
+    const where: any = {}
+    
+    if (status && status !== 'all') {
+      where.itemStatus = status
+    }
+    
+    if (difficulty && difficulty !== 'all') {
+      where.difficulty = difficulty
+    }
+    
+    if (subject && subject !== 'all') {
+      where.subject = {
+        name: subject
+      }
+    }
+    
+    if (search) {
+      where.OR = [
+        { text: { contains: search, mode: 'insensitive' } },
+        { subject: { name: { contains: search, mode: 'insensitive' } } },
+        { chapter: { name: { contains: search, mode: 'insensitive' } } }
+      ]
+    }
+
+    const [items, total] = await Promise.all([
+      db.question.findMany({
+        where,
+        include: {
+          subject: true,
+          chapter: true,
+          itemStats: true,
+          itemReviews: {
+            orderBy: { createdAt: 'desc' },
+            take: 5
+          },
+          itemVersions: {
+            orderBy: { versionNumber: 'desc' },
+            take: 5
+          },
+          _count: {
+            select: { 
+              attemptAnswers: true,
+              itemReviews: true
+            }
+          }
+        },
+        orderBy: { updatedAt: 'desc' },
+        skip: offset,
+        take: limit
+      }),
+      db.question.count({ where })
+    ])
+
+    // Transform items for frontend
+    const transformedItems = items.map(item => ({
+      id: item.id,
+      text: item.text,
+      subjectId: item.subjectId,
+      subjectName: item.subject.name,
+      chapterId: item.chapterId,
+      chapterName: item.chapter.name,
+      difficulty: item.difficulty,
+      itemStatus: item.itemStatus,
+      cognitiveLevel: item.cognitiveLevel,
+      examType: item.pyqExam || 'Custom',
+      isPYQ: item.isPYQ,
+      pyqYear: item.pyqYear,
+      pyqExam: item.pyqExam,
+      createdBy: item.createdBy,
+      authorName: item.createdBy || 'Unknown',
+      sourceRef: item.sourceRef,
+      marks: item.marks,
+      negativeMarks: item.negativeMarks,
+      options: JSON.parse(item.options),
+      explanation: item.explanation,
+      tags: item.isPYQ ? [item.pyqExam || '', `${item.pyqYear}`].filter(Boolean) : [],
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      stats: item.itemStats ? {
+        pValue: item.itemStats.pValue,
+        discriminationIndex: item.itemStats.discriminationIndex,
+        avgTimeSeconds: item.itemStats.avgTimeSeconds,
+        skipRate: item.itemStats.skipRate,
+        usageCount: item.itemStats.usageCount,
+        qualityScore: item.itemStats.qualityScore
+      } : null,
+      reviews: item.itemReviews.map(r => ({
+        reviewerId: r.reviewerId,
+        score: r.score,
+        accuracyScore: r.accuracyScore || 0,
+        clarityScore: r.clarityScore || 0,
+        relevanceScore: r.relevanceScore || 0,
+        status: r.status,
+        comments: r.comments || '',
+        createdAt: r.createdAt
+      })),
+      versions: item.itemVersions.map(v => ({
+        versionNumber: v.versionNumber,
+        changeSummary: v.changeSummary || '',
+        changedBy: v.changedBy,
+        changeType: v.changeType,
+        createdAt: v.createdAt
+      })),
+      attemptCount: item._count.attemptAnswers
+    }))
+
+    return NextResponse.json({
+      items: transformedItems,
+      total,
+      limit,
+      offset
+    })
+  } catch (error) {
+    console.error('Error fetching items:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch items' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST - Create new item
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      text,
+      subjectId,
+      chapterId,
+      options,
+      correctAnswer,
+      difficulty = 'medium',
+      cognitiveLevel = 'apply',
+      marks = 4,
+      negativeMarks = 1,
+      explanation = '',
+      isPYQ = false,
+      pyqYear,
+      pyqExam,
+      sourceRef,
+      tags = []
+    } = body
+
+    // Validate required fields
+    if (!text || !subjectId || !chapterId || !options || !correctAnswer) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Create question
+    const question = await db.question.create({
+      data: {
+        text,
+        subjectId,
+        chapterId,
+        options: JSON.stringify(options),
+        correctAnswer,
+        difficulty,
+        cognitiveLevel,
+        marks,
+        negativeMarks,
+        explanation,
+        isPYQ,
+        pyqYear,
+        pyqExam,
+        sourceRef,
+        itemStatus: 'draft',
+        itemQuality: 'standard',
+        createdBy: 'system' // TODO: Get from auth
+      }
+    })
+
+    // Create initial version
+    await db.itemVersion.create({
+      data: {
+        questionId: question.id,
+        versionNumber: 1,
+        contentSnapshot: JSON.stringify(question),
+        changeSummary: 'Initial creation',
+        changedBy: 'system',
+        changeType: 'create'
+      }
+    })
+
+    return NextResponse.json({ 
+      success: true, 
+      question 
+    })
+  } catch (error) {
+    console.error('Error creating item:', error)
+    return NextResponse.json(
+      { error: 'Failed to create item' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT - Update item
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Item ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Get current item for versioning
+    const current = await db.question.findUnique({
+      where: { id }
+    })
+
+    if (!current) {
+      return NextResponse.json(
+        { error: 'Item not found' },
+        { status: 404 }
+      )
+    }
+
+    // Prepare update data
+    const updateData: any = {
+      ...updates,
+      updatedAt: new Date()
+    }
+
+    if (updates.options) {
+      updateData.options = JSON.stringify(updates.options)
+    }
+
+    // Update question
+    const question = await db.question.update({
+      where: { id },
+      data: updateData
+    })
+
+    // Create new version if content changed
+    if (updates.text || updates.options || updates.explanation) {
+      const latestVersion = await db.itemVersion.findFirst({
+        where: { questionId: id },
+        orderBy: { versionNumber: 'desc' }
+      })
+
+      await db.itemVersion.create({
+        data: {
+          questionId: id,
+          versionNumber: (latestVersion?.versionNumber || 0) + 1,
+          contentSnapshot: JSON.stringify(question),
+          changeSummary: updates.changeSummary || 'Content updated',
+          changedBy: 'system',
+          changeType: 'edit'
+        }
+      })
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      question 
+    })
+  } catch (error) {
+    console.error('Error updating item:', error)
+    return NextResponse.json(
+      { error: 'Failed to update item' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE - Delete item
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Item ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Soft delete by setting status to archived (or hard delete)
+    await db.question.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ 
+      success: true 
+    })
+  } catch (error) {
+    console.error('Error deleting item:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete item' },
+      { status: 500 }
+    )
+  }
+}

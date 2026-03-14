@@ -1,0 +1,65 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+interface SaveAnswersRequest {
+  attemptId: string
+  answers: {
+    questionId: string
+    selectedAnswer: string | null
+    isMarkedForReview: boolean
+  }[]
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: SaveAnswersRequest = await request.json()
+    const { attemptId, answers } = body
+
+    // Verify attempt exists and is in progress
+    const attempt = await db.testAttempt.findUnique({
+      where: { id: attemptId }
+    })
+
+    if (!attempt || attempt.status !== 'in_progress') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid attempt' },
+        { status: 400 }
+      )
+    }
+
+    // Update answers in bulk
+    await Promise.all(
+      answers.map((answer) =>
+        db.attemptAnswer.upsert({
+          where: {
+            attemptId_questionId: {
+              attemptId,
+              questionId: answer.questionId
+            }
+          },
+          create: {
+            attemptId,
+            questionId: answer.questionId,
+            selectedAnswer: answer.selectedAnswer,
+            isMarkedForReview: answer.isMarkedForReview
+          },
+          update: {
+            selectedAnswer: answer.selectedAnswer,
+            isMarkedForReview: answer.isMarkedForReview
+          }
+        })
+      )
+    )
+
+    return NextResponse.json({
+      success: true,
+      message: 'Answers saved successfully'
+    })
+  } catch (error) {
+    console.error('Error saving answers:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to save answers' },
+      { status: 500 }
+    )
+  }
+}

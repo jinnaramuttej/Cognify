@@ -1,0 +1,1164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// AI Tutor Models
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  message   String
+  role      String   // "user" or "assistant"
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+model AIUsageLog {
+  id         String   @id @default(cuid())
+  userId     String
+  tokensUsed Int
+  sessionId  String
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+model UserWeakTopic {
+  id               String   @id @default(cuid())
+  userId           String
+  topic            String
+  subject          String
+  accuracy         Float
+  lastPracticed    DateTime
+  recommendedAction String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model TestAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  subject        String
+  score          Int
+  totalQuestions Int
+  createdAt      DateTime @default(now())
+
+  mistakes       TestMistake[]
+
+  @@index([userId])
+}
+
+model TestMistake {
+  id           String   @id @default(cuid())
+  testAttemptId String
+  questionId   String
+  topic        String
+  concept      String
+  createdAt    DateTime @default(now())
+
+  testAttempt  TestAttempt @relation(fields: [testAttemptId], references: [id])
+
+  @@index([testAttemptId])
+}
+
+// Cogni AI Intelligence Models
+model AISession {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  messages    AIMessage[]
+
+  @@index([userId])
+}
+
+model AIMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      String   // "user", "assistant", "system"
+  content   String
+  tokens    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  session   AISession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model UserProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  grade            String   @default("12")
+  targetExam       String   @default("JEE")
+  studyStreak      Int      @default(0)
+  lastActiveDate   DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model WeakTopicAnalysis {
+  id               String   @id @default(cuid())
+  userId           String
+  topic            String
+  subject          String
+  accuracy         Float    @default(0)
+  attemptCount     Int      @default(0)
+  lastPracticed    DateTime?
+  mistakeType      String?  // conceptual, calculation, time_pressure, silly
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, subject])
+}
+
+model AIUsageLogExtended {
+  id         String   @id @default(cuid())
+  userId     String
+  sessionId  String
+  tokensUsed Int
+  modelType  String   @default("chat")
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// =====================================================
+// COGNI CORE - Adaptive Tutoring Engine Models
+// =====================================================
+
+// Item Bank with IRT Parameters (3PL Model)
+model AdaptiveItem {
+  id                String   @id @default(cuid())
+  externalId        String?  @unique // Reference to external question bank
+  
+  // Content
+  content           String   // Question text/stem
+  options           String?  // JSON array of options for MCQ
+  correctAnswer     String   // Correct answer key
+  explanation       String?  // Solution explanation
+  
+  // Classification
+  subject           String   // Physics, Chemistry, Math, etc.
+  topic             String   // Mechanics, Organic Chemistry, Calculus, etc.
+  skillId           String?  // Associated skill/concept
+  difficulty        String   @default("medium") // easy, medium, hard
+  itemType          String   @default("mcq") // mcq, numeric, multi-select
+  
+  // IRT Parameters (3PL Model: P(θ) = c + (1-c)/(1+e^(-a(θ-b))))
+  // a = discrimination (slope), b = difficulty (location), c = guessing (lower asymptote)
+  discrimination    Float    @default(1.0) // a-parameter: item's ability to differentiate
+  difficultyParam   Float    @default(0.0) // b-parameter: item difficulty on θ scale
+  guessing          Float    @default(0.25) // c-parameter: probability of correct guess
+  
+  // Metadata
+  timeLimit         Int?     // Suggested time limit in seconds
+  points            Int      @default(1)
+  isPublished       Boolean  @default(true)
+  isEmbargoed       Boolean  @default(false) // Temporarily unavailable
+  embargoUntil      DateTime?
+  
+  // Tracking
+  exposureCount     Int      @default(0) // Times item has been shown
+  lastCalibratedAt  DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  stats             ItemStats?
+  responses         ItemResponse[]
+  
+  @@index([subject])
+  @@index([topic])
+  @@index([skillId])
+  @@index([isPublished, isEmbargoed])
+}
+
+// Item Statistics (Computed via Calibration Job)
+model ItemStats {
+  id                String   @id @default(cuid())
+  itemId            String   @unique
+  
+  // Classical Test Theory Stats
+  pValue            Float    @default(0.5) // Proportion correct (difficulty index)
+  pointBiserial     Float    @default(0.0) // Item-total correlation (discrimination)
+  cronbachAlpha     Float?   // Reliability contribution
+  
+  // IRT Fit Statistics
+  chiSquareFit      Float?   // Chi-square goodness of fit
+  rmsea             Float?   // Root mean square error of approximation
+  infitMNSQ         Float?   // Infit mean square
+  outfitMNSQ        Float?   // Outfit mean square
+  
+  // Time Statistics
+  avgResponseTime   Float?   // Average time in seconds
+  medianResponseTime Float?  // Median time in seconds
+  timeSD            Float?   // Standard deviation
+  
+  // DIF (Differential Item Functioning)
+  difFlagged        Boolean  @default(false)
+  difMagnitude      Float?   // Effect size if DIF detected
+  
+  // Calibration Metadata
+  sampleSize        Int      @default(0) // Number of responses used
+  lastCalibratedAt  DateTime @default(now())
+  calibrationMethod String?  // 3PL, 2PL, Rasch
+  
+  // Relations
+  item              AdaptiveItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@index([itemId])
+}
+
+// Adaptive Session with Full History
+model AdaptiveSession {
+  id                String   @id @default(cuid())
+  userId            String
+  subject           String
+  topic             String?  // Optional focus topic
+  
+  // Ability Estimate (θ)
+  thetaCurrent      Float    @default(0.0) // Current ability estimate
+  thetaSE           Float    @default(1.0) // Standard error of estimate
+  thetaHistory      String   // JSON array of {theta, se, timestamp, itemId}
+  
+  // Session State
+  status            String   @default("active") // active, paused, completed, abandoned
+  selectedItems     String   // JSON array of item IDs in order
+  responses         String   // JSON array of {itemId, response, correct, time, thetaAfter}
+  
+  // Teacher Overrides
+  teacherOverride   String?  // JSON: {forceTopic, forceDifficulty, skipItems: []}
+  
+  // Privacy Settings
+  biometricOptIn    Boolean  @default(false) // Facial/biometric inference opt-in
+  
+  // Metadata
+  startedAt         DateTime @default(now())
+  completedAt       DateTime?
+  totalItems        Int      @default(0)
+  correctItems      Int      @default(0)
+  avgResponseTime   Float    @default(0)
+  
+  // Relations
+  skillStates       SkillMastery[]
+  
+  @@index([userId])
+  @@index([subject])
+  @@index([status])
+}
+
+// Per-Skill Knowledge Tracing State
+model SkillMastery {
+  id                String   @id @default(cuid())
+  sessionId         String
+  skillId           String
+  
+  // Bayesian Knowledge Tracing Parameters
+  // P(Ln) = P(Ln-1) + P(T) * (1 - P(Ln-1)) if correct
+  // P(Ln) = P(Ln-1) * (1 - P(S)) / (P(Ln-1) * (1 - P(S)) + (1 - P(Ln-1)) * P(G)) if incorrect
+  pKnow             Float    @default(0.5) // P(L) - probability student knows skill
+  pGuess            Float    @default(0.25) // P(G) - probability correct guess
+  pSlip             Float    @default(0.1) // P(S) - probability slip (incorrect despite knowing)
+  pTransfer         Float    @default(0.1) // P(T) - probability of learning
+  
+  // DeepKT Extended States (for hybrid model)
+  shortTermState    Float    @default(0.5) // Recent performance window
+  longTermState     Float    @default(0.5) // Cumulative mastery
+  decayRate         Float    @default(0.1) // Forgetting curve parameter
+  
+  // History
+  attemptCount      Int      @default(0)
+  correctCount      Int      @default(0)
+  lastAttemptAt     DateTime?
+  
+  // Relations
+  session           AdaptiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@unique([sessionId, skillId])
+  @@index([sessionId])
+  @@index([skillId])
+}
+
+// Individual Item Response (for replay and analysis)
+model ItemResponse {
+  id                String   @id @default(cuid())
+  itemId            String
+  
+  // Response Data
+  userId            String
+  sessionId         String?
+  userResponse      String   // User's answer
+  isCorrect         Boolean
+  responseTime      Int      // Time in seconds
+  
+  // Context at Response
+  thetaBefore       Float    // θ before this response
+  thetaAfter        Float    // θ after this response
+  
+  // Metadata
+  attemptNumber     Int      @default(1) // For items shown multiple times
+  deviceType        String?  // desktop, mobile, tablet
+  answeredAt        DateTime @default(now())
+  
+  // Relations
+  item              AdaptiveItem @relation(fields: [itemId], references: [id])
+  
+  @@index([itemId])
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// Calibration Log (Audit Trail)
+model CalibrationLog {
+  id                String   @id @default(cuid())
+  batchId           String   @unique
+  
+  // Job Info
+  status            String   @default("pending") // pending, running, completed, failed
+  startedAt         DateTime @default(now())
+  completedAt       DateTime?
+  
+  // Scope
+  itemCount         Int      @default(0) // Items processed
+  responseCount     Int      @default(0) // Responses analyzed
+  
+  // Results Summary
+  itemsUpdated      Int      @default(0)
+  itemsFlagged      Int      @default(0) // Items with poor fit
+  avgRMSEA          Float?
+  
+  // Error Tracking
+  errorMessage      String?
+  errorStack        String?
+  
+  @@index([batchId])
+  @@index([status])
+}
+
+// Topic Exposure Tracking (for exposure control)
+model TopicExposure {
+  id                String   @id @default(cuid())
+  userId            String
+  topic             String
+  subject           String
+  
+  exposureCount     Int      @default(0) // Items shown from this topic
+  lastExposureAt    DateTime @default(now())
+  
+  @@unique([userId, topic])
+  @@index([userId])
+  @@index([topic])
+}
+
+// Teacher Configuration (Overrides and Constraints)
+model TeacherConfig {
+  id                String   @id @default(cuid())
+  classId           String?
+  userId            String?  // Specific student override
+  
+  // Constraints
+  allowedTopics     String?  // JSON array of allowed topics
+  blockedItems      String?  // JSON array of item IDs to skip
+  difficultyRange   String?  // JSON: {min: easy, max: hard}
+  
+  // Exposure Limits
+  maxExposurePerSession Int  @default(5) // Max times showing similar items
+  maxExposurePerTopic   Int  @default(10)
+  
+  // Timing
+  sessionTimeLimit  Int?     // Minutes
+  itemTimeLimit     Int?     // Seconds per item
+  
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([classId])
+  @@index([userId])
+}
+
+// =====================================================
+// COGNI MULTIMODAL - Image/Audio Parsing & Corrections
+// =====================================================
+
+// Parsed Problem from Image/Audio
+model ParsedProblem {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Source Info
+  sourceType        String   // "image", "camera", "audio", "screenshot"
+  originalFileName  String?
+  mimeType          String?
+  
+  // Recognition Results
+  rawText           String?  // Raw OCR/transcription
+  latexExpression   String?  // Extracted LaTeX
+  normalizedText    String?  // Cleaned/normalized version
+  
+  // Confidence Scores
+  ocrConfidence     Float?   // 0-1 confidence
+  latexConfidence   Float?   // LaTeX extraction confidence
+  overallConfidence Float?   // Combined confidence
+  
+  // Extracted Context
+  problemType       String?  // solve, prove, simplify, evaluate
+  subject           String?  // math, physics, chemistry
+  detectedVariables String?  // JSON array of detected variables
+  detectedConcepts  String?  // JSON array of detected concepts
+  
+  // Annotation Regions (for image)
+  annotationRegions String?  // JSON array of {x, y, width, height, label}
+  
+  // Human Corrections
+  correctedText     String?  // User-corrected version
+  correctedLatex    String?  // User-corrected LaTeX
+  correctionCount   Int      @default(0)
+  
+  // Status
+  status            String   @default("pending") // pending, verified, corrected, failed
+  needsReview       Boolean  @default(false)
+  
+  // Solution Reference
+  solutionId        String?  // Reference to generated solution
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([sourceType])
+  @@index([status])
+}
+
+// OCR/Transcription Corrections (for model improvement)
+model RecognitionCorrection {
+  id                String   @id @default(cuid())
+  parsedProblemId   String
+  
+  // Original Recognition
+  originalText      String
+  originalLatex     String?
+  recognitionType   String   // "ocr", "latex", "transcription"
+  
+  // Corrected Version
+  correctedText     String
+  correctedLatex    String?
+  
+  // Context
+  correctionSource  String   @default("user") // user, teacher, system
+  verifiedBy        String?  // User ID of verifier
+  
+  // For Model Training
+  includedInTraining Boolean @default(false)
+  trainingBatchId   String?
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([parsedProblemId])
+  @@index([recognitionType])
+  @@index([includedInTraining])
+}
+
+// Generated Solution with Explainability
+model ProblemSolution {
+  id                String   @id @default(cuid())
+  parsedProblemId   String
+  
+  // Solution Content
+  problemText       String
+  solutionSteps     String   // JSON array of {step, explanation, difficulty, estimatedTime}
+  finalAnswer       String?
+  
+  // Metadata
+  solutionType      String   // "step_by_step", "proof", "numerical"
+  difficulty        String   @default("medium")
+  estimatedTime     Int?     // Estimated solve time in minutes
+  
+  // Quality Metrics
+  helpfulVotes      Int      @default(0)
+  unhelpfulVotes    Int      @default(0)
+  viewCount         Int      @default(0)
+  
+  // AI Generation Info
+  modelUsed         String?
+  generationTime    Int?     // milliseconds
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([parsedProblemId])
+  @@index([difficulty])
+}
+
+// =====================================================
+// COGNI TEST COMPOSER - Self-Study Test Builder
+// =====================================================
+
+// Chapter/Topic Structure
+model Chapter {
+  id                String   @id @default(cuid())
+  subject           String   // Physics, Chemistry, Math
+  chapterNumber     Int      
+  name              String   
+  topics            String?  // JSON array of topic names
+  
+  // Stats
+  totalItems        Int      @default(0)
+  easyCount         Int      @default(0)
+  mediumCount       Int      @default(0)
+  hardCount         Int      @default(0)
+  pyqCount          Int      @default(0)
+  
+  // Metadata
+  weightage         Float?   // Exam weightage percentage
+  importance        String   @default("medium") // high, medium, low
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([subject, chapterNumber])
+  @@index([subject])
+}
+
+// Test Configuration
+model TestConfiguration {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Test Settings
+  testName          String
+  testMode          String   @default("fixed") // fixed, adaptive
+  buildMode         String   @default("custom") // custom, weak_topics, pyq_only, spaced_revision
+  
+  // Selection Criteria
+  subject           String
+  chapters          String   // JSON array of chapter IDs
+  difficultyMix     String   // JSON: {easy: 30, medium: 50, hard: 20}
+  questionCount     Int
+  timeLimit         Int      // Minutes
+  
+  // Filters
+  pyqOnly           Boolean  @default(false)
+  excludeShown      Boolean  @default(true) // Exclude previously shown items
+  
+  // Predictions
+  estimatedDifficulty Float?  // 0-100 scale
+  predictedScoreMin   Int?    // Minimum predicted score
+  predictedScoreMax   Int?    // Maximum predicted score
+  
+  // Metadata
+  status            String   @default("configured") // configured, generated, in_progress, completed
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([subject])
+  @@index([status])
+}
+
+// Generated Test
+model GeneratedTest {
+  id                String   @id @default(cuid())
+  configId          String
+  userId            String
+  
+  // Test Content
+  items             String   // JSON array of item IDs with order
+  totalItems        Int
+  totalMarks        Int
+  
+  // Timing
+  timeLimit         Int      // Minutes
+  startedAt         DateTime?
+  submittedAt       DateTime?
+  
+  // Results
+  score             Int?
+  percentage        Float?
+  rank              Int?
+  
+  // Analytics
+  topicWiseScore    String?  // JSON: {topic: {correct, total}}
+  difficultyWiseScore String? // JSON: {easy: {correct, total}, ...}
+  timeAnalysis      String?  // JSON: avg time, time per item
+  
+  // Status
+  status            String   @default("ready") // ready, in_progress, completed, abandoned
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([configId])
+  @@index([userId])
+  @@index([status])
+}
+
+// User Mastery per Chapter
+model ChapterMastery {
+  id                String   @id @default(cuid())
+  userId            String
+  chapterId         String
+  
+  // Mastery Metrics
+  masteryLevel      Float    @default(0) // 0-100
+  accuracy          Float    @default(0)
+  attemptCount      Int      @default(0)
+  correctCount      Int      @default(0)
+  
+  // Spaced Repetition
+  lastPracticed     DateTime?
+  nextReviewDue     DateTime?
+  forgettingIndex   Float    @default(0) // 0-1, higher = more likely to forget
+  
+  // Weak Areas
+  weakTopics        String?  // JSON array of weak topic names
+  mistakePatterns   String?  // JSON array of common mistake types
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([userId, chapterId])
+  @@index([userId])
+  @@index([chapterId])
+}
+
+// =====================================================
+// COGNIFY LIBRARY - Curriculum-Aligned Educational Ecosystem
+// =====================================================
+
+// Curriculum Structure (NCERT/Board Syllabi)
+model CurriculumNode {
+  id                String   @id @default(cuid())
+  
+  // Hierarchy
+  parentId          String?
+  level             Int      // 0: Board, 1: Class, 2: Subject, 3: Chapter, 4: Topic
+  
+  // Content
+  code              String   // e.g., "NCERT-12-PHYS-01"
+  name              String
+  nameHi            String?  // Hindi name
+  nameEn            String?  // English name
+  description       String?
+  
+  // Classification
+  board             String   @default("NCERT") // NCERT, CBSE, ICSE, State
+  grade             String?  // 11, 12, etc.
+  subject           String?  // Physics, Chemistry, Math
+  
+  // Coverage
+  coveragePercent   Float    @default(0) // Syllabus coverage percentage
+  totalResources    Int      @default(0)
+  
+  // Metadata
+  order             Int      @default(0)
+  isActive          Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  children          CurriculumNode[]  @relation("CurriculumHierarchy")
+  parent            CurriculumNode?   @relation("CurriculumHierarchy", fields: [parentId], references: [id])
+  alignments        ResourceAlignment[]
+  
+  @@unique([code])
+  @@index([board])
+  @@index([grade])
+  @@index([subject])
+  @@index([parentId])
+}
+
+// Resource to Curriculum Alignment
+model ResourceAlignment {
+  id                String   @id @default(cuid())
+  
+  // Resource Reference
+  resourceType      String   // video, note, question, book
+  resourceId        String
+  
+  // Curriculum Mapping
+  curriculumNodeId  String
+  
+  // Alignment Details
+  alignmentType     String   @default("primary") // primary, secondary, supplementary
+  relevanceScore    Float    @default(1.0) // 0-1
+  
+  // Multi-board support
+  boards            String?  // JSON array: ["NCERT", "CBSE"]
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  curriculumNode    CurriculumNode @relation(fields: [curriculumNodeId], references: [id])
+  
+  @@unique([resourceType, resourceId, curriculumNodeId])
+  @@index([resourceType])
+  @@index([resourceId])
+  @@index([curriculumNodeId])
+}
+
+// Offline Content Downloads
+model OfflineContent {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Resource Reference
+  resourceType      String   // video, note, book, question_set
+  resourceId        String
+  resourceName      String
+  
+  // Download Status
+  status            String   @default("pending") // pending, downloading, completed, failed
+  downloadProgress  Float    @default(0) // 0-100
+  downloadedBytes   Int      @default(0)
+  totalBytes        Int?
+  
+  // Storage
+  localPath         String?
+  expiresAt         DateTime?
+  
+  // Sync
+  lastSyncedAt      DateTime?
+  syncVersion       Int      @default(1)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([userId, resourceType, resourceId])
+  @@index([userId])
+  @@index([status])
+}
+
+// User Sync Data (Bookmarks, Notes, Highlights)
+model UserSyncData {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Resource Reference
+  resourceType      String
+  resourceId        String
+  
+  // Data Types
+  dataType          String   // bookmark, note, highlight, progress
+  data              String   // JSON payload
+  
+  // Sync Status
+  syncStatus        String   @default("synced") // pending, synced, conflict
+  lastModified      DateTime @default(now())
+  serverVersion     Int      @default(1)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([userId, resourceType, resourceId, dataType])
+  @@index([userId])
+  @@index([syncStatus])
+}
+
+// User Language Preference
+model UserLanguagePreference {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  
+  // Language Settings
+  primaryLanguage   String   @default("en") // en, hi, regional
+  secondaryLanguage String?  // For bilingual display
+  contentLanguage   String   @default("en") // Preferred content language
+  
+  // Available Languages
+  enabledLanguages  String   @default("[\"en\", \"hi\"]") // JSON array
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+// Custom Playlist / Learning Batch
+model Playlist {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Playlist Info
+  name              String
+  description       String?
+  coverImage        String?
+  
+  // Classification
+  subject           String?
+  grade             String?
+  playlistType      String   @default("custom") // custom, teacher, recommended
+  
+  // Sharing
+  isPublic          Boolean  @default(false)
+  shareCode         String?  @unique // For sharing
+  shareSettings     String?  // JSON: {allowCopy: true, allowEdit: false}
+  
+  // Stats
+  itemCount         Int      @default(0)
+  viewCount         Int      @default(0)
+  copyCount         Int      @default(0)
+  
+  // Metadata
+  order             Int      @default(0) // For sorting items
+  tags              String?  // JSON array of tags
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  items             PlaylistItem[]
+  shares            SharedPlaylist[]
+  
+  @@index([userId])
+  @@index([isPublic])
+  @@index([shareCode])
+}
+
+// Playlist Items
+model PlaylistItem {
+  id                String   @id @default(cuid())
+  playlistId        String
+  
+  // Resource Reference
+  resourceType      String   // video, note, question, book
+  resourceId        String
+  resourceName      String
+  resourceThumbnail String?
+  
+  // Ordering
+  sortOrder         Int      @default(0)
+  
+  // User Notes
+  notes             String?
+  
+  // Progress
+  progress          Float    @default(0) // 0-100
+  completedAt       DateTime?
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  playlist          Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  
+  @@unique([playlistId, resourceId])
+  @@index([playlistId])
+  @@index([resourceType, resourceId])
+}
+
+// Shared Playlist Records
+model SharedPlaylist {
+  id                String   @id @default(cuid())
+  playlistId        String
+  sharedBy          String
+  sharedWith        String?  // User ID or group ID
+  
+  // Share Info
+  shareType         String   @default("user") // user, group, public_link
+  permissions       String   @default("view") // view, edit, copy
+  
+  // Access
+  accessedAt        DateTime?
+  accessCount       Int      @default(0)
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  playlist          Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  
+  @@index([playlistId])
+  @@index([sharedBy])
+  @@index([sharedWith])
+}
+
+// =====================================================
+// SOCRATIC HINT LADDER - Progressive Hint System
+// =====================================================
+
+// Hint Budget Configuration (Teacher Configurable)
+model HintBudgetConfig {
+  id                String   @id @default(cuid())
+  classId           String?
+  userId            String?  // Specific student override
+  
+  // Budget Settings
+  maxHintsPerItem   Int      @default(4)   // Max hints per question
+  maxHintsPerSession Int     @default(20)  // Max hints per session
+  maxLevel4PerSession Int    @default(3)   // Max full solution reveals
+  
+  // Escalation Thresholds
+  escalationThreshold Int    @default(3)   // Level-4 uses before escalation
+  
+  // Cost Weights (higher = more expensive)
+  level1Weight      Float    @default(0.5)  // Conceptual nudge
+  level2Weight      Float    @default(1.0)  // Targeted question
+  level3Weight      Float    @default(1.5)  // Next step
+  level4Weight      Float    @default(2.5)  // Full solution
+  
+  // Adaptive Adjustments
+  reduceOnCorrect   Boolean  @default(true)  // Reduce budget on correct
+  increaseOnStruggle Boolean @default(true)  // Increase on repeated wrong
+  
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([classId])
+  @@index([userId])
+}
+
+// Hint Session (Tracks budget usage per session)
+model HintSession {
+  id                String   @id @default(cuid())
+  userId            String
+  sessionId         String?  // Link to AdaptiveSession if applicable
+  
+  // Budget Tracking
+  budgetRemaining   Float    @default(20.0)  // Weighted budget
+  hintsUsed         Int      @default(0)
+  level4Used        Int      @default(0)
+  
+  // Escalation State
+  escalationTriggered Boolean @default(false)
+  escalationType    String?  // "eli5", "worked_example", "video"
+  
+  // Statistics
+  avgHelpfulness    Float    @default(0)
+  totalFeedback     Int      @default(0)
+  
+  startedAt         DateTime @default(now())
+  endedAt           DateTime?
+  
+  // Relations
+  hintUsages        HintUsage[]
+  
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// Individual Hint Usage Record
+model HintUsage {
+  id                String   @id @default(cuid())
+  hintSessionId     String
+  userId            String
+  
+  // Context
+  itemId            String?  // AdaptiveItem ID
+  questionText      String   // The question being hinted
+  subject           String?
+  topic             String?
+  
+  // Hint Details
+  hintLevel         Int      // 1-4
+  hintContent       String   // Generated hint text
+  
+  // Prompt Context (for training)
+  promptTemplate    String?  // Template used
+  promptContext     String?  // JSON: variables passed to prompt
+  
+  // Timing
+  requestedAt       DateTime @default(now())
+  timeToRequest     Int?     // ms since question shown
+  
+  // State Before/After
+  attemptsBefore    Int      @default(0)
+  wasCorrectAfter   Boolean?
+  
+  // Relations
+  feedback          HintFeedback?
+  session           HintSession @relation(fields: [hintSessionId], references: [id], onDelete: Cascade)
+  
+  @@index([hintSessionId])
+  @@index([userId])
+  @@index([itemId])
+}
+
+// Hint Feedback (Quality Scoring)
+model HintFeedback {
+  id                String   @id @default(cuid())
+  hintUsageId       String   @unique
+  
+  // Feedback
+  rating            Int?     // 1-5 stars
+  wasHelpful        Boolean? // thumbs up/down
+  feedbackType      String?  // "too_vague", "too_revealing", "just_right", "confusing"
+  freeformFeedback  String?  // Optional text feedback
+  
+  // Learning Outcome
+  helpedSolve       Boolean? // Did hint lead to correct answer?
+  timeToSolve       Int?     // seconds after hint to solve
+  
+  // Training Labels
+  qualityScore      Float?   // Computed quality (for model training)
+  includedInTraining Boolean @default(false)
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  hintUsage         HintUsage @relation(fields: [hintUsageId], references: [id], onDelete: Cascade)
+  
+  @@index([hintUsageId])
+  @@index([wasHelpful])
+  @@index([includedInTraining])
+}
+
+// Hint Prompt Templates (LLM Prompts)
+model HintTemplate {
+  id                String   @id @default(cuid())
+  
+  // Template Info
+  name              String
+  level             Int      // 1-4
+  subject           String?  // null = general template
+  topic             String?  // null = general template
+  
+  // Prompt Content
+  systemPrompt      String
+  userPromptTemplate String  // Template with {{variables}}
+  
+  // Variables
+  requiredVariables String   // JSON array: ["question", "topic", "student_level"]
+  optionalVariables String?  // JSON array
+  
+  // Quality Control
+  avgHelpfulness    Float    @default(0)
+  usageCount        Int      @default(0)
+  
+  // Metadata
+  isActive          Boolean  @default(true)
+  version           Int      @default(1)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([level, subject, topic])
+  @@index([level])
+  @@index([subject])
+  @@index([isActive])
+}
+
+// Escalation Content (ELI5, Worked Examples)
+model EscalationContent {
+  id                String   @id @default(cuid())
+  
+  // Content Info
+  type              String   // "eli5", "worked_example", "video"
+  title             String
+  content           String   // Markdown or content reference
+  
+  // Association
+  itemId            String?  // Specific item
+  topic             String?
+  concept           String?
+  
+  // Quality
+  avgHelpfulness    Float    @default(0)
+  usageCount        Int      @default(0)
+  
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([type])
+  @@index([itemId])
+  @@index([topic])
+}
+
+// =====================================================
+// COGNI TUTOR SESSION - Dedicated AI Tutor Sessions
+// =====================================================
+
+model CogniTutorSession {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Session Context
+  topic             String?  // Current topic being discussed
+  mode              String   @default("explore") // explore, remediate, practice, review
+  
+  // Session State
+  hintCount         Int      @default(0)
+  stepsCompleted    Int      @default(0)
+  mastery           Float    @default(0.5)  // 0-1 mastery level
+  confidence        String?  // confident, somewhat, confused
+  
+  // Time Tracking
+  timeSpent         Int      @default(0)  // seconds
+  startedAt         DateTime @default(now())
+  lastActiveAt      DateTime @default(now())
+  endedAt           DateTime?
+  
+  // Messages
+  messages          CogniTutorMessage[]
+  
+  // Stats
+  questionsAsked    Int      @default(0)
+  correctResponses  Int      @default(0)
+  
+  @@index([userId])
+  @@index([startedAt])
+}
+
+model CogniTutorMessage {
+  id                String   @id @default(cuid())
+  sessionId         String
+  
+  // Message Content
+  role              String   // user, assistant, system
+  content           String
+  
+  // Structured Response (for assistant messages)
+  structuredData    String?  // JSON: StructuredResponse
+  
+  // Metadata
+  topicsDiscussed   String?  // JSON array of topics
+  hintLevel         Int?
+  tokens            Int      @default(0)
+  
+  createdAt         DateTime @default(now())
+  
+  // Relations
+  session           CogniTutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+  @@index([createdAt])
+}

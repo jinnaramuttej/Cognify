@@ -1,0 +1,159 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+interface SubmitTestRequest {
+  attemptId: string
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: SubmitTestRequest = await request.json()
+    const { attemptId } = body
+
+    // Get attempt with all answers
+    const attempt = await db.testAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        test: {
+          include: {
+            questions: {
+              include: {
+                question: true
+              }
+            }
+          }
+        },
+        answers: {
+          include: {
+            question: true
+          }
+        }
+      }
+    })
+
+    if (!attempt || attempt.status !== 'in_progress') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid attempt' },
+        { status: 400 }
+      )
+    }
+
+    // Calculate scores
+    let score = 0
+    let totalMarks = 0
+    let correctCount = 0
+    let incorrectCount = 0
+
+    // Evaluate each answer
+    for (const answer of attempt.answers) {
+      totalMarks += answer.question.marks
+      
+      if (answer.selectedAnswer) {
+        const isCorrect = answer.selectedAnswer === answer.question.correctAnswer
+        
+        await db.attemptAnswer.update({
+          where: { id: answer.id },
+          data: { isCorrect }
+        })
+
+        if (isCorrect) {
+          score += answer.question.marks
+          correctCount++
+        } else {
+          score -= answer.question.negativeMarks
+          incorrectCount++
+        }
+      }
+    }
+
+    // Ensure score is not negative
+    score = Math.max(0, score)
+
+    // Calculate accuracy
+    const totalAttempted = correctCount + incorrectCount
+    const accuracy = totalAttempted > 0 ? (correctCount / totalAttempted) * 100 : 0
+
+    // Calculate topic breakdown
+    const topicBreakdown: {
+      subject: string
+      chapter: string
+      correct: number
+      incorrect: number
+      total: number
+      accuracy: number
+    }[] = []
+
+    // Group by subject and chapter
+    const groupedBySubject = new Map<string, Map<string, { correct: number; incorrect: number; total: number }>>()
+
+    for (const tq of attempt.test.questions) {
+      const { subject, chapter } = tq.question
+      
+      if (!groupedBySubject.has(subject)) {
+        groupedBySubject.set(subject, new Map())
+      }
+      
+      const subjectMap = groupedBySubject.get(subject)!
+      if (!subjectMap.has(chapter)) {
+        subjectMap.set(chapter, { correct: 0, incorrect: 0, total: 0 })
+      }
+      
+      const chapterStats = subjectMap.get(chapter)!
+      chapterStats.total++
+      
+      const answer = attempt.answers.find((a) => a.questionId === tq.questionId)
+      if (answer?.isCorrect === true) {
+        chapterStats.correct++
+      } else if (answer?.isCorrect === false) {
+        chapterStats.incorrect++
+      }
+    }
+
+    // Flatten to array
+    groupedBySubject.forEach((chapterMap, subject) => {
+      chapterMap.forEach((stats, chapter) => {
+        topicBreakdown.push({
+          subject,
+          chapter,
+          correct: stats.correct,
+          incorrect: stats.incorrect,
+          total: stats.total,
+          accuracy: stats.total > 0 ? (stats.correct / stats.total) * 100 : 0
+        })
+      })
+    })
+
+    // Update attempt
+    await db.testAttempt.update({
+      where: { id: attemptId },
+      data: {
+        score,
+        totalMarks,
+        accuracy,
+        timeTaken: Math.floor((new Date().getTime() - attempt.startedAt.getTime()) / 1000),
+        topicBreakdown: JSON.stringify(topicBreakdown),
+        status: 'submitted',
+        submittedAt: new Date()
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      result: {
+        score,
+        totalMarks,
+        accuracy,
+        correctCount,
+        incorrectCount,
+        unattemptedCount: attempt.test.questions.length - totalAttempted,
+        topicBreakdown
+      }
+    })
+  } catch (error) {
+    console.error('Error submitting test:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to submit test' },
+      { status: 500 }
+    )
+  }
+}

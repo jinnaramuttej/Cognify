@@ -1,0 +1,159 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import type { Difficulty, TestType } from '@/modules/tests/types'
+
+interface GenerateTestRequest {
+  grade: string
+  targetExam: string
+  subjectIds: string[]
+  chapterIds: string[]
+  difficulty: Difficulty
+  questionCount: number
+  timeLimit: number
+  includePYQ: boolean
+  includeConceptual: boolean
+  testType: TestType
+  isAutoBalanced: boolean
+  subjectDistribution?: Record<string, number>
+  name?: string
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: GenerateTestRequest = await request.json()
+    
+    const {
+      grade,
+      targetExam,
+      subjectIds,
+      chapterIds,
+      difficulty,
+      questionCount,
+      timeLimit,
+      includePYQ,
+      includeConceptual,
+      testType,
+      name
+    } = body
+
+    // Build query for questions
+    const whereClause: {
+      chapterId: { in: string[] }
+      difficulty?: string | { in: string[] }
+      isPYQ?: boolean
+      isConceptual?: boolean
+    } = {
+      chapterId: { in: chapterIds }
+    }
+
+    // Handle difficulty filter
+    if (difficulty !== 'mixed') {
+      whereClause.difficulty = difficulty
+    }
+
+    // Handle PYQ filter
+    if (includePYQ && !includeConceptual) {
+      whereClause.isPYQ = true
+    } else if (!includePYQ && includeConceptual) {
+      whereClause.isConceptual = true
+    }
+
+    // Get available questions
+    const availableQuestions = await db.question.findMany({
+      where: whereClause,
+      include: {
+        chapter: {
+          include: { subject: true }
+        }
+      }
+    })
+
+    if (availableQuestions.length === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'No questions available for selected criteria',
+          message: 'Try selecting different chapters or adjusting difficulty settings.'
+        },
+        { status: 400 }
+      )
+    }
+
+    // Shuffle and select questions
+    const shuffled = availableQuestions.sort(() => Math.random() - 0.5)
+    const selectedQuestions = shuffled.slice(0, Math.min(questionCount, shuffled.length))
+
+    if (selectedQuestions.length === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Could not find enough questions',
+          message: `Only ${availableQuestions.length} questions available for your criteria.`
+        },
+        { status: 400 }
+      )
+    }
+
+    // Generate test name
+    const testName = name || `${targetExam} Practice Test - ${new Date().toLocaleDateString()}`
+
+    // Calculate total marks
+    const totalMarks = selectedQuestions.reduce((sum, q) => sum + q.marks, 0)
+
+    // Group chapters by subject for distribution
+    const subjectDist: Record<string, number> = {}
+    selectedQuestions.forEach((q) => {
+      const subjectName = q.chapter.subject.name.toLowerCase()
+      subjectDist[subjectName] = (subjectDist[subjectName] || 0) + 1
+    })
+
+    // Create test
+    const test = await db.test.create({
+      data: {
+        name: testName,
+        description: `Custom generated test with ${selectedQuestions.length} questions for ${grade} ${targetExam} preparation.`,
+        testType,
+        grade,
+        targetExam,
+        timeLimit,
+        difficulty,
+        totalMarks,
+        questionCount: selectedQuestions.length,
+        chapters: JSON.stringify(chapterIds),
+        subjectDistribution: JSON.stringify(subjectDist),
+        status: 'active',
+        isPublic: true,
+        createdBy: 'demo-user'
+      }
+    })
+
+    // Link questions to test
+    await Promise.all(
+      selectedQuestions.map((question, index) =>
+        db.testQuestion.create({
+          data: {
+            testId: test.id,
+            questionId: question.id,
+            order: index + 1,
+            section: question.chapter.subject.name,
+            marks: question.marks
+          }
+        })
+      )
+    )
+
+    return NextResponse.json({
+      success: true,
+      testId: test.id,
+      questionCount: selectedQuestions.length,
+      totalMarks,
+      message: `Test generated successfully with ${selectedQuestions.length} questions`
+    })
+  } catch (error) {
+    console.error('Error generating test:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to generate test' },
+      { status: 500 }
+    )
+  }
+}

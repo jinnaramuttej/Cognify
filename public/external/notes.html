@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognify Notes Library | AI-Powered Study Materials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cognify-gold: #D4AF37;
+            --cognify-black: #1a1a1a;
+            --cognify-dark: #0a0a0a;
+            --cognify-white: #ffffff;
+            --cognify-gray: #a0a0a0;
+            --cognify-light-gray: #d0d0d0;
+        }
+        body {
+            background-color: var(--cognify-black);
+            color: var(--cognify-white);
+            font-family: 'Inter', system-ui, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+        /* Container */
+        .container {
+            max-width: 1200px;
+            padding: 40px;
+            margin: 0 auto;
+        }
+        /* Typography */
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--cognify-gold);
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        /* Buttons */
+        .btn {
+            background-color: var(--cognify-gold);
+            color: #000;
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #f0ad42;
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(212,175,55,0.3);
+        }
+        .btn-secondary {
+            background-color: var(--cognify-dark);
+            color: var(--cognify-white);
+            border: 1px solid var(--cognify-gold);
+            padding: 12px 24px;
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(212,175,55,0.15);
+            border-color: var(--cognify-gold);
+        }
+        /* Inputs & Forms */
+        input, textarea, select {
+            background-color: var(--cognify-dark);
+            color: var(--cognify-white);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 6px;
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 16px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--cognify-gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+        }
+        /* Cards & Containers */
+        .card {
+            background-color: var(--cognify-dark);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0,0.4);
+        }
+        .card-header {
+            border-bottom: 1px solid var(--cognify-gold);
+            padding: 20px;
+            background-color: rgba(212,175,55,0.15);
+        }
+        .card-body {
+            padding: 24px;
+        }
+        .card-footer {
+            border-top: 1px solid rgba(212,175,55,0.3);
+            padding: 16px;
+        }
+        /* Tables */
+        table, th, td {
+            background-color: var(--cognify-dark);
+            border-color: rgba(212,175,55,0.3);
+            color: var(--cognify-white);
+            text-align: left;
+        }
+        th {
+            font-weight: 600;
+            color: var(--cognify-gold);
+            padding: 12px;
+            background-color: var(--cognify-black);
+        }
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--cognify-gold);
+        }
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        /* Specific Page Styles */
+        .notes-container {
+            max-width: 100%;
+            padding: 0;
+        }
+        .note-card {
+            background: var(--cognify-black);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0,0.4);
+            transition: transform 0.2s ease;
+        }
+        .note-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cognify-gold);
+            box-shadow: 0 15px 35px rgba(212,175,55,0.15);
+        }
+        .note-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--cognify-gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .note-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--cognify-gold);
+            margin-bottom: 8px;
+        }
+        .note-subtitle {
+            color: var(--cognify-white);
+            margin-bottom: 4px;
+        }
+        .note-meta {
+            font-size: 14px;
+            color: var(--cognify-gray);
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+        }
+        .note-meta-item {
+            color: var(--cognify-white);
+            background: var(--cognify-dark);
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+        .note-meta-item:hover {
+            background: var(--cognify-gold);
+            color: #000;
+        }
+        /* Loading State */
+        .loading-skeleton {
+            background: var(--cognify-dark);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            height: 400px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                background-color: rgba(212,175,55,0.15);
+            }
+        }
+        /* Search */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--cognify-dark);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            color: var(--cognify-white);
+            font-size: 16px;
+        }
+        .search-input:focus {
+            border-color: var(--cognify-gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+        }
+        .filter-btn {
+            background: var(--cognify-gold);
+            color: #000;
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .filter-btn.active {
+            background: var(--cognify-gold);
+            color: #000;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+        }
+        .filter-btn:hover {
+            background: #f0ad42;
+            transform: scale(1.02);
+        }
+        /* Note Content */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: var(--cognify-dark);
+            border: 2px dashed rgba(212,175,55,0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            color: var(--cognify-gray);
+        }
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            gap: 16px;
+                max-width: 100%;
+            }
+            .notes-grid {
+                grid-template-columns: 1fr;
+                padding: 0;
+                gap: 16px;
+                max-width: 100%;
+            }
+            .search-container {
+                max-width: 100%;
+                margin: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="background-color: var(--cognify-black); border-bottom: 1px solid var(--cognify-gold); padding: 20px 0; margin-bottom: 40px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; max-width: 100%;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--cognify-gold);">
+                    <a href="/dashboard" style="text-decoration: none; color: var(--cognify-white); transition: color 0.2s;">
+                        <strong>Cognify Notes Library</strong>
+                    </a>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="🔍 Search notes by title, subject, tag...">
+                </div>
+            </div>
+        </header>
+
+        <div class="notes-container">
+            <!-- Filter Section -->
+            <div style="margin-bottom: 32px; display: flex; flex-wrap; gap: 12px; align-items: center;">
+                <button class="filter-btn active">All Notes</button>
+                <button class="filter-btn">JEE Physics</button>
+                <button class="filter-btn">NEET Biology</button>
+                <button class="filter-btn">NEET Chemistry</button>
+                <button class="filter-btn">JEE Mathematics</button>
+                <button class="filter-btn">Foundation</button>
+            </div>
+
+            <!-- Notes Grid -->
+            <div class="notes-grid">
+                <!-- Note 1 -->
+                <div class="card">
+                    <div class="note-card">
+                        <div class="note-icon">
+                            📚
+                        </div>
+                        <div class="card-body">
+                            <h3 class="note-title">Calculus Complete Notes</h3>
+                            <p class="note-subtitle">Mathematics • JEE Advanced</p>
+                            <div class="note-meta">
+                                <span class="note-meta-item">📁 2.4 MB</span>
+                                <span class="note-meta-item">📅 PDF Download</span>
+                            </div>
+                            <a href="#" class="btn btn-primary" style="margin-top: 20px;">Download Notes</a>
+                        </div>
+                    </div>
+                    <!-- Note 2 -->
+                    <div class="card">
+                        <div class="note-card">
+                            <div class="note-icon">
+                                ⚗
+                            </div>
+                            <div class="card-body">
+                                <h3 class="Thermodynamics Quick Revision</h3>
+                                <p class="note-subtitle">Physics • JEE Mains</p>
+                                <div class="note-meta">
+                                    <span class="note-meta-item">📄 4.1 MB</span>
+                                    <span class="note-meta-item">📁 PDF Download</span>
+                                </div>
+                                <a href="#" class="btn btn-primary" style="margin-top: 20px;">Download Notes</a>
+                            </div>
+                    </div>
+                    <!-- Note 3 -->
+                    <div class="card">
+                        <div class="note-card">
+                            <div class="note-icon">
+                                📝
+                            </div>
+                            <div class="card-body">
+                                <h3 class="Organic Chemistry Notes</h3>
+                                <p class="note-subtitle">Chemistry • NEET</p>
+                                <div class="note-meta">
+                                    <span class="note-meta-item">📁 3.8 MB</span>
+                                    <span class="note-meta-item">📄 PDF Download</span>
+                                </div>
+                                <a href="#" class="btn btn-secondary" style="margin-top: 20px;">Download Notes</a>
+                            </div>
+                    </div>
+                    <!-- Note 4 -->
+                    <div class="card">
+                        <div class="note-card">
+                            <div class="note-icon">
+                                📐
+                            </div>
+                            <div class="card-body">
+                                <h3 class="Mathematics Formula Sheet</h3>
+                                <p class="note-subtitle">Math • JEE Mains</p>
+                                <div class="note-meta">
+                                    <span class="note-meta-item">📄 1.2 MB</span>
+                                    <span class="note-meta-item">📁 PDF Download</span>
+                                </div>
+                                <a href="#" class="btn btn-secondary" style="margin-top:  20px;">Download Notes</a>
+                            </div>
+                    </div>
+                    <!-- Note 5 -->
+                    <div class="card">
+                        <div class="card">
+                            <div class="note-card">
+                                <div class="note-icon">
+                                    🧪
+                                </div>
+                                <div class="card-body">
+                                    <h3>Biology NCERT Class 11 Vol 1</h3>
+                                    <p class="note-subtitle">Biology • NEET</p>
+                                    <div class="note-meta">
+                                        <span class="note-meta-item">📄 5.6 MB</span>
+                                        <span class="note-meta-item">📁 PDF Download</span>
+                                    </div>
+                                    <a href="#" class="btn btn-secondary" style="margin-top: 20px;">Download Notes</a>
+                                </div>
+                            </div>
+                    </div>
+                    <!-- Note 6 -->
+                    <div class="card">
+                        <div class="note-card">
+                            <div class="note-icon">
+                                📚
+                            </div>
+                            <div class="card-body">
+                                <h3>Modern Physics Problems</h3>
+                                <p class="note-subtitle">Physics • JEE Advanced</p>
+                                <div class="note-meta">
+                                    <span class="note-meta-item">📁 7.3 MB</span>
+                                    <span class="note-meta-item">📄 PDF Download</span>
+                                </div>
+                                <a href="#" class="btn btn-secondary" style="margin-top: 20px;">Download Notes</a>
+                            </div>
+                    </div>
+            </div>
+
+            <!-- Empty State (shown initially) -->
+            <div id="notes-list" style="display: none;">
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <p class="text-[#a0a0a0a]">No notes found for this filter.</p>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div style="text-align: center; margin: 40px 20px;">
+                <button class="btn btn-primary" onclick="loadMore()">
+                    Load More Notes
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Filter functionality
+        const filters = document.querySelectorAll('.filter-btn');
+
+        function filterNotes(category) {
+            const notesList = document.getElementById('notes-list');
+            const emptyState = document.getElementById('empty-state');
+            const noteCards = document.querySelectorAll('.note-card');
+
+            filters.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            notesList.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            if (category === 'all') {
+                noteCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                notesList.style.display = 'grid';
+            } else {
+                noteCards.forEach((card, index) => {
+                    const noteData = {
+                        tags: ['jee', 'physics'],
+                        'jee', 'chemistry'],
+                        'neet', 'biology'],
+                        'jee', 'math']
+                    };
+
+                    if (category === 'all' || noteData.tags.some(tag => category.toLowerCase() === tag.toLowerCase())) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                const visibleCards = Array.from(notesList.children).filter(el => el.style.display !== 'none');
+
+                if (visibleCards.length === 0) {
+                    notesList.style.display = 'none';
+                    emptyState.style.display = 'flex';
+                }
+            }
+        }
+
+        function loadMore() {
+            const notesList = document.getElementById('notes-list');
+            const emptyState = document.getElementById('empty-state');
+            const noteCards = document.querySelectorAll('.note-card');
+
+            // Show all cards
+            noteCards.forEach(card => {
+                card.style.display = 'block';
+            });
+            notesList.style.display = 'grid';
+            emptyState.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

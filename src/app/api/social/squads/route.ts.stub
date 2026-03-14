@@ -1,0 +1,429 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET /api/social/squads - Get squad competitions
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+    const status = searchParams.get('status') || 'active' // active, upcoming, completed, all
+
+    // Build where clause
+    const where: any = {}
+    if (status !== 'all') {
+      where.status = status
+    }
+
+    // Get competitions
+    const competitions = await db.squadCompetition.findMany({
+      where,
+      include: {
+        teams: {
+          orderBy: { totalScore: 'desc' }
+        }
+      },
+      orderBy: { startsAt: 'asc' }
+    })
+
+    // Get user's squad membership
+    const userTeams = await db.squadTeam.findMany({
+      where: {
+        memberIds: { contains: userId }
+      },
+      include: {
+        competition: true
+      }
+    })
+
+    // Transform data for response
+    const squadsWithRanks = competitions.map(competition => {
+      const teamsWithRanks = competition.teams.map((team, index) => ({
+        id: team.id,
+        name: team.name,
+        members: JSON.parse(team.memberIds),
+        leaderId: team.leaderId,
+        totalScore: team.totalScore,
+        rank: index + 1,
+        isUserTeam: team.memberIds.includes(userId)
+      }))
+
+      return {
+        id: competition.id,
+        name: competition.name,
+        description: competition.description,
+        questionCount: competition.questionCount,
+        timeLimit: competition.timeLimit,
+        teamSize: competition.teamSize,
+        maxTeams: competition.maxTeams,
+        startsAt: competition.startsAt.toISOString(),
+        endsAt: competition.endsAt.toISOString(),
+        status: competition.status,
+        teams: teamsWithRanks,
+        userJoined: teamsWithRanks.some(t => t.isUserTeam)
+      }
+    })
+
+    // If no competitions, return mock data
+    if (squadsWithRanks.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          competitions: generateMockCompetitions(),
+          userSquads: generateMockUserSquads(),
+          isMockData: true
+        }
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        competitions: squadsWithRanks,
+        userSquads: userTeams.map(ut => ({
+          id: ut.id,
+          name: ut.name,
+          competitionId: ut.competitionId,
+          competitionName: ut.competition.name,
+          totalScore: ut.totalScore,
+          rank: ut.rank
+        }))
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching squads:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch squads' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/social/squads - Create a squad or join competition
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { action, userId, competitionId, squadName, memberIds } = body
+
+    if (action === 'create') {
+      // Create a new squad team
+      const competition = await db.squadCompetition.findUnique({
+        where: { id: competitionId }
+      })
+
+      if (!competition) {
+        return NextResponse.json(
+          { success: false, error: 'Competition not found' },
+          { status: 404 }
+        )
+      }
+
+      // Check if competition has space
+      const existingTeams = await db.squadTeam.count({
+        where: { competitionId }
+      })
+
+      if (existingTeams >= competition.maxTeams) {
+        return NextResponse.json(
+          { success: false, error: 'Competition is full' },
+          { status: 400 }
+        )
+      }
+
+      // Create team
+      const team = await db.squadTeam.create({
+        data: {
+          competitionId,
+          name: squadName,
+          memberIds: JSON.stringify(memberIds || [userId]),
+          leaderId: userId,
+          totalScore: 0
+        }
+      })
+
+      // Create squad member scores
+      for (const memberId of memberIds || [userId]) {
+        await db.squadMemberScore.create({
+          data: {
+            squadTeamId: team.id,
+            userId: memberId,
+            score: 0,
+            questionsAnswered: 0,
+            accuracy: 0,
+            timeSpent: 0,
+            contributionPercent: 100 / (memberIds?.length || 1)
+          }
+        })
+      }
+
+      // Notify members
+      for (const memberId of (memberIds || []).filter(id => id !== userId)) {
+        await db.socialNotification.create({
+          data: {
+            userId: memberId,
+            type: 'squad_invite',
+            title: 'Squad Invitation',
+            message: `You've been invited to join "${squadName}" for ${competition.name}!`,
+            relatedType: 'squad',
+            relatedId: team.id,
+            actionUrl: '/social?tab=squads',
+            actionLabel: 'View Squad'
+          }
+        })
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          id: team.id,
+          name: team.name,
+          competitionId: team.competitionId,
+          message: 'Squad created successfully'
+        }
+      })
+    }
+
+    if (action === 'join') {
+      // Join an existing squad
+      const { teamId } = body
+
+      const team = await db.squadTeam.findUnique({
+        where: { id: teamId },
+        include: { competition: true }
+      })
+
+      if (!team) {
+        return NextResponse.json(
+          { success: false, error: 'Team not found' },
+          { status: 404 }
+        )
+      }
+
+      const currentMembers = JSON.parse(team.memberIds)
+      
+      if (currentMembers.length >= team.competition.teamSize) {
+        return NextResponse.json(
+          { success: false, error: 'Team is full' },
+          { status: 400 }
+        )
+      }
+
+      if (currentMembers.includes(userId)) {
+        return NextResponse.json(
+          { success: false, error: 'Already a member' },
+          { status: 400 }
+        )
+      }
+
+      // Add member
+      currentMembers.push(userId)
+      
+      await db.squadTeam.update({
+        where: { id: teamId },
+        data: { memberIds: JSON.stringify(currentMembers) }
+      })
+
+      // Create member score
+      await db.squadMemberScore.create({
+        data: {
+          squadTeamId: teamId,
+          userId,
+          score: 0,
+          questionsAnswered: 0,
+          accuracy: 0,
+          timeSpent: 0,
+          contributionPercent: 100 / currentMembers.length
+        }
+      })
+
+      // Update contribution percentages
+      await updateContributions(teamId, currentMembers)
+
+      return NextResponse.json({
+        success: true,
+        message: 'Joined squad successfully'
+      })
+    }
+
+    if (action === 'create_competition') {
+      // Create a new competition (admin/teacher)
+      const {
+        name,
+        description,
+        testId,
+        subjectIds,
+        questionCount = 30,
+        timeLimit = 45,
+        teamSize = 4,
+        maxTeams = 10,
+        startsAt,
+        endsAt
+      } = body
+
+      const competition = await db.squadCompetition.create({
+        data: {
+          name,
+          description,
+          testId,
+          subjectIds: JSON.stringify(subjectIds || []),
+          questionCount,
+          timeLimit,
+          teamSize,
+          maxTeams,
+          startsAt: new Date(startsAt),
+          endsAt: new Date(endsAt),
+          status: 'upcoming'
+        }
+      })
+
+      return NextResponse.json({
+        success: true,
+        data: competition,
+        message: 'Competition created successfully'
+      })
+    }
+
+    return NextResponse.json(
+      { success: false, error: 'Invalid action' },
+      { status: 400 }
+    )
+  } catch (error) {
+    console.error('Error managing squads:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to manage squads' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH - Update squad score
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId, teamId, scoreEarned, questionsAnswered, accuracy, timeSpent } = body
+
+    // Get member score
+    let memberScore = await db.squadMemberScore.findUnique({
+      where: {
+        squadTeamId_userId: { squadTeamId: teamId, userId }
+      }
+    })
+
+    if (!memberScore) {
+      return NextResponse.json(
+        { success: false, error: 'Not a member of this squad' },
+        { status: 400 }
+      )
+    }
+
+    // Update member score
+    memberScore = await db.squadMemberScore.update({
+      where: { id: memberScore.id },
+      data: {
+        score: memberScore.score + scoreEarned,
+        questionsAnswered: memberScore.questionsAnswered + questionsAnswered,
+        accuracy: ((memberScore.accuracy * memberScore.questionsAnswered) + (accuracy * questionsAnswered)) / 
+                  (memberScore.questionsAnswered + questionsAnswered),
+        timeSpent: memberScore.timeSpent + timeSpent,
+        lastUpdated: new Date()
+      }
+    })
+
+    // Update team total score
+    const allMemberScores = await db.squadMemberScore.findMany({
+      where: { squadTeamId: teamId }
+    })
+
+    const totalScore = allMemberScores.reduce((sum, ms) => sum + ms.score, 0)
+
+    await db.squadTeam.update({
+      where: { id: teamId },
+      data: { totalScore }
+    })
+
+    // Update contribution percentages
+    const team = await db.squadTeam.findUnique({
+      where: { id: teamId }
+    })
+
+    if (team) {
+      await updateContributions(teamId, JSON.parse(team.memberIds))
+    }
+
+    // Update user stats
+    await db.userStats.update({
+      where: { userId },
+      data: {
+        squadContributions: { increment: scoreEarned }
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        memberScore,
+        teamTotalScore: totalScore
+      }
+    })
+  } catch (error) {
+    console.error('Error updating squad score:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to update squad score' },
+      { status: 500 }
+    )
+  }
+}
+
+async function updateContributions(teamId: string, memberIds: string[]) {
+  const allScores = await db.squadMemberScore.findMany({
+    where: { squadTeamId: teamId }
+  })
+
+  const totalScore = allScores.reduce((sum, ms) => sum + ms.score, 0)
+
+  for (const score of allScores) {
+    const contributionPercent = totalScore > 0 
+      ? (score.score / totalScore) * 100 
+      : 100 / memberIds.length
+
+    await db.squadMemberScore.update({
+      where: { id: score.id },
+      data: { contributionPercent }
+    })
+  }
+}
+
+function generateMockCompetitions() {
+  return [
+    {
+      id: 'comp-1',
+      name: 'Weekly Physics Challenge',
+      description: 'Compete in teams to solve physics problems',
+      questionCount: 30,
+      timeLimit: 45,
+      teamSize: 4,
+      maxTeams: 10,
+      startsAt: new Date(Date.now() - 86400000).toISOString(),
+      endsAt: new Date(Date.now() + 6 * 86400000).toISOString(),
+      status: 'active',
+      teams: [
+        { id: 't1', name: 'Physics Phenoms', members: ['m1', 'm2', 'current'], totalScore: 2450, rank: 1, isUserTeam: true },
+        { id: 't2', name: 'Chemistry Kings', members: ['m3', 'm4', 'm5'], totalScore: 2340, rank: 2, isUserTeam: false },
+        { id: 't3', name: 'Math Mavericks', members: ['m6', 'm7', 'm8'], totalScore: 2110, rank: 3, isUserTeam: false }
+      ],
+      userJoined: true
+    }
+  ]
+}
+
+function generateMockUserSquads() {
+  return [
+    {
+      id: 't1',
+      name: 'Physics Phenoms',
+      competitionId: 'comp-1',
+      competitionName: 'Weekly Physics Challenge',
+      totalScore: 2450,
+      rank: 1
+    }
+  ]
+}

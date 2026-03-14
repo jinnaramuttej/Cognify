@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognify Profile | AI-Powered Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cognify-gold: #D4AF37;
+            --cognify-black: #1a1a1a;
+            --cognify-dark: #0a0a0a;
+            --cognify-white: #ffffff;
+            --cognify-gray: #a0a0a0;
+            --cognify-light-gray: #d0d0d0;
+        }
+        * {
+            background-color: var(--cognify-black);
+            color: var(--cognify-white);
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.6;
+        }
+        body {
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            padding: 40px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #D4AF37, #1a1a1a);
+            border-bottom: 1px solid #D4AF37;
+            padding: 24px 0 0;
+            margin-bottom: 32px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #D4AF37;
+            line-height: 1.2;
+            margin-bottom: 0;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #D4AF37;
+            line-height: 1.2;
+        }
+        p {
+            font-size: 16px;
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-card {
+            background: var(--cognify-dark);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #D4AF37;
+        }
+        .stat-label {
+            color: #D4AF37;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .progress-container {
+            background: rgba(212,175,55,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 24px 0;
+        }
+        .progress-bar {
+            background: #0a0a0a0;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #D4AF37, #f0ad42);
+            height: 100%;
+            border-radius: 4px;
+            .transition-all duration-300;
+        }
+        .info-card {
+            background: var(--cognify-dark);
+            border: 1px solid rgba(212, 175,55,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .info-card:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        .action-btn {
+            background: var(--cognify-gold);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .action-btn:hover {
+            background: #f0ad42;
+            transform: scale(1.05);
+        }
+        .content-grid {
+            display: grid;
+            gap: 20px;
+            margin: 24px 0;
+        }
+        .feature-item {
+            background: var(--cognify-dark);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--cognify-gold);
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-slate-900">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Cognify Profile</h1>
+            <p>AI-Powered Learning Analytics</p>
+        </div>
+
+        <!-- Stats Section -->
+        <h2 class="text-2xl font-bold text-[#D4AF37]">Your Performance</h2>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Total Study Time</div>
+                <div class="stat-value">124h 30m</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Questions Solved</div>
+                <div class="stat-value">2,295</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value">87.4%</div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-container">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-[#D4AF37]">Weekly Goal</span>
+                <span class="text-sm text-[#D4AF37]">15h / 25h</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%;"></div>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <h2 class="text-2xl font-bold text-[#D4AF37] mt-8">Account Details</h2>
+        <div class="content-grid">
+            <div class="info-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="badge">Basic</div>
+                    <div>
+                        <p class="font-semibold text-white">Free Account</p>
+                        <p class="text-sm text-[#a0a0a0a0]">Student Plan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                    <div class="badge">Premium</div>
+                    <div>
+                        <p class="font-semibold text-white">Premium Plan</p>
+                        <p class="text-sm text-[#a0a0a0a0]">Active Until 2024-06</p>
+                    </div>
+                </div>
+            </div>
+                <div class="action-btn">Upgrade to Premium</div>
+            </div>
+
+            <div class="info-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="badge">📚</div>
+                    <div>
+                        <p class="font-semibold text-white">Study Streak</p>
+                        <p class="text-sm text-[#a0a0a0a0]">47 days</p>
+                    </div>
+                </div>
+            </div>
+                <div class="flex items-center gap-2">
+                    <div class="badge">🎯</div>
+                    <div>
+                        <p class="font-semibold text-white">90 Days Goal</p>
+                        <p class="text-sm text-[#a0a0a0a0]">43/90</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="info-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="badge">📊</div>
+                    <div>
+                        <p class="font-semibold text-white">Rank</p>
+                        <p class="text-sm text[ #a0a0a0a0]">Top 5%</p>
+                    </div>
+                </div>
+                </div>
+            <div class="flex items-center gap-2">
+                    <div class="badge">📈</div>
+                    <div>
+                        <p class="font-semibold text-white">Rank</p>
+                        <p class="text-sm text- #a0a0a0a0]">Top 12%</p>
+                    </div>
+                </div>
+                </div>
+                <div class="action-btn">View Leaderboard</div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <h2 class="text-2xl font-bold text-[#D4AF37] mt-8">Learning Features</h2>
+
+        <div class="content-grid">
+            <div class="feature-item">
+                <div class="badge">🤖</div>
+                <div>
+                    <p class="font-semibold text-white">AI Mentor</p>
+                    <p class="text-sm text-[#a0a0a0a0]">24/7 Available</p>
+                </div>
+            </div>
+                <div class="action-btn">Start Session</div>
+            </div>
+
+            <div class="feature-item">
+                <div class="badge">📚</div>
+                <div>
+                    <p class="font-semibold text-white">Practice Quizzes</p>
+                    <p class="text-sm text-[#a0a0a0a0]">5,000+</p>
+                </div>
+            </div>
+                <div class="action-btn">Take Quiz</div>
+            </div>
+
+            <div class="feature-item">
+                <div class="badge">📊</div>
+                <div>
+                    <p class="font-semibold text-white">Analytics</p>
+                    <p class="text-sm text-[#a0a0a0a0]">Real-Time Insights</p>
+                </div>
+            </div>
+                <div class="action-btn">View Reports</div>
+            </div>
+
+            <div class="feature-item">
+                <div class="badge">🎁</div>
+                <div>
+                    <p class="font-semibold text-white">Notes</p>
+                    <p class="text-sm text-[#a0a0a0a0]">100+ Notes</p>
+                </div>
+            </div>
+                <div class="action-btn">Access Library</div>
+            </div>
+        </div>
+
+            <div class="feature-item">
+                <div class="badge">📺</div>
+                <div>
+                    <p class="font-semibold text-white">Videos</p>
+                    <p class="text-sm text-[#a0a0a0a0]">200+ Lessons</p>
+                </div>
+            </div>
+                <div class="action-btn">Watch Now</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // ============================================
+        // MOCK DATA
+        // ============================================
+
+        const performanceData = {
+            totalStudyTime: { hours: 124, minutes: 30 },
+            questionsSolved: 2295,
+            accuracy: 87.4,
+            rank: 'Top 5%',
+            rankPercentile: 'Top 12%',
+            totalNotes: 127,
+            totalVideos: 89,
+            studyStreak: 47,
+            totalGoal: 90,
+            goalProgress: 52.2
+        };
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+
+        const updateProgress = () => {
+            const progressBar = document.querySelector('.progress-fill');
+            if (progressBar) {
+                let targetWidth = parseFloat(progressBar.style.width);
+                const currentWidth = parseFloat(progressBar.style.width);
+                if (currentWidth < targetWidth) {
+                    progressBar.style.width = '0';
+                    setTimeout(() => {
+                        progressBar.style.width = Math.min(currentWidth + 1, targetWidth);
+                    if (progressBar.style.width >= targetWidth) {
+                        setTimeout(() => {
+                            progressBar.style.width = targetWidth;
+                        clearInterval(interval);
+                        }, 500);
+                    }
+                    const interval = setInterval(() => {
+                        progressBar.style.width = Math.min(parseFloat(progressBar.style.width) + 0.1, targetWidth);
+                    }, 50);
+                }, 20);
+            }
+        };
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = e.target.dataset.action;
+                const message = {
+                    'upgrade': '💎 Premium features are coming soon!',
+                    'start-session': 'Starting AI Mentor session...',
+                    'take-quiz': 'Loading quiz questions...',
+                    'view-reports': 'Generating report...',
+                    'access-library': 'Opening notes library...'
+                    'watch-now': 'Starting video player...'
+                };
+
+                alert(`${message}`);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognify Tutor</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 3D Model Viewer -->
+  <script type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js">
+  </script>
+</head>
+
+<body>
+  <div id="main-container">
+
+    <!-- LEFT: ROBOT + PANEL -->
+    <div id="model-container">
+      <model-viewer
+        id="character-viewer"
+        src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
+        autoplay
+        animation-name="Idle"
+        shadow-intensity="1">
+      </model-viewer>
+
+      <div id="side-panel">
+        <h2>Cognify</h2>
+
+        <div id="subject-panel">
+          <button onclick="selectSubject('SQL')">SQL</button>
+          <button onclick="selectSubject('DSA')">DSA</button>
+          <button onclick="selectSubject('English')">English</button>
+        </div>
+
+        <div id="progress-panel">
+          <strong>Progress</strong>
+          <div id="progress-info">No progress yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: CHAT -->
+    <div id="chat-container">
+      <div id="chat-area"></div>
+
+      <div id="input-area">
+        <select id="language">
+          <option value="English">English</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Telugu">Telugu</option>
+          <option value="Tamil">Tamil</option>
+        </select>
+
+        <button id="mic-button">🎤</button>
+
+        <input id="user-input" placeholder="Type here..." />
+        <button id="send-button">Send</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

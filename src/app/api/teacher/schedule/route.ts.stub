@@ -1,0 +1,253 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET - List scheduled tests
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const cohortId = searchParams.get('cohortId')
+    const status = searchParams.get('status')
+    const upcoming = searchParams.get('upcoming') === 'true'
+
+    const where: any = {}
+    if (cohortId) where.cohortId = cohortId
+    if (status) where.status = status
+
+    if (upcoming) {
+      where.scheduledStart = {
+        gte: new Date()
+      }
+    }
+
+    const scheduledTests = await db.scheduledTest.findMany({
+      where,
+      include: {
+        test: {
+          include: {
+            subject: true
+          }
+        },
+        cohort: {
+          include: {
+            institution: true
+          }
+        },
+        _count: {
+          select: {
+            attemptCount: true
+          }
+        }
+      },
+      orderBy: { scheduledStart: 'asc' }
+    })
+
+    // Calculate avg scores for completed tests
+    const results = await Promise.all(
+      scheduledTests.map(async (st) => {
+        let avgScore = null
+        
+        if (st.status === 'completed') {
+          const attempts = await db.testAttempt.findMany({
+            where: {
+              testId: st.testId,
+              startedAt: {
+                gte: st.scheduledStart,
+                lte: st.scheduledEnd
+              },
+              status: 'submitted'
+            },
+            select: { percentage: true }
+          })
+
+          if (attempts.length > 0) {
+            avgScore = attempts.reduce((sum, a) => sum + a.percentage, 0) / attempts.length
+          }
+        }
+
+        return {
+          id: st.id,
+          testId: st.testId,
+          testName: st.test.name,
+          subjectName: st.test.subject?.name,
+          cohortId: st.cohortId,
+          cohortName: st.cohort.name,
+          institutionName: st.cohort.institution?.name,
+          scheduledStart: st.scheduledStart,
+          scheduledEnd: st.scheduledEnd,
+          timezone: st.timezone,
+          duration: st.test.timeLimit,
+          proctorMode: st.proctorMode,
+          accessCode: st.accessCode,
+          allowLateEntry: st.allowLateEntry,
+          status: st.status,
+          attemptCount: st._count.attemptCount,
+          avgScore: avgScore ? Math.round(avgScore * 10) / 10 : null,
+          createdAt: st.createdAt
+        }
+      })
+    )
+
+    return NextResponse.json(results)
+  } catch (error) {
+    console.error('Error fetching scheduled tests:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch scheduled tests' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST - Create scheduled test
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      testId,
+      cohortId,
+      scheduledStart,
+      scheduledEnd,
+      timezone = 'Asia/Kolkata',
+      proctorMode = 'none',
+      accessCode,
+      allowLateEntry = false,
+      lateEntryMinutes
+    } = body
+
+    if (!testId || !cohortId || !scheduledStart || !scheduledEnd) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Verify test and cohort exist
+    const [test, cohort] = await Promise.all([
+      db.test.findUnique({ where: { id: testId } }),
+      db.cohort.findUnique({ where: { id: cohortId } })
+    ])
+
+    if (!test) {
+      return NextResponse.json(
+        { error: 'Test not found' },
+        { status: 404 }
+      )
+    }
+
+    if (!cohort) {
+      return NextResponse.json(
+        { error: 'Cohort not found' },
+        { status: 404 }
+      )
+    }
+
+    const scheduledTest = await db.scheduledTest.create({
+      data: {
+        testId,
+        cohortId,
+        scheduledStart: new Date(scheduledStart),
+        scheduledEnd: new Date(scheduledEnd),
+        timezone,
+        proctorMode,
+        accessCode,
+        allowLateEntry,
+        lateEntryMinutes,
+        status: 'scheduled'
+      }
+    })
+
+    return NextResponse.json({ success: true, scheduledTest })
+  } catch (error) {
+    console.error('Error creating scheduled test:', error)
+    return NextResponse.json(
+      { error: 'Failed to create scheduled test' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT - Update scheduled test (status change, edit time, etc.)
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, action, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Scheduled test ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Handle status actions
+    if (action === 'start') {
+      const scheduledTest = await db.scheduledTest.update({
+        where: { id },
+        data: {
+          status: 'active',
+          scheduledStart: new Date()
+        }
+      })
+      return NextResponse.json({ success: true, scheduledTest })
+    }
+
+    if (action === 'complete') {
+      const scheduledTest = await db.scheduledTest.update({
+        where: { id },
+        data: {
+          status: 'completed',
+          scheduledEnd: new Date()
+        }
+      })
+      return NextResponse.json({ success: true, scheduledTest })
+    }
+
+    if (action === 'cancel') {
+      const scheduledTest = await db.scheduledTest.update({
+        where: { id },
+        data: { status: 'cancelled' }
+      })
+      return NextResponse.json({ success: true, scheduledTest })
+    }
+
+    // General update
+    const scheduledTest = await db.scheduledTest.update({
+      where: { id },
+      data: updates
+    })
+
+    return NextResponse.json({ success: true, scheduledTest })
+  } catch (error) {
+    console.error('Error updating scheduled test:', error)
+    return NextResponse.json(
+      { error: 'Failed to update scheduled test' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE - Delete scheduled test
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Scheduled test ID is required' },
+        { status: 400 }
+      )
+    }
+
+    await db.scheduledTest.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting scheduled test:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete scheduled test' },
+      { status: 500 }
+    )
+  }
+}

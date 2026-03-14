@@ -1,0 +1,191 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET /api/social/percentile - Calculate and get percentile
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+    const scope = searchParams.get('scope') || 'global' // global, subject, grade
+
+    // Get user stats
+    const userStats = await db.userStats.findUnique({
+      where: { userId }
+    })
+
+    if (!userStats) {
+      return NextResponse.json({
+        success: true,
+        data: calculateMockPercentile(),
+        isMockData: true
+      })
+    }
+
+    // Count users with more points (above current user)
+    const usersAbove = await db.userStats.count({
+      where: {
+        totalPoints: { gt: userStats.totalPoints }
+      }
+    })
+
+    // Count total participants
+    const totalParticipants = await db.userStats.count({
+      where: {
+        totalPoints: { gt: 0 }
+      }
+    })
+
+    const rank = usersAbove + 1
+    const percentile = totalParticipants > 0 
+      ? Math.round(((totalParticipants - usersAbove) / totalParticipants) * 100)
+      : 0
+    const topPercentage = 100 - percentile
+
+    // Update user stats with new percentile
+    await db.userStats.update({
+      where: { userId },
+      data: {
+        percentile: Math.min(99, Math.max(1, percentile)),
+        percentileRank: rank,
+        totalParticipants
+      }
+    })
+
+    // Check for percentile-based badges
+    if (percentile >= 95) {
+      await awardPercentileBadge(userId, percentile)
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        percentile: Math.min(99, Math.max(1, percentile)),
+        rank,
+        totalParticipants,
+        topPercentage,
+        comparison: {
+          aboveYou: usersAbove,
+          belowYou: totalParticipants - rank
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Error calculating percentile:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to calculate percentile' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/social/percentile - Recalculate all percentiles (admin)
+export async function POST(request: NextRequest) {
+  try {
+    // Get all users ordered by points
+    const allStats = await db.userStats.findMany({
+      where: { totalPoints: { gt: 0 } },
+      orderBy: { totalPoints: 'desc' }
+    })
+
+    const totalParticipants = allStats.length
+
+    // Update percentile for each user
+    for (let i = 0; i < allStats.length; i++) {
+      const stat = allStats[i]
+      const rank = i + 1
+      const percentile = Math.round(((totalParticipants - i) / totalParticipants) * 100)
+
+      await db.userStats.update({
+        where: { id: stat.id },
+        data: {
+          currentRank: rank,
+          percentile: Math.min(99, Math.max(1, percentile)),
+          percentileRank: rank,
+          totalParticipants,
+          bestRank: Math.min(stat.bestRank || 999, rank)
+        }
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Updated percentiles for ${totalParticipants} users`
+    })
+  } catch (error) {
+    console.error('Error recalculating percentiles:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to recalculate percentiles' },
+      { status: 500 }
+    )
+  }
+}
+
+async function awardPercentileBadge(userId: string, percentile: number) {
+  const badgeInfo: Record<number, { key: string; name: string; icon: string; color: string; rarity: string }> = {
+    99: { key: 'top_1_percent', name: 'Elite Scholar', icon: '🌟', color: '#FFD700', rarity: 'legendary' },
+    95: { key: 'top_5_percent', name: 'Top Performer', icon: '💎', color: '#60A5FA', rarity: 'epic' },
+    90: { key: 'top_10_percent', name: 'Rising Star', icon: '⭐', color: '#34D399', rarity: 'rare' }
+  }
+
+  const badge = badgeInfo[percentile] || badgeInfo[90]
+  
+  // Check for existing badge
+  const existing = await db.userBadge.findUnique({
+    where: { userId_badgeKey: { userId, badgeKey: badge.key } }
+  })
+
+  if (existing) return
+
+  // Only award if higher percentile than existing badges
+  const percentileBadges = await db.userBadge.findMany({
+    where: { 
+      userId, 
+      badgeKey: { in: ['top_1_percent', 'top_5_percent', 'top_10_percent'] } 
+    }
+  })
+
+  if (percentileBadges.length > 0) {
+    // Already has a percentile badge, check if this is better
+    return
+  }
+
+  await db.userBadge.create({
+    data: {
+      userId,
+      badgeKey: badge.key,
+      badgeName: badge.name,
+      badgeIcon: badge.icon,
+      badgeColor: badge.color,
+      rarity: badge.rarity,
+      earnedFrom: 'percentile',
+      earnedFromId: `${percentile}%`
+    }
+  })
+
+  await db.socialNotification.create({
+    data: {
+      userId,
+      type: 'badge_earned',
+      title: 'Achievement Unlocked!',
+      message: `You're in the top ${100 - percentile}%! You earned the "${badge.name}" badge! ${badge.icon}`,
+      relatedType: 'badge',
+      relatedId: badge.key
+    }
+  })
+}
+
+function calculateMockPercentile() {
+  const percentile = 87
+  const totalParticipants = 10000
+  
+  return {
+    percentile,
+    rank: Math.round(totalParticipants * (100 - percentile) / 100),
+    totalParticipants,
+    topPercentage: 100 - percentile,
+    comparison: {
+      aboveYou: Math.round(totalParticipants * (100 - percentile) / 100),
+      belowYou: Math.round(totalParticipants * percentile / 100)
+    }
+  }
+}

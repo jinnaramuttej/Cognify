@@ -1,0 +1,267 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET - List students with filters and risk indicators
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const cohortId = searchParams.get('cohortId')
+    const status = searchParams.get('status')
+    const search = searchParams.get('search')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = parseInt(searchParams.get('offset') || '0')
+
+    // Build where clause for cohort members
+    const memberWhere: any = {}
+    if (cohortId && cohortId !== 'all') {
+      memberWhere.cohortId = cohortId
+    }
+
+    // Get cohort members with user data
+    let members = await db.cohortMember.findMany({
+      where: memberWhere,
+      include: {
+        cohort: {
+          include: {
+            institution: true
+          }
+        }
+      },
+      skip: offset,
+      take: limit
+    })
+
+    // Get user data
+    const userIds = members.map(m => m.userId)
+    let users = await db.user.findMany({
+      where: {
+        id: { in: userIds }
+      }
+    })
+
+    // Get test attempts for these users
+    const attempts = await db.testAttempt.findMany({
+      where: {
+        userId: { in: userIds },
+        status: 'submitted'
+      },
+      include: {
+        test: true,
+        answers: true
+      }
+    })
+
+    // Calculate stats and risk for each student
+    const students = members.map(member => {
+      const user = users.find(u => u.id === member.userId)
+      const userAttempts = attempts.filter(a => a.userId === member.userId)
+      
+      // Calculate stats
+      const testsAttempted = userAttempts.length
+      const avgScore = testsAttempted > 0
+        ? userAttempts.reduce((sum, a) => sum + a.percentage, 0) / testsAttempted
+        : 0
+      
+      const totalCorrect = userAttempts.reduce((sum, a) => sum + a.correctCount, 0)
+      const totalQuestions = userAttempts.reduce((sum, a) => sum + a.correctCount + a.incorrectCount + a.unattemptedCount, 0)
+      const accuracy = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0
+
+      const timeSpent = userAttempts.reduce((sum, a) => sum + a.timeSpent, 0)
+      const lastActive = userAttempts.length > 0
+        ? userAttempts.sort((a, b) => b.submittedAt!.getTime() - a.submittedAt!.getTime())[0].submittedAt
+        : member.joinedAt
+
+      // Risk calculation
+      const riskFactors: string[] = []
+      let isAtRisk = false
+
+      if (avgScore < 50) {
+        riskFactors.push('Low average score')
+        isAtRisk = true
+      }
+      if (accuracy < 40) {
+        riskFactors.push('Very low accuracy')
+        isAtRisk = true
+      }
+      if (testsAttempted < 3) {
+        riskFactors.push('Insufficient practice')
+        isAtRisk = true
+      }
+      
+      const daysSinceActive = lastActive ? Math.floor((Date.now() - lastActive.getTime()) / (1000 * 60 * 60 * 24)) : 999
+      if (daysSinceActive > 5) {
+        riskFactors.push(`Inactive for ${daysSinceActive} days`)
+        isAtRisk = true
+      }
+
+      // Subject performance
+      const subjectPerformance: { subject: string; score: number }[] = []
+      // This would be calculated from test attempts grouped by subject
+
+      return {
+        id: user?.id || member.userId,
+        name: user?.name || 'Unknown',
+        email: user?.email || '',
+        avatar: user?.avatar,
+        cohortId: member.cohortId,
+        cohortName: member.cohort.name,
+        testsAttempted,
+        avgScore: Math.round(avgScore * 10) / 10,
+        accuracy: Math.round(accuracy * 10) / 10,
+        timeSpent: Math.round(timeSpent / 60), // minutes
+        lastActive: lastActive || member.joinedAt,
+        status: isAtRisk ? 'at_risk' : testsAttempted > 0 ? 'active' : 'inactive',
+        riskFactors,
+        subjectPerformance,
+        daysSinceActive
+      }
+    })
+
+    // Apply search filter
+    let filtered = students
+    if (search) {
+      const searchLower = search.toLowerCase()
+      filtered = filtered.filter(s => 
+        s.name.toLowerCase().includes(searchLower) ||
+        s.email.toLowerCase().includes(searchLower)
+      )
+    }
+
+    // Apply status filter
+    if (status && status !== 'all') {
+      filtered = filtered.filter(s => s.status === status)
+    }
+
+    // Calculate summary stats
+    const stats = {
+      total: students.length,
+      active: students.filter(s => s.status === 'active').length,
+      atRisk: students.filter(s => s.status === 'at_risk').length,
+      inactive: students.filter(s => s.status === 'inactive').length,
+      avgScore: Math.round(filtered.reduce((sum, s) => sum + s.avgScore, 0) / filtered.length * 10) / 10 || 0
+    }
+
+    return NextResponse.json({
+      students: filtered,
+      stats,
+      total: filtered.length,
+      limit,
+      offset
+    })
+  } catch (error) {
+    console.error('Error fetching students:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch students' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST - Bulk import students
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { students, cohortId } = body
+
+    if (!students || !Array.isArray(students) || students.length === 0) {
+      return NextResponse.json(
+        { error: 'No students provided' },
+        { status: 400 }
+      )
+    }
+
+    if (!cohortId) {
+      return NextResponse.json(
+        { error: 'Cohort ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Verify cohort exists
+    const cohort = await db.cohort.findUnique({
+      where: { id: cohortId }
+    })
+
+    if (!cohort) {
+      return NextResponse.json(
+        { error: 'Cohort not found' },
+        { status: 404 }
+      )
+    }
+
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: [] as string[]
+    }
+
+    for (let i = 0; i < students.length; i++) {
+      const student = students[i]
+      const rowNum = i + 2
+
+      try {
+        // Validate required fields
+        if (!student.name || !student.email) {
+          results.errors.push(`Row ${rowNum}: Missing name or email`)
+          results.failed++
+          continue
+        }
+
+        // Create or find user
+        let user = await db.user.findUnique({
+          where: { email: student.email }
+        })
+
+        if (!user) {
+          user = await db.user.create({
+            data: {
+              email: student.email,
+              name: student.name,
+              role: 'student'
+            }
+          })
+        }
+
+        // Add to cohort
+        await db.cohortMember.create({
+          data: {
+            cohortId,
+            userId: user.id,
+            role: 'student'
+          }
+        })
+
+        results.success++
+      } catch (err: any) {
+        if (err.code === 'P2002') {
+          results.errors.push(`Row ${rowNum}: Student already in cohort`)
+        } else {
+          results.errors.push(`Row ${rowNum}: ${err.message}`)
+        }
+        results.failed++
+      }
+    }
+
+    // Update cohort student count
+    await db.cohort.update({
+      where: { id: cohortId },
+      data: {
+        studentCount: {
+          increment: results.success
+        }
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      results,
+      message: `Import complete. ${results.success} students imported, ${results.failed} failed.`
+    })
+  } catch (error) {
+    console.error('Error importing students:', error)
+    return NextResponse.json(
+      { error: 'Failed to import students' },
+      { status: 500 }
+    )
+  }
+}

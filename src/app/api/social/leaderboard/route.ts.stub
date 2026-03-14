@@ -1,0 +1,303 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const timeRange = searchParams.get('timeRange') || 'weekly'
+    const scope = searchParams.get('scope') || 'global' // global, subject, grade
+
+    // Get all user stats with user info for leaderboard
+    const userStats = await db.userStats.findMany({
+      where: {
+        totalPoints: { gt: 0 }
+      },
+      orderBy: [
+        { totalPoints: 'desc' }
+      ],
+      take: limit
+    })
+
+    // Get users for the stats
+    const userIds = userStats.map(s => s.userId)
+    const users = await db.user.findMany({
+      where: { id: { in: userIds } }
+    })
+
+    // Get study streaks
+    const streaks = await db.studyStreak.findMany({
+      where: { userId: { in: userIds } }
+    })
+
+    // Get user badges
+    const badges = await db.userBadge.findMany({
+      where: { 
+        userId: { in: userIds },
+        isDisplayed: true 
+      }
+    })
+
+    // Build leaderboard entries
+    const leaderboard = userStats.map((stat, index) => {
+      const user = users.find(u => u.id === stat.userId)
+      const streak = streaks.find(s => s.userId === stat.userId)
+      const userBadges = badges.filter(b => b.userId === stat.userId)
+
+      return {
+        rank: index + 1,
+        previousRank: stat.previousRank || index + 1,
+        userId: stat.userId,
+        userName: stat.userId === userId ? 'You' : (user?.name || 'Anonymous'),
+        avatar: user?.avatar,
+        score: stat.totalPoints,
+        accuracy: Math.round(stat.avgAccuracy),
+        timeSpent: Math.round(stat.avgSpeed),
+        streak: streak?.currentStreak || 0,
+        isCurrentUser: stat.userId === userId,
+        isFriend: false, // Will be populated by friend check
+        badges: userBadges.map(b => b.badgeKey)
+      }
+    })
+
+    // If no real data, generate mock data
+    if (leaderboard.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          leaderboard: generateMockLeaderboard(userId, limit),
+          percentile: calculateMockPercentile(userId),
+          streak: generateMockStreak(),
+          lastUpdated: new Date().toISOString(),
+          isMockData: true
+        }
+      })
+    }
+
+    // Calculate percentile for current user
+    const currentUserStats = await db.userStats.findUnique({
+      where: { userId }
+    })
+
+    const percentile = await calculatePercentile(userId, currentUserStats)
+
+    // Get streak data
+    const userStreak = await db.studyStreak.findUnique({
+      where: { userId }
+    })
+
+    const streak = {
+      currentStreak: userStreak?.currentStreak || 0,
+      longestStreak: userStreak?.longestStreak || 0,
+      lastActivityDate: userStreak?.lastActivityAt?.toISOString() || null,
+      weeklyActivity: generateWeeklyActivity(userStreak?.currentStreak || 0)
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        leaderboard,
+        percentile,
+        streak,
+        lastUpdated: new Date().toISOString()
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch leaderboard' },
+      { status: 500 }
+    )
+  }
+}
+
+// Update user's rank after a test
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId, pointsEarned, accuracy, timeSpent } = body
+
+    // Get or create user stats
+    let userStats = await db.userStats.findUnique({
+      where: { userId }
+    })
+
+    if (!userStats) {
+      userStats = await db.userStats.create({
+        data: {
+          userId,
+          totalPoints: pointsEarned,
+          avgAccuracy: accuracy,
+          avgSpeed: timeSpent,
+          testsCompleted: 1
+        }
+      })
+    } else {
+      // Update stats
+      const newTestsCompleted = userStats.testsCompleted + 1
+      const newAvgAccuracy = ((userStats.avgAccuracy * userStats.testsCompleted) + accuracy) / newTestsCompleted
+      const newAvgSpeed = ((userStats.avgSpeed * userStats.testsCompleted) + timeSpent) / newTestsCompleted
+
+      userStats = await db.userStats.update({
+        where: { userId },
+        data: {
+          totalPoints: userStats.totalPoints + pointsEarned,
+          avgAccuracy: newAvgAccuracy,
+          avgSpeed: newAvgSpeed,
+          testsCompleted: newTestsCompleted,
+          weeklyPoints: userStats.weeklyPoints + pointsEarned,
+          monthlyPoints: userStats.monthlyPoints + pointsEarned,
+          previousRank: userStats.currentRank,
+          lastRankUpdate: new Date()
+        }
+      })
+    }
+
+    // Recalculate ranks
+    await recalculateRanks()
+
+    return NextResponse.json({
+      success: true,
+      data: userStats
+    })
+  } catch (error) {
+    console.error('Error updating leaderboard:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to update leaderboard' },
+      { status: 500 }
+    )
+  }
+}
+
+async function calculatePercentile(userId: string, userStats: any) {
+  if (!userStats) {
+    return {
+      percentile: 0,
+      rank: 0,
+      totalParticipants: 0,
+      topPercentage: 100,
+      comparison: { aboveYou: 0, belowYou: 0 }
+    }
+  }
+
+  // Count users with more points
+  const usersAbove = await db.userStats.count({
+    where: {
+      totalPoints: { gt: userStats.totalPoints }
+    }
+  })
+
+  // Count total participants
+  const totalParticipants = await db.userStats.count({
+    where: {
+      totalPoints: { gt: 0 }
+    }
+  })
+
+  const rank = usersAbove + 1
+  const percentile = totalParticipants > 0 
+    ? Math.round(((totalParticipants - usersAbove) / totalParticipants) * 100)
+    : 0
+
+  return {
+    percentile: Math.min(99, Math.max(1, percentile)),
+    rank,
+    totalParticipants,
+    topPercentage: 100 - percentile,
+    comparison: {
+      aboveYou: usersAbove,
+      belowYou: totalParticipants - rank
+    }
+  }
+}
+
+async function recalculateRanks() {
+  // Get all users ordered by points
+  const allStats = await db.userStats.findMany({
+    where: { totalPoints: { gt: 0 } },
+    orderBy: { totalPoints: 'desc' }
+  })
+
+  // Update ranks in batches
+  for (let i = 0; i < allStats.length; i++) {
+    const stat = allStats[i]
+    await db.userStats.update({
+      where: { id: stat.id },
+      data: { 
+        currentRank: i + 1,
+        bestRank: Math.min(stat.bestRank || 999, i + 1)
+      }
+    })
+  }
+}
+
+function generateWeeklyActivity(currentStreak: number) {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  return days.map((day, i) => ({
+    day,
+    completed: i < currentStreak % 7 || (currentStreak >= 7 && i < 6)
+  }))
+}
+
+// Mock data generators for fallback
+function generateMockLeaderboard(currentUserId: string, limit: number) {
+  const names = [
+    'Rahul Sharma', 'Priya Patel', 'Amit Kumar', 'Sneha Gupta', 'Vikram Singh',
+    'Ananya Roy', 'Karthik Nair', 'Meera Iyer', 'Arjun Reddy', 'Divya Nair',
+    'Rohan Verma', 'Kavita Singh', 'Saurabh Jain', 'Nisha Agarwal', 'Manish Yadav'
+  ]
+
+  const badgeOptions = ['speedster', 'perfectionist', 'streaker', 'genius', 'champion', 'warrior']
+  
+  return names.slice(0, limit).map((name, index) => {
+    const score = Math.round(2500 - index * 80 + Math.random() * 50)
+    const accuracy = Math.round(95 - index * 2 + Math.random() * 3)
+    const previousRank = Math.max(1, index + 1 + Math.floor(Math.random() * 3) - 1)
+    
+    return {
+      rank: index + 1,
+      previousRank,
+      userId: index === 5 ? currentUserId : `user-${index}`,
+      userName: index === 5 ? 'You' : name,
+      score,
+      accuracy: Math.max(60, Math.min(100, accuracy)),
+      timeSpent: Math.round(45 + Math.random() * 15),
+      streak: Math.round(Math.random() * 20),
+      isCurrentUser: index === 5,
+      isFriend: Math.random() > 0.7,
+      badges: Math.random() > 0.5 ? [badgeOptions[Math.floor(Math.random() * badgeOptions.length)]] : []
+    }
+  })
+}
+
+function calculateMockPercentile(userId: string) {
+  const percentile = 87
+  const totalParticipants = 10000
+  
+  return {
+    percentile,
+    rank: Math.round(totalParticipants * (100 - percentile) / 100),
+    totalParticipants,
+    topPercentage: 100 - percentile,
+    comparison: {
+      aboveYou: Math.round(totalParticipants * (100 - percentile) / 100),
+      belowYou: Math.round(totalParticipants * percentile / 100)
+    }
+  }
+}
+
+function generateMockStreak() {
+  const currentStreak = 7
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  
+  return {
+    currentStreak,
+    longestStreak: 15,
+    lastActivityDate: new Date().toISOString(),
+    weeklyActivity: days.map((day, i) => ({
+      day,
+      completed: i < 6
+    }))
+  }
+}

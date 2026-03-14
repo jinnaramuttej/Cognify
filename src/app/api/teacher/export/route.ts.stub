@@ -1,0 +1,176 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET - Download template
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const type = searchParams.get('type') || 'students'
+
+  if (type === 'students') {
+    const template = `name,email,phone,roll_number,cohort
+John Doe,john@school.com,9876543210,2024001,JEE 2024 Batch A
+Jane Smith,jane@school.com,9876543211,2024002,JEE 2024 Batch A`
+
+    return new NextResponse(template, {
+      headers: {
+        'Content-Type': 'text/csv',
+        'Content-Disposition': 'attachment; filename="students-import-template.csv"'
+      }
+    })
+  }
+
+  return NextResponse.json({ error: 'Invalid template type' }, { status: 400 })
+}
+
+// POST - Export results
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { format, scope, cohortId, testId, includeAnswers } = body
+
+    // Get data based on scope
+    let data: any[] = []
+
+    if (scope === 'cohort' && cohortId) {
+      // Get cohort members with their test attempts
+      const members = await db.cohortMember.findMany({
+        where: { cohortId },
+        include: {
+          cohort: true
+        }
+      })
+
+      const userIds = members.map(m => m.userId)
+
+      const attempts = await db.testAttempt.findMany({
+        where: {
+          userId: { in: userIds },
+          status: 'submitted'
+        },
+        include: {
+          test: true,
+          user: true,
+          answers: includeAnswers ? {
+            include: {
+              question: true
+            }
+          } : false
+        },
+        orderBy: { submittedAt: 'desc' }
+      })
+
+      data = attempts.map(attempt => ({
+        studentName: attempt.user.name,
+        studentEmail: attempt.user.email,
+        testName: attempt.test.name,
+        score: attempt.percentage,
+        correct: attempt.correctCount,
+        incorrect: attempt.incorrectCount,
+        unattempted: attempt.unattemptedCount,
+        timeSpent: Math.round(attempt.timeSpent / 60),
+        submittedAt: attempt.submittedAt?.toISOString()
+      }))
+
+    } else if (scope === 'test' && testId) {
+      const attempts = await db.testAttempt.findMany({
+        where: {
+          testId,
+          status: 'submitted'
+        },
+        include: {
+          test: true,
+          user: true
+        },
+        orderBy: { submittedAt: 'desc' }
+      })
+
+      data = attempts.map(attempt => ({
+        studentName: attempt.user.name,
+        studentEmail: attempt.user.email,
+        score: attempt.percentage,
+        correct: attempt.correctCount,
+        incorrect: attempt.incorrectCount,
+        unattempted: attempt.unattemptedCount,
+        timeSpent: Math.round(attempt.timeSpent / 60),
+        submittedAt: attempt.submittedAt?.toISOString()
+      }))
+
+    } else {
+      // Export all results
+      const attempts = await db.testAttempt.findMany({
+        where: { status: 'submitted' },
+        include: {
+          test: true,
+          user: true
+        },
+        orderBy: { submittedAt: 'desc' },
+        take: 1000 // Limit for safety
+      })
+
+      data = attempts.map(attempt => ({
+        studentName: attempt.user.name,
+        studentEmail: attempt.user.email,
+        testName: attempt.test.name,
+        score: attempt.percentage,
+        correct: attempt.correctCount,
+        incorrect: attempt.incorrectCount,
+        unattempted: attempt.unattemptedCount,
+        timeSpent: Math.round(attempt.timeSpent / 60),
+        submittedAt: attempt.submittedAt?.toISOString()
+      }))
+    }
+
+    if (format === 'csv') {
+      // Generate CSV
+      if (data.length === 0) {
+        return NextResponse.json({ error: 'No data to export' }, { status: 400 })
+      }
+
+      const headers = Object.keys(data[0])
+      const csvRows = [
+        headers.join(','),
+        ...data.map(row => 
+          headers.map(h => {
+            const val = row[h]
+            if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) {
+              return `"${val.replace(/"/g, '""')}"`
+            }
+            return val
+          }).join(',')
+        )
+      ].join('\n')
+
+      return new NextResponse(csvRows, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="results-export-${Date.now()}.csv"`
+        }
+      })
+
+    } else if (format === 'pdf') {
+      // For PDF, return structured data that frontend can use with a PDF library
+      // Or return a pre-generated PDF
+
+      // For now, return the data with instructions
+      return NextResponse.json({
+        success: true,
+        format: 'pdf',
+        data,
+        meta: {
+          exportDate: new Date().toISOString(),
+          totalRecords: data.length,
+          scope
+        }
+      })
+    }
+
+    return NextResponse.json({ error: 'Invalid format' }, { status: 400 })
+
+  } catch (error) {
+    console.error('Error exporting results:', error)
+    return NextResponse.json(
+      { error: 'Failed to export results' },
+      { status: 500 }
+    )
+  }
+}

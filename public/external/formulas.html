@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognify Formula Sheets | AI-Powered Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cognify-gold: #D4AF37;
+            --cognify-black: #1a1a1a;
+            --cognify-white: #ffffff;
+            --cognify-gray: #a0a0a0;
+        }
+
+        * {
+            background-color: var(--cognify-black) !important;
+            color: var(--cognify-white) !important;
+            border-color: var(--cognify-gold) !important;
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.6;
+        }
+
+        body {
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 0;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: var(--cognify-black);
+            border-bottom: 1px solid var(--cognify-gold);
+            padding: 24px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--cognify-gold);
+            margin-bottom: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--cognify-gold);
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        h1 { font-size: 32px; }
+
+        .card {
+            background: var(--cognify-black);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-color: var(--cognify-gold);
+        }
+
+        .card-header {
+            padding: 16px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            margin-bottom: 0;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--cognify-white);
+            margin-bottom: 8px;
+        }
+
+        .card-body {
+            padding: 16px 24px;
+            color: var(--cognify-white);
+        line-height: 1.6;
+        }
+
+        .btn {
+            background-color: var(--cognify-gold);
+            color: #000;
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #f0ad42;
+            transform: scale(1.02);
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 32px;
+        }
+
+        .search-input {
+            background-color: var(--cognify-black);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--cognify-white);
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-wrap: justify-center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: var(--cognify-white);
+            border: 1px solid var(--cognify-gold);
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background: var(--cognify-gold);
+            color: #000;
+        }
+
+        .filter-btn:hover {
+            background: var(--cognify-black);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--cognify-gold);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 32px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--cognify-white);
+            margin-bottom: 8px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--cognify-gray);
+        }
+
+        .card-body {
+            margin-top: 12px;
+            color: var(--cognify-white);
+        }
+
+        .download-btn {
+            background: var(--cognify-gold);
+            color: #000;
+            border: 1px solid var(--cognify-gold);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn:hover {
+            background: #f0ad42;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--cognify-gray);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            color: var(--cognify-gray);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="header">
+            <div class="logo">🧪 Cognify</div>
+        </nav>
+
+        <!-- Main Container -->
+        <main>
+            <!-- Breadcrumb -->
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search formula sheets by title, subject, tag..." />
+            </div>
+
+            <!-- Header -->
+            <h1>Cognify Formula Sheets</h1>
+            <p class="text-[var(--cognify-white)]">Essential formulas for JEE/NEET preparation, curated by AI</p>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <button id="filterAll" class="filter-btn active">All</button>
+                <button id="filterJEE" class="filter-btn">JEE Physics</button>
+                <button id="filterNEET" class="filter-btn">NEET Chemistry</button>
+                <button id="filterMath" class="filter-btn">Mathematics</button>
+                <button id="filterFoundation" class="filter-btn">Foundation</button>
+            </div>
+
+            <!-- Formulas Grid -->
+            <div id="formulas-list" class="grid">
+                <!-- Formula 1 -->
+                <div class="card">
+                    <div class="card-icon">📐</div>
+                    <div class="card-title">Integral Calculus</div>
+                    <div class="card-body">
+                        <p class="card-body">Integration of 1/x dx with constant.</p>
+                        <div class="card-meta">
+                            <span class="download-btn" id="dl1">📄 Download</span>
+                            <span class="download-btn" id="dl2">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula 2 -->
+                <div class="card">
+                    <div class="card-icon">∫</div>
+                    <div class="card-title">Differentiation Rules</div>
+                    <div class="card-body">
+                        <p class="card-body">Learn to master all differentiation rules.</p>
+                        <div class="card-meta">
+                            <span class="download-btn">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula 3 -->
+                <div class="card">
+                    <div class="card-icon">∑</div>
+                    <div class="card-title">Integration Techniques</div>
+                    <div class="card-body">
+                        <p class="card-body">Integration by substitution, by parts, and by partial fractions.</p>
+                        <div class="card-meta">
+                            <span class="download-btn">📄 Download</span>
+                            <span class="download-btn">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula 4 -->
+                <div class="card">
+                    <div class="card-icon">🧪</div>
+                    <div class="card-title">Thermodynamics Formulas</div>
+                    <div class="card-body">
+                        <p class="card-body">Laws of thermodynamics for JEE/NEET.</p>
+                        <div class="card-meta">
+                            <span class="download-btn">📄 Download</span>
+                            <span class="download-btn">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula 5 -->
+                <div class="card">
+                    <div class="card-icon">⚛</div>
+                    <div class="card-title">Wave Optics</div>
+                    <div class="card-body">
+                        <p class="card-body">Understanding wave properties and interference.</p>
+                        <div class="card-meta">
+                            <span class="download-btn">📄 Download</span>
+                            <span class="download-btn">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula 6 -->
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Electrostatics</div>
+                    <div class="card-body">Electric fields, charges, and circuits.</p>
+                        <div class="card-meta">
+                            <span class="download-btn">📄 Download</span>
+                            <span class="download-btn">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" style="display: none;">
+                <div class="empty-icon">📭</div>
+                <p class="text-[var(--cognify-gray)]">No formulas found for this filter.</p>
+            </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div style="text-align: center; margin: 80px 0;">
+                <button class="btn">
+                    Load More Formulas
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // FORMULAS DATA
+        // ============================================
+
+        const formulasData = [
+            {
+                id: 1,
+                title: 'Integral Calculus',
+                subject: 'Mathematics',
+                tag: ['math', 'integration'],
+                size: '0.8',
+                downloads: 45,
+                icon: '📐'
+            },
+            {
+                id: 2,
+                title: 'Differentiation Rules',
+                subject: 'Mathematics',
+                tag: ['math', 'derivation'],
+                size: '1.2',
+                downloads: 23,
+                icon: '∫'
+            },
+            {
+                id: 3,
+                title: 'Integration Techniques',
+                subject: 'Mathematics',
+                tag: ['math', 'integration', 'calculus'],
+                size: '1.5',
+                downloads: 67,
+                icon: '∑'
+            },
+            {
+                id: 4,
+                title: 'Thermodynamics Formulas',
+                subject: 'Physics',
+                tag: ['physics', 'thermodynamics'],
+                size: '2.0',
+                downloads: 89,
+                icon: '🧪'
+            },
+            {
+                id: 5,
+                title: 'Wave Optics',
+                subject: 'Physics',
+                tag: ['physics', 'waves', 'properties'],
+                size: '0.8',
+                downloads: 45,
+                icon: '⚛'
+            },
+            {
+                id: 6,
+                title: 'Electrostatics',
+                subject: 'Physics',
+                tag: ['physics', 'electrostatics'],
+                size: '1.1',
+                downloads: 112,
+                icon: '📊'
+            },
+        ];
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+
+        const renderCard = (formula) => `
+            <div class="card">
+                <div class="card-icon">${formula.icon}</div>
+                <div class="card-title">${formula.title}</div>
+                <div class="card-body">
+                    <p class="card-body">${formula.title}</p>
+                    <div class="card-meta">
+                        <span class="download-btn" id="dl1" onclick="downloadFormula('${formula.id}', 1)">📄 Download</span>
+                        <span class="download-btn" onclick="downloadFormula('${formula.id}', 2)">📄 Download</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const downloadFormula = (id, fileIndex) => {
+            console.log(`Downloading ${formulasData.find(f => f.id === id).title} - File ${fileIndex}.pdf`);
+            alert(`"${formulasData.find(f => f.id === id).title}" downloaded successfully!`);
+        };
+
+        // ============================================
+        // FILTER LOGIC
+        // ============================================
+
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const formulasList = document.getElementById('formulas-list');
+        const emptyState = document.getElementById('empty-state');
+
+        function filterFormulas(category) {
+            let visibleCount = 0;
+
+            formulasList.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            filterButtons.forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if (category === 'all') {
+                formulasData.forEach(formula => {
+                    formula.card = document.getElementById(`formula-${formula.id}`);
+                    formula.card.style.display = 'block';
+                    visibleCount++;
+                });
+            } else {
+                formulasData.forEach(formula => {
+                    const tags = category === 'jee' ? ['jee'] : ['neet', 'foundation'];
+                    const matches = formula.tag.some(tag => tags.includes(tag));
+
+                    if (matches) {
+                        formula.card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        formula.card.style.display = 'none';
+                    }
+                });
+            }
+
+            const visibleCards = Array.from(formulasList.children).filter(el => el.style.display !== 'none');
+
+            if (visibleCards.length === 0) {
+                formulasList.style.display = 'none';
+                emptyState.style.display = 'flex';
+            } else {
+                formulasList.style.display = 'grid';
+                emptyState.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFormulas('all');
+        });
+    </script>
+</body>
+</html>

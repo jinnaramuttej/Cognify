@@ -1,0 +1,375 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { 
+  estimateThetaEAP, 
+  selectNextItem, 
+  calculateProbability,
+  shouldStop,
+  getAbilityLevel
+} from '@/modules/tests/utils/irt'
+import type { IRTParameters } from '@/modules/tests/types'
+
+// POST /api/tests/adaptive/start - Start an adaptive test session
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { testId, userId } = body
+
+    // Get test configuration
+    const test = await db.test.findUnique({
+      where: { id: testId },
+      include: {
+        questions: {
+          include: {
+            question: {
+              include: {
+                itemStats: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!test) {
+      return NextResponse.json({ error: 'Test not found' }, { status: 404 })
+    }
+
+    // Create test attempt
+    const attempt = await db.testAttempt.create({
+      data: {
+        userId,
+        testId,
+        status: 'in_progress',
+        startedAt: new Date()
+      }
+    })
+
+    // Create adaptive session
+    const adaptiveSession = await db.adaptiveSession.create({
+      data: {
+        attemptId: attempt.id,
+        thetaCurrent: 0,
+        thetaHistory: JSON.stringify([]),
+        standardError: 1.0,
+        selectedItems: JSON.stringify([]),
+        currentItem: 0,
+        knowledgeState: JSON.stringify({}),
+        masteryHistory: JSON.stringify([]),
+        isComplete: false
+      }
+    })
+
+    // Get available items with IRT parameters
+    const availableItems = test.questions
+      .filter(tq => tq.question.itemStats?.irtA !== null)
+      .map(tq => ({
+        id: tq.questionId,
+        params: {
+          a: tq.question.itemStats?.irtA || 1,
+          b: tq.question.itemStats?.irtB || 0,
+          c: tq.question.itemStats?.irtC || 0.25
+        } as IRTParameters
+      }))
+
+    // Select first item (medium difficulty for initial assessment)
+    const firstItem = selectNextItem(0, availableItems, [])
+
+    if (!firstItem) {
+      // Fallback to first question if no calibrated items
+      const firstQuestion = test.questions[0]
+      return NextResponse.json({
+        attemptId: attempt.id,
+        sessionId: adaptiveSession.id,
+        currentTheta: 0,
+        standardError: 1.0,
+        firstQuestion: {
+          id: firstQuestion.questionId,
+          order: 1,
+          totalQuestions: test.questionCount
+        },
+        abilityLevel: getAbilityLevel(0),
+        warning: 'Using non-adaptive mode - insufficient calibrated items'
+      })
+    }
+
+    // Update session with selected item
+    await db.adaptiveSession.update({
+      where: { id: adaptiveSession.id },
+      data: {
+        selectedItems: JSON.stringify([firstItem.id])
+      }
+    })
+
+    return NextResponse.json({
+      attemptId: attempt.id,
+      sessionId: adaptiveSession.id,
+      currentTheta: 0,
+      standardError: 1.0,
+      firstQuestion: {
+        id: firstItem.id,
+        order: 1,
+        totalQuestions: test.questionCount
+      },
+      abilityLevel: getAbilityLevel(0),
+      calibratedItemsAvailable: availableItems.length
+    })
+  } catch (error) {
+    console.error('Error starting adaptive session:', error)
+    return NextResponse.json(
+      { error: 'Failed to start adaptive test' },
+      { status: 500 }
+    )
+  }
+}
+
+// GET /api/tests/adaptive/next - Get next question based on current ability
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const sessionId = searchParams.get('sessionId')
+
+    if (!sessionId) {
+      return NextResponse.json({ error: 'Session ID required' }, { status: 400 })
+    }
+
+    // Get adaptive session
+    const session = await db.adaptiveSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        attempt: {
+          include: {
+            test: {
+              include: {
+                questions: {
+                  include: {
+                    question: {
+                      include: {
+                        itemStats: true,
+                        subject: { select: { name: true, color: true } },
+                        chapter: { select: { name: true } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!session) {
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    }
+
+    if (session.isComplete) {
+      return NextResponse.json({
+        complete: true,
+        finalTheta: session.thetaCurrent,
+        abilityLevel: getAbilityLevel(session.thetaCurrent),
+        standardError: session.standardError
+      })
+    }
+
+    // Parse current state
+    const thetaHistory = JSON.parse(session.thetaHistory as string || '[]')
+    const selectedItems = JSON.parse(session.selectedItems as string || '[]')
+
+    // Check stopping rules
+    const stopCheck = shouldStop(
+      session.standardError,
+      5, // min items
+      session.attempt.test.questionCount,
+      selectedItems.length,
+      0.3 // target SE
+    )
+
+    if (stopCheck.stop) {
+      // Mark session as complete
+      await db.adaptiveSession.update({
+        where: { id: sessionId },
+        data: {
+          isComplete: true,
+          terminationReason: stopCheck.reason
+        }
+      })
+
+      return NextResponse.json({
+        complete: true,
+        reason: stopCheck.reason,
+        finalTheta: session.thetaCurrent,
+        abilityLevel: getAbilityLevel(session.thetaCurrent),
+        standardError: session.standardError,
+        questionsAnswered: selectedItems.length
+      })
+    }
+
+    // Get available items with IRT parameters
+    const availableItems = session.attempt.test.questions
+      .filter(tq => tq.question.itemStats?.irtA !== null)
+      .map(tq => ({
+        id: tq.questionId,
+        params: {
+          a: tq.question.itemStats?.irtA || 1,
+          b: tq.question.itemStats?.irtB || 0,
+          c: tq.question.itemStats?.irtC || 0.25
+        } as IRTParameters,
+        question: tq.question
+      }))
+
+    // Select next item
+    const nextItem = selectNextItem(session.thetaCurrent, availableItems, selectedItems)
+
+    if (!nextItem) {
+      return NextResponse.json({
+        complete: true,
+        reason: 'no_more_items',
+        finalTheta: session.thetaCurrent
+      })
+    }
+
+    // Get question details
+    const questionData = availableItems.find(item => item.id === nextItem?.id)
+
+    // Update session
+    await db.adaptiveSession.update({
+      where: { id: sessionId },
+      data: {
+        selectedItems: JSON.stringify([...selectedItems, nextItem.id]),
+        currentItem: selectedItems.length
+      }
+    })
+
+    return NextResponse.json({
+      complete: false,
+      question: {
+        id: questionData?.question.id,
+        text: questionData?.question.text,
+        options: JSON.parse(questionData?.question.options || '[]'),
+        difficulty: questionData?.question.difficulty,
+        subject: questionData?.question.subject.name,
+        subjectColor: questionData?.question.subject.color,
+        chapter: questionData?.question.chapter.name,
+        order: selectedItems.length + 1,
+        totalQuestions: session.attempt.test.questionCount
+      },
+      currentTheta: session.thetaCurrent,
+      abilityLevel: getAbilityLevel(session.thetaCurrent),
+      standardError: session.standardError,
+      itemInformation: nextItem.information,
+      expectedProbability: calculateProbability(session.thetaCurrent, questionData?.params || { a: 1, b: 0, c: 0.25 })
+    })
+  } catch (error) {
+    console.error('Error getting next adaptive question:', error)
+    return NextResponse.json(
+      { error: 'Failed to get next question' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT /api/tests/adaptive/respond - Submit response and update ability estimate
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { sessionId, questionId, isCorrect, timeSpent } = body
+
+    // Get session
+    const session = await db.adaptiveSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        attempt: {
+          include: {
+            test: {
+              include: {
+                questions: {
+                  include: {
+                    question: {
+                      include: { itemStats: true }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!session) {
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    }
+
+    // Get question IRT parameters
+    const questionData = session.attempt.test.questions.find(
+      tq => tq.questionId === questionId
+    )
+
+    if (!questionData) {
+      return NextResponse.json({ error: 'Question not found in test' }, { status: 404 })
+    }
+
+    const params: IRTParameters = {
+      a: questionData.question.itemStats?.irtA || 1,
+      b: questionData.question.itemStats?.irtB || 0,
+      c: questionData.question.itemStats?.irtC || 0.25
+    }
+
+    // Parse current theta history
+    const thetaHistory = JSON.parse(session.thetaHistory as string || '[]')
+
+    // Add response to history
+    thetaHistory.push({
+      questionId,
+      isCorrect,
+      timeSpent,
+      params
+    })
+
+    // Re-estimate theta using all responses
+    const responses = thetaHistory.map((record: { isCorrect: boolean; params: IRTParameters }) => ({
+      isCorrect: record.isCorrect,
+      params: record.params
+    }))
+
+    const { theta: newTheta, standardError } = estimateThetaEAP(responses)
+
+    // Update session
+    await db.adaptiveSession.update({
+      where: { id: sessionId },
+      data: {
+        thetaCurrent: newTheta,
+        standardError,
+        thetaHistory: JSON.stringify(thetaHistory)
+      }
+    })
+
+    // Save answer
+    await db.attemptAnswer.create({
+      data: {
+        attemptId: session.attemptId,
+        questionId,
+        selectedAnswer: '', // Will be updated later
+        isCorrect,
+        timeSpent,
+        marksAwarded: isCorrect ? questionData.marks : -questionData.question.negativeMarks
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      newTheta,
+      standardError,
+      abilityLevel: getAbilityLevel(newTheta),
+      thetaChange: newTheta - session.thetaCurrent,
+      questionsAnswered: thetaHistory.length
+    })
+  } catch (error) {
+    console.error('Error processing adaptive response:', error)
+    return NextResponse.json(
+      { error: 'Failed to process response' },
+      { status: 500 }
+    )
+  }
+}

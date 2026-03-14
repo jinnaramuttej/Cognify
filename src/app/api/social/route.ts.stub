@@ -1,0 +1,352 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET /api/social/challenges - Get active challenges
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'demo-user'
+    const type = searchParams.get('type') // daily, weekly, special, or all
+
+    const now = new Date()
+
+    // Build where clause
+    const where: any = {
+      status: 'active',
+      startsAt: { lte: now },
+      endsAt: { gte: now }
+    }
+
+    if (type && type !== 'all') {
+      where.type = type
+    }
+
+    // Get active challenges
+    const challenges = await db.challenge.findMany({
+      where,
+      orderBy: [
+        { type: 'asc' },
+        { endsAt: 'asc' }
+      ]
+    })
+
+    // Get user's progress on these challenges
+    const userChallenges = await db.userChallenge.findMany({
+      where: {
+        userId,
+        challengeId: { in: challenges.map(c => c.id) }
+      }
+    })
+
+    // Combine data
+    const challengesWithProgress = challenges.map(challenge => {
+      const userProgress = userChallenges.find(uc => uc.challengeId === challenge.id)
+      
+      return {
+        id: challenge.id,
+        title: challenge.title,
+        description: challenge.description,
+        type: challenge.type,
+        category: challenge.category,
+        reward: challenge.pointsReward,
+        progress: userProgress?.progress || 0,
+        target: challenge.targetValue,
+        endsAt: challenge.endsAt.toISOString(),
+        participants: challenge.participantCount,
+        completed: userProgress?.completed || false,
+        badgeReward: challenge.badgeReward
+      }
+    })
+
+    // If no challenges, return mock data
+    if (challengesWithProgress.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: generateMockChallenges(),
+        isMockData: true
+      })
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: challengesWithProgress
+    })
+  } catch (error) {
+    console.error('Error fetching challenges:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch challenges' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/social/challenges - Create a new challenge (admin/teacher)
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      title,
+      description,
+      type = 'weekly',
+      category = 'general',
+      targetMetric,
+      targetValue,
+      subjectId,
+      pointsReward = 0,
+      badgeReward,
+      startsAt,
+      endsAt
+    } = body
+
+    const challenge = await db.challenge.create({
+      data: {
+        title,
+        description,
+        type,
+        category,
+        targetMetric,
+        targetValue,
+        subjectId,
+        pointsReward,
+        badgeReward,
+        startsAt: new Date(startsAt),
+        endsAt: new Date(endsAt),
+        status: 'active'
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: challenge,
+      message: 'Challenge created successfully'
+    })
+  } catch (error) {
+    console.error('Error creating challenge:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to create challenge' },
+      { status: 500 }
+    )
+  }
+}
+
+// PATCH /api/social/challenges - Update challenge progress
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { userId, challengeId, progressIncrement = 1 } = body
+
+    // Get the challenge
+    const challenge = await db.challenge.findUnique({
+      where: { id: challengeId }
+    })
+
+    if (!challenge) {
+      return NextResponse.json(
+        { success: false, error: 'Challenge not found' },
+        { status: 404 }
+      )
+    }
+
+    // Get or create user challenge
+    let userChallenge = await db.userChallenge.findUnique({
+      where: {
+        userId_challengeId: { userId, challengeId }
+      }
+    })
+
+    if (!userChallenge) {
+      userChallenge = await db.userChallenge.create({
+        data: {
+          userId,
+          challengeId,
+          progress: progressIncrement,
+          target: challenge.targetValue
+        }
+      })
+
+      // Increment participant count
+      await db.challenge.update({
+        where: { id: challengeId },
+        data: { participantCount: { increment: 1 } }
+      })
+    } else {
+      // Update progress
+      const newProgress = userChallenge.progress + progressIncrement
+      const completed = newProgress >= challenge.targetValue
+
+      userChallenge = await db.userChallenge.update({
+        where: { id: userChallenge.id },
+        data: {
+          progress: Math.min(newProgress, challenge.targetValue),
+          completed,
+          completedAt: completed ? new Date() : null
+        }
+      })
+
+      // If just completed, increment completion count
+      if (completed && !userChallenge.completedAt) {
+        await db.challenge.update({
+          where: { id: challengeId },
+          data: { completionCount: { increment: 1 } }
+        })
+
+        // Award points
+        if (challenge.pointsReward > 0) {
+          await awardPoints(userId, challenge.pointsReward)
+        }
+
+        // Award badge if applicable
+        if (challenge.badgeReward) {
+          await awardBadge(userId, challenge.badgeReward, 'challenge', challengeId)
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        progress: userChallenge.progress,
+        target: challenge.targetValue,
+        completed: userChallenge.completed,
+        pointsEarned: userChallenge.completed ? challenge.pointsReward : 0
+      }
+    })
+  } catch (error) {
+    console.error('Error updating challenge progress:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to update challenge progress' },
+      { status: 500 }
+    )
+  }
+}
+
+async function awardPoints(userId: string, points: number) {
+  const userStats = await db.userStats.findUnique({ where: { userId } })
+  
+  if (userStats) {
+    await db.userStats.update({
+      where: { userId },
+      data: {
+        totalPoints: { increment: points },
+        weeklyPoints: { increment: points },
+        monthlyPoints: { increment: points },
+        challengesCompleted: { increment: 1 }
+      }
+    })
+  } else {
+    await db.userStats.create({
+      data: {
+        userId,
+        totalPoints: points,
+        weeklyPoints: points,
+        monthlyPoints: points,
+        challengesCompleted: 1
+      }
+    })
+  }
+}
+
+async function awardBadge(userId: string, badgeKey: string, earnedFrom: string, earnedFromId: string) {
+  const badgeInfo: Record<string, { name: string; icon: string; color: string; rarity: string }> = {
+    speedster: { name: 'Speed Demon', icon: '⚡', color: '#00D4FF', rarity: 'rare' },
+    perfectionist: { name: 'Perfect Score', icon: '✨', color: '#A855F7', rarity: 'epic' },
+    streaker: { name: 'Streak Master', icon: '🔥', color: '#F97316', rarity: 'rare' },
+    genius: { name: 'Genius', icon: '🧠', color: '#EC4899', rarity: 'epic' },
+    champion: { name: 'Champion', icon: '👑', color: '#FFD700', rarity: 'legendary' },
+    warrior: { name: 'Warrior', icon: '⚔️', color: '#EF4444', rarity: 'rare' },
+    challenger: { name: 'Challenge Champion', icon: '🏆', color: '#10B981', rarity: 'epic' }
+  }
+
+  const badge = badgeInfo[badgeKey] || { name: badgeKey, icon: '🎖️', color: '#FFD700', rarity: 'common' }
+
+  await db.userBadge.upsert({
+    where: {
+      userId_badgeKey: { userId, badgeKey }
+    },
+    create: {
+      userId,
+      badgeKey,
+      badgeName: badge.name,
+      badgeIcon: badge.icon,
+      badgeColor: badge.color,
+      rarity: badge.rarity,
+      earnedFrom,
+      earnedFromId
+    },
+    update: {}
+  })
+
+  // Create notification
+  await db.socialNotification.create({
+    data: {
+      userId,
+      type: 'badge_earned',
+      title: 'New Badge Earned!',
+      message: `You earned the "${badge.name}" badge! ${badge.icon}`,
+      relatedType: 'badge',
+      relatedId: badgeKey
+    }
+  })
+}
+
+function generateMockChallenges() {
+  const now = Date.now()
+  return [
+    {
+      id: 'c1',
+      title: 'Daily Sprint',
+      description: 'Complete 50 questions today',
+      type: 'daily',
+      category: 'general',
+      reward: 100,
+      progress: 35,
+      target: 50,
+      endsAt: new Date(now + 8 * 60 * 60 * 1000).toISOString(),
+      participants: 1250,
+      completed: false,
+      badgeReward: null
+    },
+    {
+      id: 'c2',
+      title: 'Weekly Warrior',
+      description: 'Achieve 90% accuracy this week',
+      type: 'weekly',
+      category: 'accuracy',
+      reward: 500,
+      progress: 85,
+      target: 90,
+      endsAt: new Date(now + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      participants: 890,
+      completed: false,
+      badgeReward: 'perfectionist'
+    },
+    {
+      id: 'c3',
+      title: 'Streak Master',
+      description: 'Maintain a 7-day streak',
+      type: 'weekly',
+      category: 'streak',
+      reward: 300,
+      progress: 5,
+      target: 7,
+      endsAt: new Date(now + 2 * 24 * 60 * 60 * 1000).toISOString(),
+      participants: 2100,
+      completed: false,
+      badgeReward: 'streaker'
+    },
+    {
+      id: 'c4',
+      title: 'JEE Main Special',
+      description: 'Complete 5 JEE mock tests',
+      type: 'special',
+      category: 'general',
+      reward: 1000,
+      progress: 3,
+      target: 5,
+      endsAt: new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      participants: 3500,
+      completed: false,
+      badgeReward: 'champion'
+    }
+  ]
+}

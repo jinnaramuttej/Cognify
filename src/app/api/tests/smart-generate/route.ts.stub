@@ -1,0 +1,306 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+interface DifficultyMix {
+  easy: number
+  medium: number
+  hard: number
+}
+
+interface SmartGenerateRequest {
+  name?: string
+  selectedSubject: string | null
+  selectedChapters: string[]
+  difficultyMix: DifficultyMix
+  questionCount: number
+  timeLimit: number
+  testMode: 'adaptive' | 'fixed'
+  specialMode: 'none' | 'weak_topics' | 'pyq_only' | 'spaced_revision'
+  includeConceptual: boolean
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: SmartGenerateRequest = await request.json()
+    
+    const {
+      name,
+      selectedSubject,
+      selectedChapters,
+      difficultyMix,
+      questionCount,
+      timeLimit,
+      testMode,
+      specialMode,
+      includeConceptual
+    } = body
+
+    // Validate
+    if (!selectedSubject || selectedChapters.length === 0) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Subject and chapters required',
+          message: 'Please select a subject and at least one chapter.'
+        },
+        { status: 400 }
+      )
+    }
+
+    // Build base query
+    const baseWhere: {
+      chapterId: { in: string[] }
+      subjectId?: string
+      isPYQ?: boolean
+      itemStatus?: string
+    } = {
+      chapterId: { in: selectedChapters },
+      subjectId: selectedSubject,
+      itemStatus: 'live' // Only use live questions
+    }
+
+    // Handle special modes
+    if (specialMode === 'pyq_only') {
+      baseWhere.isPYQ = true
+    }
+
+    // Get questions grouped by difficulty
+    const [easyQuestions, mediumQuestions, hardQuestions] = await Promise.all([
+      db.question.findMany({
+        where: { ...baseWhere, difficulty: 'easy' },
+        include: { chapter: true }
+      }),
+      db.question.findMany({
+        where: { ...baseWhere, difficulty: 'medium' },
+        include: { chapter: true }
+      }),
+      db.question.findMany({
+        where: { ...baseWhere, difficulty: 'hard' },
+        include: { chapter: true }
+      })
+    ])
+
+    // Calculate target counts based on difficulty mix
+    const targetCounts = {
+      easy: Math.round(questionCount * difficultyMix.easy / 100),
+      medium: Math.round(questionCount * difficultyMix.medium / 100),
+      hard: Math.round(questionCount * difficultyMix.hard / 100)
+    }
+
+    // Adjust to match total
+    const totalTarget = targetCounts.easy + targetCounts.medium + targetCounts.hard
+    if (totalTarget !== questionCount) {
+      targetCounts.medium += questionCount - totalTarget
+    }
+
+    // Check availability
+    const availabilityIssues: string[] = []
+    if (easyQuestions.length < targetCounts.easy) {
+      availabilityIssues.push(`Need ${targetCounts.easy} easy questions, only ${easyQuestions.length} available`)
+    }
+    if (mediumQuestions.length < targetCounts.medium) {
+      availabilityIssues.push(`Need ${targetCounts.medium} medium questions, only ${mediumQuestions.length} available`)
+    }
+    if (hardQuestions.length < targetCounts.hard) {
+      availabilityIssues.push(`Need ${targetCounts.hard} hard questions, only ${hardQuestions.length} available`)
+    }
+
+    // If not enough questions, return error with suggestions
+    const totalAvailable = easyQuestions.length + mediumQuestions.length + hardQuestions.length
+    if (totalAvailable < questionCount) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Insufficient questions',
+          message: `Only ${totalAvailable} questions available for your criteria. Need ${questionCount}.`,
+          details: availabilityIssues,
+          suggestions: [
+            'Reduce the total question count',
+            'Add more chapters to increase question pool',
+            'Adjust difficulty mix to match available questions'
+          ],
+          available: {
+            easy: easyQuestions.length,
+            medium: mediumQuestions.length,
+            hard: hardQuestions.length,
+            total: totalAvailable
+          }
+        },
+        { status: 400 }
+      )
+    }
+
+    // Select questions from each difficulty pool
+    const shuffleArray = <T,>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5)
+    
+    const selectedEasy = shuffleArray(easyQuestions).slice(0, targetCounts.easy)
+    const selectedMedium = shuffleArray(mediumQuestions).slice(0, targetCounts.medium)
+    const selectedHard = shuffleArray(hardQuestions).slice(0, targetCounts.hard)
+    
+    const selectedQuestions = shuffleArray([
+      ...selectedEasy,
+      ...selectedMedium,
+      ...selectedHard
+    ])
+
+    // Generate test name
+    const subject = await db.subject.findUnique({
+      where: { id: selectedSubject }
+    })
+    
+    const testName = name || generateTestName(subject?.name || 'Practice', specialMode, questionCount)
+
+    // Calculate total marks
+    const totalMarks = selectedQuestions.reduce((sum, q) => sum + q.marks, 0)
+
+    // Create test
+    const test = await db.test.create({
+      data: {
+        name: testName,
+        description: generateDescription(selectedQuestions.length, specialMode, testMode, subject?.name),
+        testType: testMode === 'adaptive' ? 'adaptive' : 'practice',
+        subjectId: selectedSubject,
+        grade: '12th',
+        targetExam: 'JEE',
+        timeLimit,
+        difficulty: 'mixed',
+        totalMarks,
+        questionCount: selectedQuestions.length,
+        chapters: JSON.stringify(selectedChapters),
+        subjectDistribution: JSON.stringify({ [subject?.name?.toLowerCase() || 'subject']: selectedQuestions.length }),
+        status: 'active',
+        isPublic: true,
+        createdBy: 'demo-user'
+      }
+    })
+
+    // Link questions to test
+    await Promise.all(
+      selectedQuestions.map((question, index) =>
+        db.testQuestion.create({
+          data: {
+            testId: test.id,
+            questionId: question.id,
+            order: index + 1,
+            section: question.chapter.subjectId,
+            marks: question.marks
+          }
+        })
+      )
+    )
+
+    // For adaptive mode, create initial adaptive session config
+    if (testMode === 'adaptive') {
+      // IRT parameters would be initialized here
+      // For now, we just flag it as adaptive
+    }
+
+    return NextResponse.json({
+      success: true,
+      testId: test.id,
+      questionCount: selectedQuestions.length,
+      breakdown: {
+        easy: selectedEasy.length,
+        medium: selectedMedium.length,
+        hard: selectedHard.length
+      },
+      totalMarks,
+      testMode,
+      specialMode,
+      message: `Test generated successfully with ${selectedQuestions.length} questions`
+    })
+  } catch (error) {
+    console.error('Error generating smart test:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to generate test' },
+      { status: 500 }
+    )
+  }
+}
+
+// GET endpoint to check question availability
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const subjectId = searchParams.get('subjectId')
+    const chapterIds = searchParams.get('chapterIds')?.split(',') || []
+    const specialMode = searchParams.get('specialMode') || 'none'
+
+    if (!subjectId) {
+      return NextResponse.json(
+        { success: false, error: 'Subject ID required' },
+        { status: 400 }
+      )
+    }
+
+    const whereClause: {
+      subjectId: string
+      chapterId?: { in: string[] }
+      isPYQ?: boolean
+      itemStatus: string
+    } = {
+      subjectId,
+      itemStatus: 'live'
+    }
+
+    if (chapterIds.length > 0) {
+      whereClause.chapterId = { in: chapterIds }
+    }
+
+    if (specialMode === 'pyq_only') {
+      whereClause.isPYQ = true
+    }
+
+    // Get counts by difficulty
+    const [easy, medium, hard] = await Promise.all([
+      db.question.count({ where: { ...whereClause, difficulty: 'easy' } }),
+      db.question.count({ where: { ...whereClause, difficulty: 'medium' } }),
+      db.question.count({ where: { ...whereClause, difficulty: 'hard' } })
+    ])
+
+    return NextResponse.json({
+      success: true,
+      availability: {
+        easy,
+        medium,
+        hard,
+        total: easy + medium + hard
+      }
+    })
+  } catch (error) {
+    console.error('Error checking availability:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to check availability' },
+      { status: 500 }
+    )
+  }
+}
+
+// Helper functions
+function generateTestName(subjectName: string, specialMode: string, questionCount: number): string {
+  const modeLabels: Record<string, string> = {
+    none: '',
+    weak_topics: 'Weak Topics Focus',
+    pyq_only: 'PYQ Practice',
+    spaced_revision: 'Spaced Revision'
+  }
+  
+  const modeSuffix = modeLabels[specialMode] ? ` - ${modeLabels[specialMode]}` : ''
+  const date = new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+  
+  return `${subjectName} ${questionCount}Q${modeSuffix} - ${date}`
+}
+
+function generateDescription(count: number, specialMode: string, testMode: string, subject?: string): string {
+  const modeDescriptions: Record<string, string> = {
+    none: 'custom-selected questions',
+    weak_topics: 'questions from your weak areas',
+    pyq_only: 'previous year examination questions',
+    spaced_revision: 'questions due for spaced revision'
+  }
+  
+  const modeText = modeDescriptions[specialMode] || 'questions'
+  const adaptiveText = testMode === 'adaptive' ? 'adaptive difficulty ' : ''
+  
+  return `A ${count}-question ${adaptiveText}test with ${modeText}${subject ? ` in ${subject}` : ''}.`
+}

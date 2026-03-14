@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognify Videos Library | AI-Powered Learning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-bottom: 2px solid #D4AF37;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D4AF37;
+            text-decoration: none;
+        }
+        .logo:hover {
+            color: #f0ad42;
+            cursor: pointer;
+        }
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #D4AF37;
+            margin: 0;
+        }
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #D4AF37;
+            background: transparent;
+            color: #D4AF37;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover {
+            background: #D4AF37;
+            color: #1a1a1a;
+        }
+        .filter-btn.active {
+            background: #D4AF37;
+            color: #1a1a1a;
+            box-shadow: 0 0 10px rgba(212,175,55,0.1);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0,0.2);
+        }
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 16px;
+        }
+        .card-body {
+            color: #ffffff;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .card-footer {
+            margin-top: 16px;
+            padding-top: 16px;
+        border-top: 1px solid #1a1a1a;
+        }
+        .download-btn {
+            width: 100%;
+            margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="/dashboard" class="logo">
+                <span>Cognify</span>
+            </a>
+            <div class="page-title">Videos Library</div>
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="filterVideos('all')">All Videos</button>
+                <button class="filter-btn" onclick="filterVideos('jee')">JEE Videos</button>
+                <button class="filter-btn" onclick="filterVideos('neet')">NEET Videos</button>
+                <button class="filter-btn" onclick="filterVideos('foundation')">Foundation Videos</button>
+            </div>
+        </nav>
+    </div>
+    
+    <div class="grid" id="video-grid">
+        <!-- Video 1 -->
+        <div class="card">
+            <div class="card-icon">▶️</div>
+            <div class="card-header">
+                <h3 class="video-title">Thermodynamics Basics</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-body">
+                    Learn the fundamentals of thermodynamics with our AI-powered video lessons.
+                </p>
+                <div class="card-meta">
+                    <span>⏱ 15 min</span>
+                    <span class="download-btn">📄 Download</span>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Video 2 -->
+        <div class="card">
+            <div class="card-icon">⚛</div>
+            <div class="card-header">
+                <h3 class="video-title">First Law of Thermodynamics</h3>
+            </div>
+            <div class="card-body">
+                <p class="card-body">
+                    Master the first and second laws with step-by-step explanations.
+                </p>
+                <div class="card-meta">
+                    <span>🏱 45 min</span>
+                    <span class="download-btn">📄 Download</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Video 3 -->
+        <div class="card">
+            <div class="card-icon">📡</div>
+            <div class="card-header">
+                <h3 class="video-title">Second Law of Thermodynamics</h3>
+                </div>
+            <div class="card">
+                <p class="card-body">
+                    Understand the second law with practical examples and problems.
+                </p>
+                <div class="card-meta">
+                    <span>⏱ 35 min</span>
+                    <span class="download-btn">📄 Download</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video 4 -->
+        <div class="card">
+            <div class="card-icon">📋</div>
+            <div class="card-header">
+                <h3 class="video-title">Heat Engines & Cycles</h3>
+            </div>
+            <div class="card">
+                <p class="card-body">
+                    Learn about heat engines and thermodynamic cycles in detail.
+                </p>
+                <div class="card-meta">
+                    <span>⏱ 25 min</span>
+                    <span class="download-btn">📄 Download</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const videosData = [
+        {
+            id: 1,
+            title: "Thermodynamics Basics",
+            subject: "Physics",
+            duration: "15 min",
+            icon: "▶️",
+            downloads: 156,
+            tags: ['jee', 'physics', 'thermodynamics', 'class 11']
+        },
+        {
+            id: 2,
+            title: "First Law of Thermodynamics",
+            subject: "Physics",
+            duration: "45 min",
+            icon: "⚛",
+            downloads: 89,
+            tags: ['jee', 'physics', 'thermodynamics', 'law']
+        },
+        {
+            id: 3,
+            title: "Second Law of Thermodynamics",
+            subject: "Physics",
+            duration: "35 min",
+            icon: "📡",
+            downloads: 234,
+            tags: ['jee', 'physics', 'thermodynamics', 'law']
+        },
+        {
+            id: 4,
+            title: "Heat Engines & Cycles",
+            subject: "Physics",
+            duration: "25 min",
+            icon: "📋",
+            downloads: 67,
+            tags: ['jee', 'physics', 'thermodynamics', 'cycles']
+        }
+    ];
+
+    function filterVideos(category) {
+        const allVideos = document.getElementById('video-grid');
+        const emptyState = document.getElementById('empty-state');
+        const videoCards = document.querySelectorAll('.card');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        if (category === 'all') {
+            videoCards.forEach(card => card.style.display = 'block');
+            allVideos.style.display = 'grid';
+            emptyState.style.display = 'none';
+        } else if (category !== 'all') {
+            const tags = category === 'jee' ? ['jee', 'physics', 'thermodynamics', 'law'] :
+                        category === 'neet' ? ['neet', 'biology', 'chemistry'] :
+                        category === 'foundation' ? ['foundation', 'class 9', 'class 10'];
+            
+            allVideos.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            let visibleCount = 0;
+            videoCards.forEach(card => {
+                const cardData = videosData.find(v => v.id === parseInt(card.dataset.id));
+                const isMatch = cardData.tags.some(tag => tags.includes(tag));
+                
+                if (isMatch) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                }
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                allVideos.style.display = 'none';
+                emptyState.style.display = 'flex';
+                emptyState.innerHTML = `
+                    <div class="empty-icon">📂</div>
+                    <p class="text-[#a0a0a0a]">No videos found for "${category}".</p>
+                `;
+            }
+        }
+    }
+
+    function downloadNote(id) {
+        const noteData = videosData.find(v => v.id === id);
+        alert(`Downloading "${noteData.title}" (${noteData.downloads} downloads)...`);
+    }
+</script>
+</body>
+</html>

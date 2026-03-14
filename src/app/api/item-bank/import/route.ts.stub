@@ -1,0 +1,174 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// CSV Import endpoint
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { items, defaultSubjectId, defaultChapterId } = body
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: 'No items provided' },
+        { status: 400 }
+      )
+    }
+
+    const results = {
+      success: 0,
+      failed: 0,
+      errors: [] as string[]
+    }
+
+    // Process each item
+    for (let i = 0; i < items.length; i++) {
+      const row = items[i]
+      const rowNum = i + 2 // Account for header row
+
+      try {
+        // Validate required fields
+        const requiredFields = ['question', 'subject', 'chapter', 'difficulty', 'option_a', 'option_b', 'option_c', 'option_d', 'correct']
+        for (const field of requiredFields) {
+          if (!row[field]) {
+            results.errors.push(`Row ${rowNum}: Missing required field "${field}"`)
+            results.failed++
+            continue
+          }
+        }
+
+        if (results.errors.length > 0 && results.errors[results.errors.length - 1].includes(`Row ${rowNum}`)) {
+          continue
+        }
+
+        // Validate difficulty
+        const validDifficulties = ['easy', 'medium', 'hard']
+        if (!validDifficulties.includes(row.difficulty.toLowerCase())) {
+          results.errors.push(`Row ${rowNum}: Invalid difficulty "${row.difficulty}". Must be one of: ${validDifficulties.join(', ')}`)
+          results.failed++
+          continue
+        }
+
+        // Validate correct answer
+        const validAnswers = ['A', 'B', 'C', 'D']
+        if (!validAnswers.includes(row.correct.toUpperCase())) {
+          results.errors.push(`Row ${rowNum}: Invalid correct answer "${row.correct}". Must be one of: ${validAnswers.join(', ')}`)
+          results.failed++
+          continue
+        }
+
+        // Find or create subject
+        let subject = await db.subject.findFirst({
+          where: {
+            name: { equals: row.subject, mode: 'insensitive' }
+          }
+        })
+
+        if (!subject && defaultSubjectId) {
+          subject = await db.subject.findUnique({
+            where: { id: defaultSubjectId }
+          })
+        }
+
+        if (!subject) {
+          results.errors.push(`Row ${rowNum}: Subject "${row.subject}" not found`)
+          results.failed++
+          continue
+        }
+
+        // Find chapter
+        let chapter = await db.chapter.findFirst({
+          where: {
+            subjectId: subject.id,
+            name: { equals: row.chapter, mode: 'insensitive' }
+          }
+        })
+
+        if (!chapter && defaultChapterId) {
+          chapter = await db.chapter.findUnique({
+            where: { id: defaultChapterId }
+          })
+        }
+
+        if (!chapter) {
+          results.errors.push(`Row ${rowNum}: Chapter "${row.chapter}" not found for subject "${row.subject}"`)
+          results.failed++
+          continue
+        }
+
+        // Build options array
+        const options = [
+          { id: 'A', label: 'A', text: row.option_a, isCorrect: row.correct.toUpperCase() === 'A' },
+          { id: 'B', label: 'B', text: row.option_b, isCorrect: row.correct.toUpperCase() === 'B' },
+          { id: 'C', label: 'C', text: row.option_c, isCorrect: row.correct.toUpperCase() === 'C' },
+          { id: 'D', label: 'D', text: row.option_d, isCorrect: row.correct.toUpperCase() === 'D' }
+        ]
+
+        // Create question
+        const question = await db.question.create({
+          data: {
+            text: row.question,
+            subjectId: subject.id,
+            chapterId: chapter.id,
+            options: JSON.stringify(options),
+            correctAnswer: row.correct.toUpperCase(),
+            difficulty: row.difficulty.toLowerCase(),
+            cognitiveLevel: 'apply',
+            marks: parseFloat(row.marks) || 4,
+            negativeMarks: parseFloat(row.negative_marks) || 1,
+            explanation: row.explanation || '',
+            isPYQ: row.is_pyq === 'true' || row.is_pyq === true,
+            pyqYear: row.pyq_year ? parseInt(row.pyq_year) : null,
+            pyqExam: row.pyq_exam || null,
+            sourceRef: row.source_ref || null,
+            itemStatus: 'draft',
+            itemQuality: 'standard',
+            createdBy: 'csv-import'
+          }
+        })
+
+        // Create initial version
+        await db.itemVersion.create({
+          data: {
+            questionId: question.id,
+            versionNumber: 1,
+            contentSnapshot: JSON.stringify(question),
+            changeSummary: 'Imported from CSV',
+            changedBy: 'csv-import',
+            changeType: 'create'
+          }
+        })
+
+        results.success++
+      } catch (err: any) {
+        results.errors.push(`Row ${rowNum}: ${err.message || 'Unknown error'}`)
+        results.failed++
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      results,
+      message: `Import complete. ${results.success} items imported, ${results.failed} failed.`
+    })
+  } catch (error) {
+    console.error('Error importing items:', error)
+    return NextResponse.json(
+      { error: 'Failed to import items' },
+      { status: 500 }
+    )
+  }
+}
+
+// GET - Download CSV template
+export async function GET() {
+  const template = `question,subject,chapter,difficulty,option_a,option_b,option_c,option_d,correct,explanation,marks,negative_marks,tags,source_ref,is_pyq,pyq_year,pyq_exam
+"What is the SI unit of force?",Physics,Mechanics,easy,Newton,Joule,Watt,Pascal,A,"Force = mass × acceleration, measured in Newtons",4,1,"force,units,physics",NCERT Class 11,false,,
+"Which compound is aromatic?",Chemistry,Organic Chemistry,medium,Cyclohexane,Benzene,Cyclopentane,Hexane,B,"Benzene has a conjugated ring system with 6π electrons",4,1,"organic,aromatic",,true,2022,JEE Main`
+
+  return new NextResponse(template, {
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': 'attachment; filename="item-bank-template.csv"'
+    }
+  })
+}

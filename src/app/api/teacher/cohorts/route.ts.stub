@@ -1,0 +1,189 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+// GET - List all cohorts with stats
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const institutionId = searchParams.get('institutionId')
+
+    const where: any = {}
+    if (institutionId) {
+      where.institutionId = institutionId
+    }
+
+    const cohorts = await db.cohort.findMany({
+      where,
+      include: {
+        institution: true,
+        members: {
+          include: {
+            cohort: true
+          }
+        },
+        scheduledTests: true,
+        _count: {
+          select: {
+            members: true,
+            scheduledTests: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    // Calculate avg scores for each cohort
+    const cohortsStats = await Promise.all(
+      cohorts.map(async (cohort) => {
+        // Get all test attempts for this cohort's students
+        const memberIds = cohort.members.map(m => m.userId)
+        
+        const attempts = await db.testAttempt.findMany({
+          where: {
+            userId: { in: memberIds },
+            status: 'submitted'
+          },
+          select: {
+            percentage: true
+          }
+        })
+
+        const avgScore = attempts.length > 0
+          ? attempts.reduce((sum, a) => sum + a.percentage, 0) / attempts.length
+          : 0
+
+        return {
+          id: cohort.id,
+          name: cohort.name,
+          description: cohort.description,
+          grade: cohort.grade,
+          targetExam: cohort.targetExam,
+          studentCount: cohort._count.members,
+          testsAssigned: cohort._count.scheduledTests,
+          avgScore: Math.round(avgScore * 10) / 10,
+          createdAt: cohort.createdAt,
+          institution: cohort.institution,
+          academicYear: cohort.academicYear,
+          section: cohort.section
+        }
+      })
+    )
+
+    return NextResponse.json(cohortsStats)
+  } catch (error) {
+    console.error('Error fetching cohorts:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch cohorts' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST - Create new cohort
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      name,
+      description,
+      grade,
+      targetExam,
+      institutionId,
+      academicYear,
+      section
+    } = body
+
+    if (!name || !institutionId) {
+      return NextResponse.json(
+        { error: 'Name and institution ID are required' },
+        { status: 400 }
+      )
+    }
+
+    const cohort = await db.cohort.create({
+      data: {
+        name,
+        description,
+        grade,
+        targetExam,
+        institutionId,
+        academicYear,
+        section
+      }
+    })
+
+    return NextResponse.json({ success: true, cohort })
+  } catch (error) {
+    console.error('Error creating cohort:', error)
+    return NextResponse.json(
+      { error: 'Failed to create cohort' },
+      { status: 500 }
+    )
+  }
+}
+
+// PUT - Update cohort
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Cohort ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const cohort = await db.cohort.update({
+      where: { id },
+      data: updates
+    })
+
+    return NextResponse.json({ success: true, cohort })
+  } catch (error) {
+    console.error('Error updating cohort:', error)
+    return NextResponse.json(
+      { error: 'Failed to update cohort' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE - Delete cohort
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Cohort ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Delete members first
+    await db.cohortMember.deleteMany({
+      where: { cohortId: id }
+    })
+
+    // Delete scheduled tests
+    await db.scheduledTest.deleteMany({
+      where: { cohortId: id }
+    })
+
+    // Delete cohort
+    await db.cohort.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting cohort:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete cohort' },
+      { status: 500 }
+    )
+  }
+}
