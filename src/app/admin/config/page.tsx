@@ -40,12 +40,12 @@ export default function SystemConfigPage() {
   function getFrontendConfig(): ConfigItem[] {
     return [
       {
-        name: 'Featherless API Key',
-        key: 'FEATHERLESS_API_KEY',
+        name: 'Ollama Model',
+        key: 'OLLAMA_MODEL',
         status: 'unknown',
         required: true,
-        description: 'Required for AI-powered features (Cogni tutor, notes conversion, question parsing)',
-        setupLink: 'https://featherless.ai',
+        description: 'Local AI provider configuration (default: phi3).',
+        setupLink: 'https://ollama.com/library/phi3',
       },
       {
         name: 'Supabase URL',
@@ -188,7 +188,7 @@ export default function SystemConfigPage() {
                     className="text-blue-500 p-0 h-auto"
                     onClick={() => window.open(item.setupLink, '_blank')}
                   >
-                    Get API Key <ExternalLink size={14} className="ml-1" />
+                    Setup Guide <ExternalLink size={14} className="ml-1" />
                   </Button>
                 )}
               </CardContent>
@@ -236,18 +236,18 @@ export default function SystemConfigPage() {
             <div className="grid gap-3">
               <FeatureStatus
                 name="Cogni AI Tutor"
-                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
-                requirement="Requires FEATHERLESS_API_KEY"
+                enabled={config.find(c => c.key === 'OLLAMA_MODEL')?.status === 'configured'}
+                requirement="Requires local Ollama (phi3)"
               />
               <FeatureStatus
                 name="Notes Converter"
-                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
-                requirement="Requires FEATHERLESS_API_KEY"
+                enabled={config.find(c => c.key === 'OLLAMA_MODEL')?.status === 'configured'}
+                requirement="Requires local Ollama (phi3)"
               />
               <FeatureStatus
                 name="Question Ingestion (OCR)"
-                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
-                requirement="Requires FEATHERLESS_API_KEY"
+                enabled={config.find(c => c.key === 'OLLAMA_MODEL')?.status === 'configured'}
+                requirement="Requires local Ollama (phi3)"
               />
               <FeatureStatus
                 name="Tests & Practice"

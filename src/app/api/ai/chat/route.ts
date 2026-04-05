@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callFeatherlessChat, getFeatherlessApiKey, getFeatherlessModel } from '@/lib/featherless';
+import { callFeatherlessChat, getFeatherlessModel } from '@/lib/featherless';
 import type { FeatherlessMessage } from '@/lib/featherless';
 
 type ChatRole = 'system' | 'user' | 'assistant';
@@ -118,16 +118,8 @@ export async function POST(request: Request) {
       { role: 'user', content: message },
     ];
 
-    const key = getFeatherlessApiKey();
-    if (!key) {
-      return NextResponse.json(
-        toErrorResponse('AI service not configured. Set FEATHERLESS_API_KEY or STITCH_API_KEY in your environment.'),
-        { status: 503 }
-      );
-    }
-
     const aiMessage = await callFeatherlessChat(modelMessages, {
-      model: getFeatherlessModel('meta-llama/Meta-Llama-3.1-8B-Instruct'),
+      model: getFeatherlessModel('phi3'),
       temperature: 0.6,
       max_tokens: 1200,
     });

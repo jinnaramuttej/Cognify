@@ -20,13 +20,11 @@ const REQUIRED_ENV = [
   "SUPABASE_URL",
   "SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "FEATHERLESS_API_KEY",
 ] as const;
 
 const FALLBACKS: Record<string, string[]> = {
   SUPABASE_URL: ["NEXT_PUBLIC_SUPABASE_URL"],
   SUPABASE_ANON_KEY: ["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
-  FEATHERLESS_API_KEY: ["STITCH_API_KEY", "AI_API_KEY"],
 };
 
 function isPresent(value: string | undefined): boolean {
@@ -64,6 +62,6 @@ export function runEnvChecker(): CheckerResult {
     name: "Environment",
     ok: errorCount === 0,
     issues,
-    summary: `${REQUIRED_ENV.length} required keys checked (${errorCount} errors, ${warningCount} warnings).`,
+    summary: `${REQUIRED_ENV.length} required keys checked (${errorCount} errors, ${warningCount} warnings). AI provider uses local Ollama model ${process.env.OLLAMA_MODEL || 'phi3'}.`,
   };
 }

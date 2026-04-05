@@ -12,12 +12,12 @@ export async function GET(request: NextRequest) {
   try {
     const config = [
       {
-        name: 'Featherless API Key',
-        key: 'FEATHERLESS_API_KEY',
-        status: (process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY) ? 'configured' : 'missing',
+        name: 'Ollama Model',
+        key: 'OLLAMA_MODEL',
+        status: 'configured',
         required: true,
-        description: 'Required for AI-powered features (Cogni tutor, notes conversion, question parsing). STITCH_API_KEY is accepted as an alias.',
-        setupLink: 'https://featherless.ai',
+        description: 'AI runs locally via Ollama. Default model is phi3 (set OLLAMA_MODEL to override).',
+        setupLink: 'https://ollama.com/library/phi3',
       },
       {
         name: 'Supabase URL',

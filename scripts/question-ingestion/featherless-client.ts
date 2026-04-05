@@ -1,54 +1,103 @@
-const FEATHERLESS_CHAT_COMPLETIONS_URL =
-  process.env.FEATHERLESS_CHAT_COMPLETIONS_URL?.trim() ||
-  'https://api.featherless.ai/v1/chat/completions';
+const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL?.trim() || 'http://127.0.0.1:11434';
 
 export interface FeatherlessMessage {
   role: 'system' | 'user' | 'assistant';
   content: string | Array<Record<string, unknown>>;
 }
 
-export function getFeatherlessApiKey() {
-  return process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY || null;
+interface OllamaMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 }
 
-export function getFeatherlessModel(defaultModel: string) {
-  return (
-    process.env.FEATHERLESS_MODEL?.trim() ||
-    process.env.STITCH_MODEL?.trim() ||
-    process.env.AI_MODEL?.trim() ||
-    defaultModel
-  );
+function extractDataUrlBase64(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const marker = 'base64,';
+  const idx = value.indexOf(marker);
+  if (idx === -1) {
+    return null;
+  }
+  return value.slice(idx + marker.length).trim() || null;
+}
+
+function normalizeMessageContent(content: FeatherlessMessage['content']): string {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  const textParts: string[] = [];
+
+  for (const part of content) {
+    if (!part || typeof part !== 'object') {
+      continue;
+    }
+
+    const candidateType = (part as { type?: unknown }).type;
+    if (candidateType === 'text') {
+      const text = (part as { text?: unknown }).text;
+      if (typeof text === 'string' && text.trim()) {
+        textParts.push(text.trim());
+      }
+      continue;
+    }
+
+    if (candidateType === 'image_url') {
+      const imageUrl = (part as { image_url?: { url?: unknown } }).image_url?.url;
+      const base64 = extractDataUrlBase64(imageUrl);
+      if (base64) {
+        textParts.push('[Image content omitted for phi3 text model]');
+      }
+    }
+  }
+
+  return textParts.join('\n').trim() || 'Analyze the provided content.';
+}
+
+function toOllamaMessages(messages: FeatherlessMessage[]): OllamaMessage[] {
+  return messages.map((message) => {
+    const normalizedText = normalizeMessageContent(message.content);
+    return {
+      role: message.role,
+      content: normalizedText,
+    };
+  });
+}
+
+export function getFeatherlessApiKey() {
+  return process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY || 'OLLAMA_LOCAL';
+}
+
+export function getFeatherlessModel(_defaultModel: string) {
+  return process.env.OLLAMA_MODEL?.trim() || 'phi3';
 }
 
 export async function callFeatherlessChat(
   messages: FeatherlessMessage[],
   options?: { model?: string; temperature?: number; max_tokens?: number; response_format?: unknown }
 ): Promise<string> {
-  const apiKey = getFeatherlessApiKey();
-  if (!apiKey) {
-    throw new Error('FEATHERLESS_API_KEY (or STITCH_API_KEY / AI_API_KEY) is not configured.');
-  }
-
-  const response = await fetch(FEATHERLESS_CHAT_COMPLETIONS_URL, {
+  const response = await fetch(`${OLLAMA_BASE_URL.replace(/\/$/, '')}/api/chat`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: getFeatherlessModel(options?.model || 'meta-llama/Meta-Llama-3.1-8B-Instruct'),
-      messages,
-      temperature: options?.temperature ?? 0.1,
-      max_tokens: options?.max_tokens ?? 3000,
-      ...(options?.response_format ? { response_format: options.response_format } : {}),
+      model: getFeatherlessModel(options?.model || 'phi3'),
+      messages: toOllamaMessages(messages),
+      stream: false,
+      options: {
+        temperature: options?.temperature ?? 0.1,
+        num_predict: options?.max_tokens ?? 3000,
+      },
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Featherless API error (${response.status}): ${errorText}`);
+    throw new Error(`Ollama error (${response.status}): ${errorText}`);
   }
 
   const data = await response.json();
-  return data?.choices?.[0]?.message?.content ?? '';
+  return String(data?.message?.content ?? data?.response ?? '');
 }

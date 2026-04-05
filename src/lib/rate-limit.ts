@@ -77,15 +77,7 @@ export function checkEnvConfig(): { missing: string[]; configured: string[] } {
     const missing: string[] = [];
     const configured: string[] = [];
 
-    const featherlessConfigured = Boolean(
-        process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY
-    );
-
-    if (featherlessConfigured) {
-        configured.push('Featherless API Key');
-    } else {
-        missing.push('Featherless API Key');
-    }
+    configured.push(`Ollama (${process.env.OLLAMA_MODEL?.trim() || 'phi3'})`);
 
     const checks = [
         { key: 'NEXT_PUBLIC_SUPABASE_URL', label: 'Supabase URL' },
