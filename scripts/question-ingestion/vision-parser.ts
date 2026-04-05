@@ -1,7 +1,7 @@
 /**
- * Vision Parser — Uses Gemini Vision API to interpret page layouts from scanned PDFs
+ * Vision Parser — Uses Featherless vision models to interpret page layouts from scanned PDFs
  * 
- * Sends page images directly to Gemini for visual understanding of:
+ * Sends page images directly to Featherless for visual understanding of:
  * - Question boundaries and numbering
  * - Option blocks (A/B/C/D)
  * - Diagrams and figures
@@ -10,6 +10,7 @@
  */
 
 import * as fs from 'fs';
+import { callFeatherlessChat, getFeatherlessApiKey, getFeatherlessModel } from './featherless-client';
 
 export interface VisionBlock {
     type: 'question' | 'options' | 'diagram' | 'equation' | 'answer' | 'header' | 'unknown';
@@ -61,16 +62,16 @@ Rules:
 - Return ONLY valid JSON`;
 
 /**
- * Send a page image to Gemini Vision API for analysis.
+ * Send a page image to Featherless vision API for analysis.
  */
 export async function parsePageWithVision(
     imagePath: string,
     pageNumber: number,
     context?: { exam?: string; subject?: string; year?: number }
 ): Promise<VisionPageResult> {
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const apiKey = getFeatherlessApiKey();
     if (!apiKey) {
-        throw new Error('GEMINI_API_KEY or GOOGLE_API_KEY not set in environment');
+        throw new Error('FEATHERLESS_API_KEY (or STITCH_API_KEY / AI_API_KEY) not set in environment');
     }
 
     const imageBuffer = fs.readFileSync(imagePath);
@@ -81,41 +82,25 @@ export async function parsePageWithVision(
         ? `\nContext: This is from ${context.exam || 'competitive exam'}, Subject: ${context.subject || 'unknown'}, Year: ${context.year || 'unknown'}`
         : '';
 
-    const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    const rawText = await callFeatherlessChat([
         {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        {
-                            inlineData: {
-                                mimeType,
-                                data: base64Image,
-                            },
-                        },
-                        {
-                            text: `${VISION_SYSTEM_PROMPT}${contextInfo}\n\nAnalyze this exam page image and extract all questions.`,
-                        },
-                    ],
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 8192,
-                    responseMimeType: 'application/json',
+            role: 'user',
+            content: [
+                {
+                    type: 'image_url',
+                    image_url: { url: `data:${mimeType};base64,${base64Image}` },
                 },
-            }),
-        }
-    );
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Gemini Vision API error (${response.status}): ${errorText}`);
-    }
-
-    const data = await response.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{"questions":[]}';
+                {
+                    type: 'text',
+                    text: `${VISION_SYSTEM_PROMPT}${contextInfo}\n\nAnalyze this exam page image and extract all questions. Return only valid JSON.`,
+                },
+            ],
+        },
+    ], {
+        model: getFeatherlessModel('meta-llama/Llama-3.2-11B-Vision-Instruct'),
+        temperature: 0.1,
+        max_tokens: 8192,
+    });
 
     try {
         const parsed = JSON.parse(rawText);
@@ -137,7 +122,7 @@ export async function parsePageWithVision(
             rawResponse: rawText,
         };
     } catch (e: any) {
-        console.error(`❌ Page ${pageNumber}: Failed to parse Vision response: ${e.message}`);
+        console.error(`❌ Page ${pageNumber}: Failed to parse vision response: ${e.message}`);
         return {
             pageNumber,
             blocks: [],

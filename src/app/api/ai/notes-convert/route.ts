@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { callFeatherlessChat, getFeatherlessApiKey, getFeatherlessModel } from '@/lib/featherless';
 import { checkRateLimit, validateInput } from '@/lib/rate-limit';
 
 /**
  * AI Notes Conversion API Route
  * 
  * Accepts notes text + conversion type, returns structured output.
- * Uses Groq API (llama-3.1-8b-instant) matching existing Cognify AI pattern.
+ * Uses Featherless chat completions matching existing Cognify AI pattern.
  * Rate limited: 20 requests/user/hour
  */
 
@@ -26,17 +25,6 @@ const PROMPTS: Record<string, string> = {
 
     keypoints: `Extract the most important key points from the following notes. Return a JSON array where each item has: "point" (string) and "importance" ("high", "medium", or "low"). Return ONLY valid JSON, no other text.`,
 };
-
-function getGroqKey(): string | null {
-    if (process.env.GROQ_API_KEY) return process.env.GROQ_API_KEY;
-    try {
-        const envPath = path.join(process.cwd(), 'src', 'app', 'ai', 'ai', 'backend', '.env');
-        const raw = fs.readFileSync(envPath, 'utf8');
-        const m = raw.match(/^GROQ_API_KEY=(.+)$/m);
-        if (m) return m[1].trim();
-    } catch { }
-    return null;
-}
 
 function extractJSON(text: string): any {
     // Try to find JSON array or object in the response
@@ -83,7 +71,7 @@ export async function POST(request: Request) {
             ? input_text.slice(0, 6000) + '\n[...truncated]'
             : input_text;
 
-        const key = getGroqKey();
+        const key = getFeatherlessApiKey();
 
         if (!key) {
             // Demo fallback
@@ -93,35 +81,14 @@ export async function POST(request: Request) {
             });
         }
 
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${key}`,
-            },
-            body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
-                messages: [
-                    { role: 'system', content: prompt },
-                    { role: 'user', content: truncatedInput },
-                ],
-                temperature: 0.3,
-                max_tokens: 4000,
-            }),
+        const content = await callFeatherlessChat([
+            { role: 'system', content: prompt },
+            { role: 'user', content: truncatedInput },
+        ], {
+            model: getFeatherlessModel('meta-llama/Meta-Llama-3.1-8B-Instruct'),
+            temperature: 0.3,
+            max_tokens: 4000,
         });
-
-        if (!res.ok) {
-            const errText = await res.text();
-            console.error('Groq API error:', errText);
-            return NextResponse.json({
-                result: getDemoResult(conversion_type),
-                demo: true,
-                error: 'AI service temporarily unavailable',
-            });
-        }
-
-        const data = await res.json();
-        const content = data?.choices?.[0]?.message?.content || '';
 
         try {
             const parsed = extractJSON(content);
@@ -135,7 +102,7 @@ export async function POST(request: Request) {
             });
         }
     } catch (err) {
-        console.error('/api/ai/notes-convert error:', err);
+        console.error('/api/ai/convert-notes error:', err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

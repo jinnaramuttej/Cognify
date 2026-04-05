@@ -12,20 +12,12 @@ export async function GET(request: NextRequest) {
   try {
     const config = [
       {
-        name: 'GROQ API Key',
-        key: 'GROQ_API_KEY',
-        status: process.env.GROQ_API_KEY ? 'configured' : 'missing',
+        name: 'Featherless API Key',
+        key: 'FEATHERLESS_API_KEY',
+        status: (process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY) ? 'configured' : 'missing',
         required: true,
-        description: 'Required for AI-powered features (Cogni tutor, notes conversion, question parsing)',
-        setupLink: 'https://console.groq.com/keys',
-      },
-      {
-        name: 'Gemini API Key',
-        key: 'GEMINI_API_KEY',
-        status: process.env.GEMINI_API_KEY ? 'configured' : 'missing',
-        required: false,
-        description: 'Alternative AI provider for enhanced features',
-        setupLink: 'https://makersuite.google.com/app/apikey',
+        description: 'Required for AI-powered features (Cogni tutor, notes conversion, question parsing). STITCH_API_KEY is accepted as an alias.',
+        setupLink: 'https://featherless.ai',
       },
       {
         name: 'Supabase URL',

@@ -5,6 +5,12 @@
  * for storage in question_text fields.
  */
 
+import {
+    callFeatherlessChat,
+    getFeatherlessApiKey,
+    getFeatherlessModel,
+} from './featherless-client';
+
 /**
  * Common equation patterns found in JEE/NEET papers.
  * Simple regex-based conversions for common patterns.
@@ -45,10 +51,10 @@ export function applyBasicLatex(text: string): string {
 }
 
 /**
- * Use Groq AI to convert complex equations to LaTeX.
+ * Use Featherless AI to convert complex equations to LaTeX.
  */
 export async function convertEquationsWithAI(text: string): Promise<string> {
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = getFeatherlessApiKey();
     if (!apiKey) {
         // Fall back to basic regex conversion
         return applyBasicLatex(text);
@@ -63,32 +69,18 @@ export async function convertEquationsWithAI(text: string): Promise<string> {
     }
 
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
+        const content = await callFeatherlessChat([
+            {
+                role: 'system',
+                content: 'Convert any mathematical expressions in the text to inline LaTeX (wrapped in $ delimiters). Preserve all non-mathematical text exactly. Only respond with the converted text, nothing else.',
             },
-            body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'Convert any mathematical expressions in the text to inline LaTeX (wrapped in $ delimiters). Preserve all non-mathematical text exactly. Only respond with the converted text, nothing else.',
-                    },
-                    { role: 'user', content: text },
-                ],
-                temperature: 0,
-                max_tokens: 2000,
-            }),
+            { role: 'user', content: text },
+        ], {
+            model: getFeatherlessModel('meta-llama/Meta-Llama-3.1-8B-Instruct'),
+            temperature: 0,
+            max_tokens: 2000,
         });
-
-        if (!response.ok) {
-            return applyBasicLatex(text);
-        }
-
-        const data = await response.json();
-        return data.choices[0]?.message?.content || applyBasicLatex(text);
+        return content || applyBasicLatex(text);
     } catch {
         return applyBasicLatex(text);
     }

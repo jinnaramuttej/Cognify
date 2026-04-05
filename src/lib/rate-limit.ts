@@ -74,14 +74,23 @@ export function validateInput(text: string): string | null {
  * Returns list of missing items.
  */
 export function checkEnvConfig(): { missing: string[]; configured: string[] } {
+    const missing: string[] = [];
+    const configured: string[] = [];
+
+    const featherlessConfigured = Boolean(
+        process.env.FEATHERLESS_API_KEY || process.env.STITCH_API_KEY || process.env.AI_API_KEY
+    );
+
+    if (featherlessConfigured) {
+        configured.push('Featherless API Key');
+    } else {
+        missing.push('Featherless API Key');
+    }
+
     const checks = [
-        { key: 'GROQ_API_KEY', label: 'Groq API Key' },
         { key: 'NEXT_PUBLIC_SUPABASE_URL', label: 'Supabase URL' },
         { key: 'NEXT_PUBLIC_SUPABASE_ANON_KEY', label: 'Supabase Anon Key' },
     ];
-
-    const missing: string[] = [];
-    const configured: string[] = [];
 
     for (const check of checks) {
         if (process.env[check.key]) {

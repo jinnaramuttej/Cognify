@@ -20,13 +20,13 @@ const REQUIRED_ENV = [
   "SUPABASE_URL",
   "SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "GROQ_API_KEY",
-  "GEMINI_API_KEY",
+  "FEATHERLESS_API_KEY",
 ] as const;
 
 const FALLBACKS: Record<string, string[]> = {
   SUPABASE_URL: ["NEXT_PUBLIC_SUPABASE_URL"],
   SUPABASE_ANON_KEY: ["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+  FEATHERLESS_API_KEY: ["STITCH_API_KEY", "AI_API_KEY"],
 };
 
 function isPresent(value: string | undefined): boolean {
@@ -47,14 +47,6 @@ export function runEnvChecker(): CheckerResult {
       issues.push({
         severity: "warning",
         message: `Missing ${key}, but ${fallbackFound} is set (compat mode).`,
-      });
-      continue;
-    }
-
-    if (key === "GEMINI_API_KEY") {
-      issues.push({
-        severity: "error",
-        message: "Missing GEMINI_API_KEY - AI tutor will not function.",
       });
       continue;
     }

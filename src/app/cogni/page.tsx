@@ -13,7 +13,6 @@ import {
   Lightbulb,
   RotateCcw,
   ChevronDown,
-  Zap,
   CheckCircle,
   Clock,
   TrendingUp,
@@ -27,7 +26,7 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { CogniSplineAvatar, type CogniState } from '@/components/cogni/CogniSplineAvatar'
+import { CogniSplineAvatar } from '@/components/cogni/CogniSplineAvatar'
 import { useAuth } from '@/contexts/AuthContext'
 
 // =====================================================
@@ -471,6 +470,7 @@ export default function CogniTutorPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [avatarState, setAvatarState] = useState<CogniAvatarState>('idle')
   const [session, setSession] = useState<SessionState>({
     sessionId: `session_${Date.now()}`,
@@ -493,17 +493,19 @@ export default function CogniTutorPage() {
 
   // Send message - uses /api/ai/chat (the existing Cognify API route)
   const handleSend = useCallback(async () => {
-    if (!input.trim() || isLoading) return
+    const trimmedInput = input.trim()
+    if (!trimmedInput || isLoading) return
 
     const userMessage: Message = {
       id: `msg_${Date.now()}`,
       role: 'user',
-      content: input.trim(),
+      content: trimmedInput,
       timestamp: new Date(),
     }
 
     setMessages((prev) => [...prev, userMessage])
     setInput('')
+    setError(null)
     setIsLoading(true)
     setAvatarState('thinking')
 
@@ -518,43 +520,44 @@ export default function CogniTutorPage() {
         }),
       })
 
-      const data = await response.json()
+      const data = (await response.json()) as Partial<ChatApiResponse>
 
-      if (data.reply) {
-        const assistantMessage: Message = {
-          id: `msg_${Date.now() + 1}`,
-          role: 'assistant',
-          content: data.reply,
-          timestamp: new Date(),
-          structured: data.structured,
-        }
+      if (!response.ok || data.status !== 'success' || !data.message || !data.structured) {
+        throw new Error(data.message || 'I could not complete that request right now. Please try again.')
+      }
 
-        setMessages((prev) => [...prev, assistantMessage])
-        setAvatarState('explaining')
+      const assistantMessage: Message = {
+        id: `msg_${Date.now() + 1}`,
+        role: 'assistant',
+        content: data.message,
+        timestamp: new Date(),
+        structured: data.structured,
+      }
 
-        if (data.topicsDiscussed?.length) {
-          setSession((prev) => ({
-            ...prev,
-            topic: data.topicsDiscussed[0],
-            stepsCompleted: prev.stepsCompleted + 1,
-          }))
-        }
+      setMessages((prev) => [...prev, assistantMessage])
+      setAvatarState('explaining')
 
-        setTimeout(() => setAvatarState('idle'), 2000)
-      } else {
-        throw new Error(data.error || 'Failed to get response')
+      const primaryTopic = data.topicsDiscussed?.[0]
+      if (primaryTopic) {
+        setSession((prev) => ({
+          ...prev,
+          topic: primaryTopic,
+          stepsCompleted: prev.stepsCompleted + 1,
+        }))
       }
     } catch {
-      setAvatarState('idle')
+      const userMessage = 'I could not generate a tutor response. Please try again in a moment.'
+      setError(userMessage)
       const errorMessage: Message = {
         id: `msg_error_${Date.now()}`,
         role: 'system',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: userMessage,
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
+      setAvatarState('idle')
     }
   }, [input, isLoading, messages, user?.id])
 
@@ -621,6 +624,12 @@ export default function CogniTutorPage() {
         </div>
       </div>
 
+      {error && (
+        <div className="shrink-0 px-6 py-2 bg-destructive/10 border-b border-destructive/20 text-destructive text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Main Content - Split Layout */}
       <div className="flex-1 flex overflow-hidden">
         {/* LEFT - Learning Workspace (65%) */}
@@ -685,7 +694,7 @@ export default function CogniTutorPage() {
                   </Avatar>
                   <div className={cn('flex-1', message.role === 'user' ? 'items-end' : 'items-start')}>
                     {message.role === 'assistant' && message.structured ? (
-                      <StructuredResponseRenderer response={message.structured} onFollowUpClick={(q) => setInput(q)} />
+                      <StructuredResponseRenderer response={message.structured} />
                     ) : (
                       <div
                         className={cn(
@@ -748,10 +757,22 @@ export default function CogniTutorPage() {
                     className="h-12 pr-24 text-sm"
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled
+                      title="Voice input coming soon"
+                      className="h-8 w-8 text-muted-foreground"
+                    >
                       <Mic className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled
+                      title="Image input coming soon"
+                      className="h-8 w-8 text-muted-foreground"
+                    >
                       <ImageIcon className="w-4 h-4" />
                     </Button>
                   </div>

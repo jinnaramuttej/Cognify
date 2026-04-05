@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server';
-import { getChatCompletionsURL, getPreferredModel, getUnifiedAIKey } from '@/lib/ai-provider';
+import { callFeatherlessChat, getFeatherlessApiKey, getFeatherlessModel } from '@/lib/featherless';
+import type { FeatherlessMessage } from '@/lib/featherless';
+
+type ChatRole = 'system' | 'user' | 'assistant';
+
+function isChatRole(value: unknown): value is ChatRole {
+  return value === 'system' || value === 'user' || value === 'assistant';
+}
 
 interface StructuredPayload {
   concept: string;
@@ -17,10 +24,10 @@ interface ChatResponse {
 function sanitizeHistory(history: unknown[] = []) {
   return history
     .filter(
-      (item): item is { role: string; content: string } =>
+      (item): item is { role: ChatRole; content: string } =>
         Boolean(item) &&
         typeof item === 'object' &&
-        typeof (item as { role?: unknown }).role === 'string' &&
+        isChatRole((item as { role?: unknown }).role) &&
         typeof (item as { content?: unknown }).content === 'string'
     )
     .map((item) => ({ role: item.role, content: item.content }));
@@ -75,8 +82,7 @@ function toSuccessResponse(userMessage: string, aiMessage: string): ChatResponse
   };
 }
 
-function toErrorResponse(): ChatResponse {
-  const message = 'Something went wrong. Please try again.';
+function toErrorResponse(message = 'Something went wrong. Please try again.'): ChatResponse {
   return {
     message,
     structured: {
@@ -106,40 +112,30 @@ export async function POST(request: Request) {
     }
 
     const safeHistory = sanitizeHistory(history);
-    const modelMessages = [
+    const modelMessages: FeatherlessMessage[] = [
       { role: 'system', content: systemPrompt },
       ...safeHistory,
       { role: 'user', content: message },
     ];
 
-    const key = getUnifiedAIKey();
+    const key = getFeatherlessApiKey();
     if (!key) {
-      const demoMessage = `Demo Cognify: I heard "${message}". Try asking for a concept breakdown.`;
-      return NextResponse.json(toSuccessResponse(message, demoMessage));
+      return NextResponse.json(
+        toErrorResponse('AI service not configured. Set FEATHERLESS_API_KEY or STITCH_API_KEY in your environment.'),
+        { status: 503 }
+      );
     }
 
-    const res = await fetch(getChatCompletionsURL(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: getPreferredModel('llama-3.1-8b-instant'),
-        messages: modelMessages,
-        temperature: 0.6,
-      }),
+    const aiMessage = await callFeatherlessChat(modelMessages, {
+      model: getFeatherlessModel('meta-llama/Meta-Llama-3.1-8B-Instruct'),
+      temperature: 0.6,
+      max_tokens: 1200,
     });
 
-    if (!res.ok) {
-      throw new Error(`AI provider returned ${res.status}`);
-    }
-
-    const payload = await res.json();
-    const aiMessage = payload?.choices?.[0]?.message?.content ?? 'I could not generate a response.';
     return NextResponse.json(toSuccessResponse(message, String(aiMessage)));
   } catch (error) {
     console.error('/api/ai/chat error:', error);
-    return NextResponse.json(toErrorResponse(), { status: 500 });
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+    return NextResponse.json(toErrorResponse(message), { status: 500 });
   }
 }

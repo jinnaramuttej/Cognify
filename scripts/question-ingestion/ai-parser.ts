@@ -1,8 +1,14 @@
 /**
- * AI Parser — Uses Groq API to extract structured questions from raw text
+ * AI Parser — Uses Featherless API to extract structured questions from raw text
  * 
  * Sends page text to an LLM and receives structured question objects.
  */
+
+import {
+    callFeatherlessChat,
+    getFeatherlessApiKey,
+    getFeatherlessModel,
+} from './featherless-client';
 
 export interface RawQuestion {
     question_text: string;
@@ -17,12 +23,10 @@ export interface RawQuestion {
     topic_hint?: string; // AI-detected topic name for syllabus mapping
 }
 
-interface GroqMessage {
+interface AIMessage {
     role: 'system' | 'user' | 'assistant';
     content: string;
 }
-
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const SYSTEM_PROMPT = `You are a competitive exam question parser for Indian exams (JEE Main, JEE Advanced, NEET, BITSAT).
 
@@ -56,45 +60,31 @@ Rules:
 - Return ONLY a JSON array of question objects. No other text.`;
 
 /**
- * Call Groq API with retry logic
+ * Call Featherless API with retry logic
  */
-async function callGroq(messages: GroqMessage[], retries = 3): Promise<string> {
-    const apiKey = process.env.GROQ_API_KEY;
+async function callAI(messages: AIMessage[], retries = 3): Promise<string> {
+    const apiKey = getFeatherlessApiKey();
     if (!apiKey) {
-        throw new Error('GROQ_API_KEY not set in environment');
+        throw new Error('FEATHERLESS_API_KEY (or STITCH_API_KEY / AI_API_KEY) not set in environment');
     }
 
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const response = await fetch(GROQ_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
-                    messages,
-                    temperature: 0.1,
-                    max_tokens: 8000,
-                    response_format: { type: 'json_object' },
-                }),
+            return await callFeatherlessChat(messages, {
+                model: getFeatherlessModel('meta-llama/Meta-Llama-3.1-8B-Instruct'),
+                temperature: 0.1,
+                max_tokens: 8000,
+                response_format: { type: 'json_object' },
             });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                if (response.status === 429 && attempt < retries) {
-                    const waitMs = Math.pow(2, attempt) * 1000;
-                    console.log(`⏳ Rate limited, waiting ${waitMs / 1000}s before retry...`);
-                    await new Promise(r => setTimeout(r, waitMs));
-                    continue;
-                }
-                throw new Error(`Groq API error (${response.status}): ${errorText}`);
-            }
-
-            const data = await response.json();
-            return data.choices[0]?.message?.content || '{"questions":[]}';
         } catch (error: any) {
+            const message = String(error?.message || error || 'unknown error');
+            const isRateLimited = /429|rate limit/i.test(message);
+            if (isRateLimited && attempt < retries) {
+                const waitMs = Math.pow(2, attempt) * 1000;
+                console.log(`⏳ Rate limited, waiting ${waitMs / 1000}s before retry...`);
+                await new Promise(r => setTimeout(r, waitMs));
+                continue;
+            }
             if (attempt === retries) throw error;
             console.log(`⚠️ Attempt ${attempt} failed: ${error.message}. Retrying...`);
             await new Promise(r => setTimeout(r, 1000 * attempt));
@@ -119,7 +109,7 @@ export async function parseQuestionsFromText(
         ? `\nContext: Exam=${context.exam || 'unknown'}, Subject=${context.subject || 'unknown'}, Year=${context.year || 'unknown'}`
         : '';
 
-    const messages: GroqMessage[] = [
+    const messages: AIMessage[] = [
         { role: 'system', content: SYSTEM_PROMPT },
         {
             role: 'user',
@@ -127,7 +117,7 @@ export async function parseQuestionsFromText(
         },
     ];
 
-    const responseText = await callGroq(messages);
+    const responseText = await callAI(messages);
 
     try {
         const parsed = JSON.parse(responseText);

@@ -37,45 +37,15 @@ export default function SystemConfigPage() {
   const [config, setConfig] = useState<ConfigItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkConfiguration();
-  }, []);
-
-  const checkConfiguration = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/system/config-status');
-      if (response.ok) {
-        const data = await response.json();
-        setConfig(data.config || []);
-      } else {
-        // Fallback to frontend-only check
-        setConfig(getFrontendConfig());
-      }
-    } catch (error) {
-      // Fallback
-      setConfig(getFrontendConfig());
-    }
-    setLoading(false);
-  };
-
-  const getFrontendConfig = (): ConfigItem[] => {
+  function getFrontendConfig(): ConfigItem[] {
     return [
       {
-        name: 'GROQ API Key',
-        key: 'GROQ_API_KEY',
+        name: 'Featherless API Key',
+        key: 'FEATHERLESS_API_KEY',
         status: 'unknown',
         required: true,
         description: 'Required for AI-powered features (Cogni tutor, notes conversion, question parsing)',
-        setupLink: 'https://console.groq.com/keys',
-      },
-      {
-        name: 'Gemini API Key',
-        key: 'GEMINI_API_KEY',
-        status: 'unknown',
-        required: false,
-        description: 'Alternative AI provider for enhanced features',
-        setupLink: 'https://makersuite.google.com/app/apikey',
+        setupLink: 'https://featherless.ai',
       },
       {
         name: 'Supabase URL',
@@ -100,7 +70,33 @@ export default function SystemConfigPage() {
         description: 'Run db/migrations/001_add_role_and_study_packs.sql in Supabase',
       },
     ];
-  };
+  }
+
+  async function checkConfiguration() {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/system/config-status');
+      if (response.ok) {
+        const data = await response.json();
+        setConfig(data.config || []);
+      } else {
+        // Fallback to frontend-only check
+        setConfig(getFrontendConfig());
+      }
+    } catch (error) {
+      // Fallback
+      setConfig(getFrontendConfig());
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void checkConfiguration();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -240,18 +236,18 @@ export default function SystemConfigPage() {
             <div className="grid gap-3">
               <FeatureStatus
                 name="Cogni AI Tutor"
-                enabled={config.find(c => c.key === 'GROQ_API_KEY')?.status === 'configured'}
-                requirement="Requires GROQ_API_KEY"
+                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
+                requirement="Requires FEATHERLESS_API_KEY"
               />
               <FeatureStatus
                 name="Notes Converter"
-                enabled={config.find(c => c.key === 'GROQ_API_KEY')?.status === 'configured'}
-                requirement="Requires GROQ_API_KEY"
+                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
+                requirement="Requires FEATHERLESS_API_KEY"
               />
               <FeatureStatus
                 name="Question Ingestion (OCR)"
-                enabled={config.find(c => c.key === 'GEMINI_API_KEY')?.status === 'configured'}
-                requirement="Requires GEMINI_API_KEY"
+                enabled={config.find(c => c.key === 'FEATHERLESS_API_KEY')?.status === 'configured'}
+                requirement="Requires FEATHERLESS_API_KEY"
               />
               <FeatureStatus
                 name="Tests & Practice"
