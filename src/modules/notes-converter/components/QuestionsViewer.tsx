@@ -6,15 +6,25 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, Eye } from 'lucide-react';
-import type { PracticeQuestion } from '../types/notes-types';
+import type { QuizQuestion } from '../types/notes-types';
 
 interface Props {
-    questions: PracticeQuestion[];
+    questions: QuizQuestion[];
 }
 
 export default function QuestionsViewer({ questions }: Props) {
     const [answers, setAnswers] = useState<Record<number, number>>({});
     const [revealed, setRevealed] = useState<Set<number>>(new Set());
+    const typeStyles = {
+        conceptual: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30',
+        application: 'bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30',
+        tricky: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30',
+    };
+    const relevanceStyles = {
+        high: 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30',
+        medium: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30',
+        low: 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30',
+    };
 
     const selectAnswer = (qIndex: number, optIndex: number) => {
         if (revealed.has(qIndex)) return;
@@ -55,7 +65,16 @@ export default function QuestionsViewer({ questions }: Props) {
                             <CardContent className="p-5 space-y-4">
                                 <div className="flex items-start gap-3">
                                     <Badge variant="secondary" className="mt-0.5 shrink-0">Q{qIndex + 1}</Badge>
-                                    <p className="text-foreground font-medium leading-relaxed">{q.question}</p>
+                                    <div className="space-y-2">
+                                        <div className="flex flex-wrap gap-2">
+                                            <Badge className={`border ${typeStyles[q.type]}`}>{q.type}</Badge>
+                                            <Badge className={`border ${relevanceStyles[q.examRelevance]}`}>{q.examRelevance}</Badge>
+                                            {q.topicTags.map((tag) => (
+                                                <Badge key={tag} variant="outline" className="capitalize">{tag}</Badge>
+                                            ))}
+                                        </div>
+                                        <p className="text-foreground font-medium leading-relaxed">{q.question}</p>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-2 ml-8">

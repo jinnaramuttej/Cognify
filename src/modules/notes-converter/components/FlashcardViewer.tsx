@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, RotateCcw, Shuffle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import type { Flashcard } from '../types/notes-types';
 
 interface Props {
@@ -17,6 +18,11 @@ export default function FlashcardViewer({ flashcards }: Props) {
     const [learned, setLearned] = useState<Set<string>>(new Set());
 
     const current = cards[index];
+    const relevanceStyles = {
+        high: 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30',
+        medium: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30',
+        low: 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30',
+    };
 
     const next = () => { setFlipped(false); setIndex((i) => Math.min(i + 1, cards.length - 1)); };
     const prev = () => { setFlipped(false); setIndex((i) => Math.max(i - 1, 0)); };
@@ -69,6 +75,18 @@ export default function FlashcardViewer({ flashcards }: Props) {
                                 : 'bg-card border-border'
                             } ${learned.has(current.front || String(index)) ? 'ring-2 ring-green-500/50' : ''}`}
                     >
+                        <div className="mb-4 flex flex-wrap justify-center gap-2">
+                            {current?.examRelevance && (
+                                <Badge className={`border ${relevanceStyles[current.examRelevance]}`}>
+                                    {current.examRelevance}
+                                </Badge>
+                            )}
+                            {current?.topicTags?.map((tag) => (
+                                <Badge key={tag} variant="secondary" className="capitalize">
+                                    {tag}
+                                </Badge>
+                            ))}
+                        </div>
                         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-4">
                             {flipped ? 'Answer' : 'Question'}
                         </span>

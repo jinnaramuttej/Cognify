@@ -1,78 +1,98 @@
 /**
- * Notes Converter Module — Types
+ * Notes Converter v1 frontend types
  */
 
-export type ConversionType =
-    | 'flashcards'
-    | 'questions'
-    | 'quiz'
-    | 'summary'
-    | 'mindmap'
-    | 'formulas'
-    | 'keypoints';
+export type ConversionType = 'flashcards' | 'summary' | 'quiz';
+export type SourceType = 'text' | 'pdf';
+export type DetectedExam = 'jee' | 'neet' | 'bitsat' | 'generic';
+export type ExamFocus = 'high' | 'medium' | 'low';
+export type ExamRelevance = 'high' | 'medium' | 'low';
+export type ProcessingStage =
+    | 'idle'
+    | 'extracting'
+    | 'reviewing'
+    | 'generating'
+    | 'review'
+    | 'ready'
+    | 'completed'
+    | 'failed';
+
+export interface SummaryConcept {
+    title: string;
+    explanation: string;
+    topicTags: string[];
+    examRelevance: ExamRelevance;
+}
+
+export interface SummaryResult {
+    quickSummary: string[];
+    coreConcepts: SummaryConcept[];
+    examTips: string[];
+}
 
 export interface Flashcard {
     id: string;
     front: string;
     back: string;
-    learned?: boolean;
+    topicTags: string[];
+    examRelevance: ExamRelevance;
 }
 
-export interface PracticeQuestion {
+export interface FlashcardResult {
+    cards: Flashcard[];
+}
+
+export interface QuizQuestion {
     id: string;
+    type: 'conceptual' | 'application' | 'tricky';
     question: string;
     options: string[];
     correctIndex: number;
     explanation: string;
+    topicTags: string[];
+    examRelevance: ExamRelevance;
 }
 
-export interface QuizQuestion extends PracticeQuestion {
-    userAnswer?: number;
+export interface QuizResult {
+    meta: {
+        questionCount: number;
+        distribution: {
+            conceptual: number;
+            application: number;
+            tricky: number;
+        };
+    };
+    questions: QuizQuestion[];
 }
 
-export interface SummarySection {
-    heading: string;
-    content: string;
+export interface OutputMap {
+    summary: SummaryResult;
+    flashcards: FlashcardResult;
+    quiz: QuizResult;
 }
 
-export interface MindMapNode {
-    id: string;
-    label: string;
-    children: MindMapNode[];
+export interface IngestResponse {
+    generationId: string;
+    sourceType: SourceType;
+    sourceName: string;
+    detectedExam: DetectedExam;
+    examFocus: ExamFocus;
+    extractedText: string;
+    normalizedText: string;
+    characterCount: number;
+    processingStage: 'review';
 }
 
-export interface FormulaEntry {
-    formula: string;
-    name: string;
-    explanation: string;
-    example?: string;
+export interface UpdateSourceResponse {
+    generationId: string;
+    normalizedText: string;
+    characterCount: number;
+    processingStage: 'ready';
 }
 
-export interface KeyPoint {
-    id: string;
-    point: string;
-    importance: 'high' | 'medium' | 'low';
-}
-
-export interface ConversionResult {
-    type: ConversionType;
-    data: Flashcard[] | PracticeQuestion[] | SummarySection[] | MindMapNode | FormulaEntry[] | KeyPoint[];
-    generatedAt: string;
-}
-
-export interface ConversionHistory {
-    id: string;
-    user_id: string;
-    input_text: string;
-    conversion_type: ConversionType;
-    generated_output: any;
-    created_at: string;
-}
-
-export interface NotesConverterState {
-    inputText: string;
-    selectedTool: ConversionType | null;
-    result: ConversionResult | null;
-    isGenerating: boolean;
-    error: string | null;
+export interface GenerateResponse<T extends ConversionType = ConversionType> {
+    generationId: string;
+    outputType: T;
+    result: OutputMap[T];
+    processingStage: 'completed';
 }
