@@ -1,139 +1,145 @@
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { NextResponse } from 'next/server';
+import { getChatCompletionsURL, getPreferredModel, getUnifiedAIKey } from '@/lib/ai-provider';
 
-const progressFile = path.join(process.cwd(), "src", "app", "ai", "ai", "backend", "progress.json");
-
-function loadProgress() {
-  try {
-    if (!fs.existsSync(progressFile)) {
-      fs.writeFileSync(progressFile, "{}");
-      return {};
-    }
-    const raw = fs.readFileSync(progressFile, "utf8").trim();
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch (e) {
-    fs.writeFileSync(progressFile, "{}");
-    return {};
-  }
+interface StructuredPayload {
+  concept: string;
+  steps: string[];
+  finalAnswer: string;
 }
 
-function saveProgress(data: any) {
-  fs.writeFileSync(progressFile, JSON.stringify(data, null, 2));
+interface ChatResponse {
+  message: string;
+  structured: StructuredPayload;
+  topicsDiscussed: string[];
+  status: 'success' | 'error';
 }
 
-function sanitizeHistory(history: any[] = []) {
+function sanitizeHistory(history: unknown[] = []) {
   return history
     .filter(
-      (m) =>
-        m && typeof m === "object" && typeof m.role === "string" && typeof m.content === "string"
+      (item): item is { role: string; content: string } =>
+        Boolean(item) &&
+        typeof item === 'object' &&
+        typeof (item as { role?: unknown }).role === 'string' &&
+        typeof (item as { content?: unknown }).content === 'string'
     )
-    .map((m) => ({ role: m.role, content: String(m.content) }));
+    .map((item) => ({ role: item.role, content: item.content }));
 }
 
-const systemPrompt = `
-You are Cognify, an AI tutor.
+function splitSentences(text: string) {
+  return text
+    .split(/\n+|(?<=[.!?])\s+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
 
+function buildStructured(messageText: string): StructuredPayload {
+  const parts = splitSentences(messageText);
+  const concept = parts[0] ?? 'Key Concept';
+  const stepCandidates = parts.slice(1, 5);
+  const steps = stepCandidates.length > 0
+    ? stepCandidates
+    : ['Understand the core idea.', 'Apply it step by step.', 'Verify the final result.'];
+  const finalAnswer = parts[parts.length - 1] ?? messageText;
+
+  return {
+    concept,
+    steps,
+    finalAnswer,
+  };
+}
+
+function extractTopics(inputMessage: string, aiMessage: string) {
+  const content = `${inputMessage} ${aiMessage}`.toLowerCase();
+  const tokens = content
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length >= 4);
+
+  const counts = new Map<string, number>();
+  for (const token of tokens) {
+    counts.set(token, (counts.get(token) ?? 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([token]) => token);
+}
+
+function toSuccessResponse(userMessage: string, aiMessage: string): ChatResponse {
+  return {
+    message: aiMessage,
+    structured: buildStructured(aiMessage),
+    topicsDiscussed: extractTopics(userMessage, aiMessage),
+    status: 'success',
+  };
+}
+
+function toErrorResponse(): ChatResponse {
+  const message = 'Something went wrong. Please try again.';
+  return {
+    message,
+    structured: {
+      concept: message,
+      steps: [message],
+      finalAnswer: message,
+    },
+    topicsDiscussed: [],
+    status: 'error',
+  };
+}
+
+const systemPrompt = `You are Cognify, an AI tutor.
 Rules:
-- Teach one concept at a time
-- Give examples
-- Ask a short quiz question
-- If wrong, explain differently
-- Be calm and encouraging
-`;
+- Teach one concept at a time.
+- Explain clearly in short steps.
+- Be calm and encouraging.`;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { message, history = [], tutorState = {}, userId = "default" } = body;
+    const message = typeof body?.message === 'string' ? body.message.trim() : '';
+    const history = Array.isArray(body?.history) ? body.history : [];
 
-    const progress = loadProgress();
-    const userProgress = progress[userId] || { subject: null, lessonIndex: 0, stage: "idle" };
+    if (!message) {
+      return NextResponse.json(toErrorResponse(), { status: 400 });
+    }
 
     const safeHistory = sanitizeHistory(history);
-
-    const messages = [
-      { role: "system", content: systemPrompt },
-      { role: "system", content: `Progress: ${JSON.stringify(userProgress)}` },
+    const modelMessages = [
+      { role: 'system', content: systemPrompt },
       ...safeHistory,
-      { role: "user", content: String(message) }
+      { role: 'user', content: message },
     ];
 
-    // Update progress heuristically
-    const lower = String(message).toLowerCase();
-    if (lower.includes("teach")) {
-      userProgress.subject = message;
-      userProgress.lessonIndex = 0;
-      userProgress.stage = "teaching";
-    } else if (lower === "next") {
-      userProgress.lessonIndex += 1;
-    } else if (lower.includes("quiz")) {
-      userProgress.stage = "quiz";
+    const key = getUnifiedAIKey();
+    if (!key) {
+      const demoMessage = `Demo Cognify: I heard "${message}". Try asking for a concept breakdown.`;
+      return NextResponse.json(toSuccessResponse(message, demoMessage));
     }
 
-    progress[userId] = userProgress;
-    saveProgress(progress);
-
-    // Attempt to get GROQ key from environment or backend .env (local dev fallback)
-    const key = (function getGroqKey() {
-      if (process.env.GROQ_API_KEY) return process.env.GROQ_API_KEY;
-      try {
-        const envPath = path.join(process.cwd(), "src", "app", "ai", "ai", "backend", ".env");
-        const raw = fs.readFileSync(envPath, "utf8");
-        const m = raw.match(/^GROQ_API_KEY=(.+)$/m);
-        if (m) return m[1].trim();
-      } catch (e) {}
-      return null;
-    })();
-
-    if (key) {
-      try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${key}`
-          },
-          body: JSON.stringify({ model: "llama-3.1-8b-instant", messages, temperature: 0.6 })
-        });
-
-        const js = await res.json();
-        const reply = js?.choices?.[0]?.message?.content ?? js?.reply ?? JSON.stringify(js);
-
-        return NextResponse.json({
-          reply,
-          tutorState: userProgress,
-          demo: false,
-          groqReachable: true
-        });
-      } catch (err) {
-        console.error("GROQ call failed:", err);
-        const messageText = err instanceof Error ? err.message : (typeof err === 'string' ? err : JSON.stringify(err) || 'Unknown error');
-        return NextResponse.json(
-          {
-            reply: "Tutor failed to reach Groq.",
-            tutorState: userProgress,
-            error: `Groq unreachable: ${messageText}`,
-            demo: false,
-            groqReachable: false
-          },
-          { status: 502 }
-        );
-      }
-    }
-
-    // Fallback demo reply (uses user's message)
-    const demoReply = `Demo Cognify: I heard "${String(message)}". Try: "Teach me SQL"`;
-    return NextResponse.json({
-      reply: demoReply,
-      tutorState: userProgress,
-      demo: true,
-      groqReachable: false
+    const res = await fetch(getChatCompletionsURL(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model: getPreferredModel('llama-3.1-8b-instant'),
+        messages: modelMessages,
+        temperature: 0.6,
+      }),
     });
 
-  } catch (err) {
-    console.error("/api/ai/chat error:", err);
-    return NextResponse.json({ reply: "Tutor failed internally." }, { status: 500 });
+    if (!res.ok) {
+      throw new Error(`AI provider returned ${res.status}`);
+    }
+
+    const payload = await res.json();
+    const aiMessage = payload?.choices?.[0]?.message?.content ?? 'I could not generate a response.';
+    return NextResponse.json(toSuccessResponse(message, String(aiMessage)));
+  } catch (error) {
+    console.error('/api/ai/chat error:', error);
+    return NextResponse.json(toErrorResponse(), { status: 500 });
   }
 }

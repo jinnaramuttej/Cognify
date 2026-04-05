@@ -48,6 +48,13 @@ interface StructuredResponse {
   finalAnswer: string
 }
 
+interface ChatApiResponse {
+  message: string
+  structured: StructuredResponse
+  topicsDiscussed: string[]
+  status: 'success' | 'error'
+}
+
 interface SessionState {
   sessionId: string
   topic: string | null
@@ -400,85 +407,43 @@ function InlineHintLadder({
 
 function StructuredResponseRenderer({
   response,
-  onFollowUpClick,
 }: {
   response: StructuredResponse
-  onFollowUpClick: (question: string) => void
 }) {
-  const [expandedStep, setExpandedStep] = useState<number | null>(null)
-
   return (
     <div className="space-y-4">
-      {/* Understanding */}
+      {/* Concept */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4 border border-blue-100 dark:border-blue-800">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-6 h-6 rounded-lg bg-blue-500 flex items-center justify-center">
             <Target className="w-3 h-3 text-white" />
           </div>
-          <span className="text-sm font-semibold text-blue-900 dark:text-blue-200">Understanding</span>
+          <span className="text-sm font-semibold text-blue-900 dark:text-blue-200">Concept</span>
         </div>
-        <p className="text-sm text-blue-800 dark:text-blue-300">{response.understanding}</p>
-      </motion.div>
-
-      {/* Strategy */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-gradient-to-r from-muted/50 to-blue-50 dark:from-muted/20 dark:to-blue-950/20 rounded-xl p-4 border border-border">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-6 h-6 rounded-lg bg-slate-600 flex items-center justify-center">
-            <Zap className="w-3 h-3 text-white" />
-          </div>
-          <span className="text-sm font-semibold text-foreground">Strategy</span>
-        </div>
-        <p className="text-sm text-muted-foreground">{response.strategy}</p>
+        <p className="text-sm text-blue-800 dark:text-blue-300">{response.concept}</p>
       </motion.div>
 
       {/* Steps */}
       <div className="space-y-2">
         {response.steps.map((step, index) => (
           <motion.div
-            key={step.stepNumber}
+            key={`${step}-${index}`}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.15 + index * 0.05 }}
-            className="bg-card rounded-xl border border-border overflow-hidden"
+            transition={{ delay: 0.1 + index * 0.05 }}
+            className="bg-card rounded-xl border border-border p-4"
           >
-            <button
-              onClick={() => setExpandedStep(expandedStep === step.stepNumber ? null : step.stepNumber)}
-              className={cn(
-                'w-full flex items-center gap-3 p-4 text-left transition-colors',
-                expandedStep === step.stepNumber ? 'bg-accent' : 'hover:bg-muted/50'
-              )}
+            <div className="flex items-start gap-3"
             >
               <div
-                className={cn(
-                  'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold',
-                  step.isKey ? 'bg-gradient-to-br from-emerald-400 to-emerald-600 text-white' : 'bg-muted text-muted-foreground'
-                )}
+                className="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-sm font-bold bg-muted text-muted-foreground"
               >
-                {step.stepNumber}
+                {index + 1}
               </div>
               <div className="flex-1">
-                <p className="font-medium text-foreground">{step.title}</p>
-                <p className="text-xs text-muted-foreground line-clamp-1">{step.content}</p>
+                <p className="text-sm text-foreground">{step}</p>
               </div>
-              <ChevronDown className={cn('w-5 h-5 text-muted-foreground transition-transform', expandedStep === step.stepNumber && 'rotate-180')} />
-            </button>
-            <AnimatePresence>
-              {expandedStep === step.stepNumber && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="px-4 pb-4 pt-2 border-t border-border">
-                    <p className="text-sm text-muted-foreground mb-2">{step.explanation}</p>
-                    {step.formulas && step.formulas.length > 0 && (
-                      <div className="mt-2 p-3 bg-muted rounded-lg">
-                        <p className="text-xs text-muted-foreground mb-1">Key Formulas:</p>
-                        {step.formulas.map((formula, i) => (
-                          <code key={i} className="block text-sm text-primary font-mono">{formula}</code>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -493,19 +458,6 @@ function StructuredResponseRenderer({
         </div>
         <p className="text-lg font-bold text-emerald-900 dark:text-emerald-100">{response.finalAnswer}</p>
       </motion.div>
-
-      {/* Follow-up */}
-      {response.followUpQuestion && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="bg-card rounded-xl border border-primary/20 p-4">
-          <p className="text-sm text-muted-foreground mb-2">Quick Check:</p>
-          <button
-            onClick={() => onFollowUpClick(response.followUpQuestion)}
-            className="text-left w-full p-3 bg-accent rounded-lg hover:bg-accent/80 transition-colors"
-          >
-            <p className="text-sm font-medium text-primary">{response.followUpQuestion}</p>
-          </button>
-        </motion.div>
-      )}
     </div>
   )
 }
