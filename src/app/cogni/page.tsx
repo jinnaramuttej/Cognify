@@ -545,8 +545,10 @@ export default function CogniTutorPage() {
           stepsCompleted: prev.stepsCompleted + 1,
         }))
       }
-    } catch {
-      const userMessage = 'I could not generate a tutor response. Please try again in a moment.'
+    } catch (err) {
+      const userMessage = err instanceof Error && err.message
+        ? err.message
+        : 'I could not generate a tutor response. Please try again in a moment.'
       setError(userMessage)
       const errorMessage: Message = {
         id: `msg_error_${Date.now()}`,
