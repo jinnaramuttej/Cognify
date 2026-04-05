@@ -43,21 +43,9 @@ interface Message {
 }
 
 interface StructuredResponse {
-  understanding: string
-  strategy: string
-  steps: SolutionStep[]
+  concept: string
+  steps: string[]
   finalAnswer: string
-  followUpQuestion: string
-  topicsCovered: string[]
-}
-
-interface SolutionStep {
-  stepNumber: number
-  title: string
-  content: string
-  explanation: string
-  formulas?: string[]
-  isKey?: boolean
 }
 
 interface SessionState {
