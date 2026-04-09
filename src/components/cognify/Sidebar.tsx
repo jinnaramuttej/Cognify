@@ -17,6 +17,7 @@ import {
   BookOpen,
   Swords,
   GraduationCap,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -34,13 +35,13 @@ export default function Sidebar() {
   const effectiveCollapsed = !isHovered;
 
   const studentItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/tests', label: 'Tests', icon: BarChart },
-    { href: '/library', label: 'Library', icon: BookOpen },
-    { href: '/cogni', label: 'Cogni AI', icon: Bot },
-    { href: '/notes-converter', label: 'Notes Converter', icon: FileText },
-    { href: '/arena', label: 'Arena', icon: Swords },
-    { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/dashboard', label: 'Home Dashboard', icon: LayoutDashboard },
+    { href: '/tests', label: 'Tests & Mocks', icon: BarChart },
+    { href: '/analytics', label: 'Analytics & Progress', icon: TrendingUp },
+    { href: '/library', label: 'Syllabus Library', icon: BookOpen },
+    { href: '/cogni', label: 'Cogni AI Tutor', icon: Bot },
+    { href: '/notes-converter', label: 'Notes → Flashcards', icon: FileText },
+    { href: '/arena', label: 'Arena & Leaderboard', icon: Swords },
   ];
 
   const teacherItems = [

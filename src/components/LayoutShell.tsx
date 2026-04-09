@@ -54,8 +54,10 @@ function getShell(pathname: string): Shell {
         pathname.startsWith('/library') ||
         pathname.startsWith('/cogni') ||
         pathname.startsWith('/arena') ||
+        pathname.startsWith('/analytics') ||
         pathname.startsWith('/leaderboard') ||
         pathname.startsWith('/lectures') ||
+        pathname.startsWith('/notes') ||
         pathname.startsWith('/recommendations') ||
         pathname.startsWith('/progress-analytics') ||
         pathname.startsWith('/practice-quizzes') ||

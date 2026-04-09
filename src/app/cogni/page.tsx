@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAIStore } from '@/lib/stores/ai-store'
 import {
   Brain,
   Send,
@@ -467,43 +468,64 @@ function StructuredResponseRenderer({
 
 export default function CogniTutorPage() {
   const { user } = useAuth()
-  const [messages, setMessages] = useState<Message[]>([])
+
+  // ── Centralized AI Store ──────────────────────────────
+  const storeMessages = useAIStore((s) => s.messages)
+  const storeSession = useAIStore((s) => s.currentSession)
+  const storeHintsUsed = useAIStore((s) => s.hintsUsed)
+  const addMessage = useAIStore((s) => s.addMessage)
+  const incrementHint = useAIStore((s) => s.incrementHint)
+  const setTopic = useAIStore((s) => s.setTopic)
+  const incrementStep = useAIStore((s) => s.incrementStep)
+  const tickTimer = useAIStore((s) => s.tickTimer)
+  const newSession = useAIStore((s) => s.newSession)
+
+  // Bridge store messages to local Message type (store uses ISO strings, page uses Date)
+  const messages: Message[] = storeMessages.map((m) => ({
+    id: m.id,
+    role: m.role,
+    content: m.content,
+    timestamp: new Date(m.timestamp),
+    structured: m.structured,
+  }))
+  const hintsUsed: number[] = storeHintsUsed
+  const session: SessionState = {
+    sessionId: storeSession.sessionId,
+    topic: storeSession.topic,
+    hintCount: storeSession.hintCount,
+    confidence: null,
+    timeSpent: storeSession.timeSpent,
+    stepsCompleted: storeSession.stepsCompleted,
+    mastery: storeSession.mastery,
+  }
+
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [avatarState, setAvatarState] = useState<CogniAvatarState>('idle')
-  const [session, setSession] = useState<SessionState>({
-    sessionId: `session_${Date.now()}`,
-    topic: null,
-    hintCount: 0,
-    confidence: null,
-    timeSpent: 0,
-    stepsCompleted: 0,
-    mastery: 0.62,
-  })
-  const [hintsUsed, setHintsUsed] = useState<number[]>([])
 
-  // Timer
+  // Timer — ticks store session timer
   useEffect(() => {
     const interval = setInterval(() => {
-      setSession((prev) => ({ ...prev, timeSpent: prev.timeSpent + 1 }))
+      tickTimer()
     }, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [tickTimer])
 
   // Send message - uses /api/ai/chat (the existing Cognify API route)
   const handleSend = useCallback(async () => {
     const trimmedInput = input.trim()
     if (!trimmedInput || isLoading) return
 
-    const userMessage: Message = {
+    const now = new Date()
+    const userMsg = {
       id: `msg_${Date.now()}`,
-      role: 'user',
+      role: 'user' as const,
       content: trimmedInput,
-      timestamp: new Date(),
+      timestamp: now.toISOString(),
     }
 
-    setMessages((prev) => [...prev, userMessage])
+    addMessage(userMsg)
     setInput('')
     setError(null)
     setIsLoading(true)
@@ -514,7 +536,7 @@ export default function CogniTutorPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: userMsg.content,
           history: messages.slice(-10).map((m) => ({ role: m.role, content: m.content })),
           userId: user?.id || 'anonymous',
         }),
@@ -526,42 +548,38 @@ export default function CogniTutorPage() {
         throw new Error(data.message || 'I could not complete that request right now. Please try again.')
       }
 
-      const assistantMessage: Message = {
+      const assistantMsg = {
         id: `msg_${Date.now() + 1}`,
-        role: 'assistant',
+        role: 'assistant' as const,
         content: data.message,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         structured: data.structured,
       }
 
-      setMessages((prev) => [...prev, assistantMessage])
+      addMessage(assistantMsg)
       setAvatarState('explaining')
 
       const primaryTopic = data.topicsDiscussed?.[0]
       if (primaryTopic) {
-        setSession((prev) => ({
-          ...prev,
-          topic: primaryTopic,
-          stepsCompleted: prev.stepsCompleted + 1,
-        }))
+        setTopic(primaryTopic)
+        incrementStep()
       }
     } catch (err) {
-      const userMessage = err instanceof Error && err.message
+      const errMsg = err instanceof Error && err.message
         ? err.message
         : 'I could not generate a tutor response. Please try again in a moment.'
-      setError(userMessage)
-      const errorMessage: Message = {
+      setError(errMsg)
+      addMessage({
         id: `msg_error_${Date.now()}`,
         role: 'system',
-        content: userMessage,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
+        content: errMsg,
+        timestamp: new Date().toISOString(),
+      })
     } finally {
       setIsLoading(false)
       setAvatarState('idle')
     }
-  }, [input, isLoading, messages, user?.id])
+  }, [input, isLoading, messages, user?.id, addMessage, setTopic, incrementStep])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -581,10 +599,9 @@ export default function CogniTutorPage() {
   }, [])
 
   const handleHintRequest = useCallback((level: number) => {
-    setHintsUsed((prev) => [...prev, level])
-    setSession((prev) => ({ ...prev, hintCount: prev.hintCount + 1 }))
+    incrementHint(level)
     setInput((prev) => prev + ` [Hint Level ${level} requested]`)
-  }, [])
+  }, [incrementHint])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -622,6 +639,14 @@ export default function CogniTutorPage() {
               <Target className="w-4 h-4" />
               <span>{Math.round(session.mastery * 100)}% mastery</span>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={newSession}
+              className="rounded-lg h-8 text-xs gap-1.5"
+            >
+              <RotateCcw className="w-3 h-3" /> New Session
+            </Button>
           </div>
         </div>
       </div>
