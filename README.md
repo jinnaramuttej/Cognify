@@ -98,12 +98,12 @@ Every feature is built around answering one student question: **"What should I s
 - Students see assigned tests on their dashboard
 - Admin panel for platform-wide analytics and user management
 
-### 🎨 Dashboard & UX
+### 🧭 Dashboard & Experience
 - Live Study Session Timer with focus mode floater
 - Weekly streak tracker with fire animation
 - Animated timeline of recent study sessions
-- Responsive dark/light theme with Geist fonts
-- Framer Motion page transitions and micro-animations throughout
+- Responsive layout for mobile and desktop study flows
+- Consistent navigation and action placement across student workflows
 
 ---
 
@@ -113,12 +113,12 @@ Use this section as your planning board while building. It maps what already exi
 
 | Area | Route(s) | What the page currently has | Build / improve next |
 |------|----------|-----------------------------|----------------------|
-| **Landing + Marketing** | `/`, `/about`, `/features`, `/pricing`, `/contact`, `/blog`, `/careers`, `/courses`, `/lectures`, `/practice-tests`, `/practice-quizzes`, `/partners` | Marketing and product-discovery surface already scaffolded | Tighten conversion flow (hero → trust proof → CTA), unify visual system across all marketing pages |
+| **Landing + Marketing** | `/`, `/about`, `/features`, `/pricing`, `/contact`, `/blog`, `/careers`, `/courses`, `/lectures`, `/practice-tests`, `/practice-quizzes`, `/partners` | Marketing and product-discovery surface already scaffolded | Tighten conversion flow (hero → trust proof → CTA) and standardize content hierarchy across marketing pages |
 | **Auth** | `/auth`, `/auth/login`, `/auth/signup` | Entry points for sign-in and sign-up | Add better onboarding branching (student vs teacher), post-signup exam/class setup |
 | **Student Dashboard** | `/dashboard` | Live study session timer, assigned tests, streak + stats, rich hero cards | Add goal planner widget, today plan queue, and stronger empty states |
 | **Test Hub** | `/tests` | Test OS dashboard with snapshot cards, smart queue, category matrix | Connect all cards to real data and personalize recommendations from analytics |
 | **Test Creation** | `/tests/create` | Multi-step wizard (exam, subject/chapter, difficulty, timing, mode, PYQ filters) | Add presets (JEE Sprint, NEET Revision), validation hints, and saved templates |
-| **Test Execution + Analysis** | `/tests/[testId]`, `/tests/[testId]/analysis`, `/tests/results`, `/tests/history`, `/tests/analytics`, `/tests/active`, `/tests/mocks` | Attempt flow + post-test views are present with history and analytics pages | Normalize visual style across these pages and ensure every page uses the same performance vocabulary |
+| **Test Execution + Analysis** | `/tests/[testId]`, `/tests/[testId]/analysis`, `/tests/results`, `/tests/history`, `/tests/analytics`, `/tests/active`, `/tests/mocks` | Attempt flow + post-test views are present with history and analytics pages | Standardize data hierarchy and ensure every page uses the same performance vocabulary |
 | **Syllabus Library** | `/library`, `/library/[examId]/[subjectId]`, `/library/[examId]/[subjectId]/[chapterId]` | Exam tabs, subject cards, syllabus search, chapter drill-down routes | Add bookmarks/recently viewed + progress sync from test mistakes |
 | **AI Tutor (Cogni)** | `/cogni` | Full chat workspace with animated avatar states, session context, hints/mastery signals | Add conversation memory timeline, solved-problem notebook, and one-click "create test from this chat" |
 | **Notes Converter** | `/notes-converter` (and `/notes` redirects here) | 3-panel pipeline: ingest notes/PDF → review text → generate flashcards/quiz/summary | Add output export packs (PDF/Anki/CSV), source chunk traceability, and quality scoring |
@@ -137,57 +137,197 @@ Use this section as your planning board while building. It maps what already exi
 
 ---
 
-## 🎨 UI Direction Comparison (Choose a System, Not Just a Theme)
+## 📋 Page-by-Page MVP Scope
 
-Pick one primary direction and one fallback direction. Then implement page by page.
+This scope is intentionally design-agnostic. It defines what each page must do for an MVP release.
 
-| Direction | Visual Character | Best For | Risks | Suggested Type Pairing |
-|-----------|------------------|----------|-------|-------------------------|
-| **A. Precision Console** | Dense but clean data panels, sharp cards, restrained motion, high info clarity | Analytics, tests, teacher/admin dashboards | Can feel too "enterprise" if overdone | `Sora` (headings) + `IBM Plex Sans` (body) + `IBM Plex Mono` (numbers) |
-| **B. Momentum Coach** | Bold gradients, progress-driven UI, motivational surfaces, energetic CTAs | Dashboard, arena, test hub, streak experiences | Can become noisy without strict spacing rules | `Outfit` (headings/body) + `Space Mono` (timers/scores) |
-| **C. Scholar Notebook** | Editorial, paper-like surfaces, calm spacing, reading-first hierarchy | Library, notes converter, Cogni, long-form learning pages | May underwhelm on competitive/social pages | `Merriweather Sans` (headings) + `Source Sans 3` (body) + `JetBrains Mono` (data) |
+| Route | MVP Objective | Must-have functionality | Data/API dependency | MVP done when |
+|-------|---------------|-------------------------|---------------------|---------------|
+| `/` | Convert visitors into signed-in users | Exam-focused value proposition, clear CTAs, feature preview, trust proof | Static + marketing content | User can understand product and reach auth in one click |
+| `/auth/login`, `/auth/signup` | Reliable access and account creation | Email auth, validation, error handling, role-aware redirect | Supabase Auth | User can sign up/login and land on correct workspace |
+| `/dashboard` | Daily command center for students | Study session start/stop, assigned tests panel, streak/status summary, quick actions | `study_sessions`, `streaks`, assigned tests APIs | Student can start a session and continue study flow from one screen |
+| `/tests` | Entry point to test workflows | Test categories, recommendation queue, navigation to create/history/results | Test summary APIs | Student can choose and launch the next test path in < 2 clicks |
+| `/tests/create` | Configure tests safely | Exam/subject/chapter selection, difficulty/time/question count, validation, create action | `/api/tests/exams`, `/api/tests/subjects`, `/api/tests/chapters`, create APIs | User can create a valid test config with no broken states |
+| `/tests/[testId]` | Complete an attempt | Question navigation, answer save, timer, submit/finish flow | Attempt and answer APIs | User can finish a full test attempt and persist answers |
+| `/tests/[testId]/analysis` | Learn from mistakes | Accuracy by topic, mistakes list, suggested next actions | Analysis API + attempt data | User can identify weak topics and next recommended action |
+| `/tests/results`, `/tests/history` | View past performance | Search/filter attempts, score/accuracy/time summary, drill into analysis | `/api/tests/history` | User can find any attempt and open analysis quickly |
+| `/tests/analytics` | Monitor long-term performance | Trends, subject split, weak-topic highlights, recommendations | `/api/analytics` | User can see trend direction and priority weak areas |
+| `/library` and nested routes | Navigate syllabus hierarchy | Exam switch, subject/chapter drill-down, syllabus search | Library service APIs | User can browse from exam to chapter without dead ends |
+| `/cogni` | Get AI tutoring on demand | Chat input/output, session context, hint flow, fallback/error handling | Cogni AI endpoints | User can ask, receive help, and continue learning loop |
+| `/notes-converter` | Convert notes into study assets | Text/PDF ingest, review editable extraction, generate flashcards/quiz/summary, output cache | Notes ingestion + generation APIs | User can generate at least one output type from notes |
+| `/settings` | Manage account and learning preferences | Profile/security/privacy/notifications/targets/AI preferences, save feedback | Settings context + profile APIs | User can update settings and confirm persistence |
+| `/arena` | Enable social motivation | Leaderboard preview, streak status, squad management, challenge card | Social/challenge tables + APIs | User can join/create squad and see competition context |
+| `/leaderboard` | Rank visibility | Global ranking list, current user rank context, loading/empty states | `profiles`/ranking query | User can find own rank and compare with top users |
+| `/teacher` + `/teacher/*` | Teacher operations workspace | Batch creation, question operations, test assignment, teacher analytics, uploads | Teacher service + ingestion logs + tests data | Teacher can create batch and manage tests/questions end-to-end |
+| `/admin/config`, `/admin/system-health` | System controls and observability | Config management and health monitoring screens | Admin APIs/system checks | Admin can verify system status and update settings |
+| Policy pages | Compliance visibility | Privacy/terms/cookies/data-protection/compliance content | Static docs/content | Legal pages are accessible and versioned |
 
-### Recommended Hybrid for Cognify
+### MVP Build Sequence
 
-Use **B. Momentum Coach** as primary brand language and **A. Precision Console** for high-density data pages.
-
-| Page Cluster | Primary Direction | Secondary Direction |
-|--------------|-------------------|---------------------|
-| Dashboard, Arena, Leaderboard | B. Momentum Coach | A. Precision Console |
-| Tests (create, results, analytics, history) | A. Precision Console | B. Momentum Coach |
-| Library, Notes Converter, Cogni | C. Scholar Notebook | B. Momentum Coach |
-| Teacher/Admin operations | A. Precision Console | C. Scholar Notebook |
-| Marketing pages | B. Momentum Coach | C. Scholar Notebook |
+1. Auth + Dashboard + Test create/attempt/submit.
+2. Results/history/analysis + library integration.
+3. Cogni + notes converter.
+4. Arena/leaderboard.
+5. Teacher workflows.
+6. Admin and policy hardening.
 
 ---
 
-## 🧪 Design Comparison Workflow (So You Can Decide Fast)
+## 🧩 Component-Level Requirements Per Page
 
-Use this workflow to compare UI options without getting stuck.
+These are functional components, not visual prescriptions.
 
-1. Pick three representative pages: `/dashboard`, `/tests/create`, `/notes-converter`.
-2. Build one lightweight mock variant for each direction (A, B, C) on those pages only.
-3. Score each variant from 1-5 on the rubric below.
-4. Choose one primary direction and one secondary direction for the whole app.
-5. Freeze tokens (typography, spacing scale, radii, shadows, motion durations) before full implementation.
+### Shared components required on every app page
 
-### Scoring Rubric
+- Route guard or role gate where needed.
+- Data state handler: loading, empty, error, success.
+- Primary action block (single clear next action).
+- Notification/toast integration for async actions.
+- Telemetry hook point (page viewed, primary action clicked).
 
-| Criterion | What to ask | Weight |
-|-----------|-------------|--------|
-| Clarity | Can a student understand next action in < 3 seconds? | 30% |
-| Focus | Does the layout keep attention on exam tasks, not decoration? | 20% |
-| Data Readability | Are scores/time/accuracy readable at a glance? | 20% |
-| Mobile Usability | Is it comfortable on small screens for long sessions? | 20% |
-| Brand Distinctiveness | Does it look like Cognify, not a generic dashboard? | 10% |
+### `/dashboard`
 
-### Page Build Checklist (Living)
+- `DashboardHeader` (user context + day summary).
+- `StudySessionController` (start/stop, elapsed time, resume).
+- `AssignedTestsPanel` (list + open action).
+- `ProgressSnapshot` (streak, completion counters).
+- `QuickActionsPanel` (start test, open library, open Cogni).
 
-- [ ] Finalize IA: unify `/teacher/*` and `/teachers/*` strategy.
-- [ ] Finalize admin strategy: dedicated admin UI vs redirect model.
-- [ ] Add dedicated `/notes` workspace (separate from converter) if needed.
-- [ ] Standardize design tokens and motion specs across tests/dashboard/library.
-- [ ] Add "design direction" tags in PRs (A/B/C or Hybrid) to keep consistency.
+### `/tests`
+
+- `TestsHubHeader`.
+- `PerformanceSnapshotCards`.
+- `SmartRecommendationQueue`.
+- `TestCategoryGrid`.
+- `RecentAttemptMiniList`.
+
+### `/tests/create`
+
+- `TestConfigStepper`.
+- `ExamSelector`.
+- `SubjectChapterSelector`.
+- `DifficultyAndRulesPanel`.
+- `TimeQuestionControls`.
+- `ConfigValidationSummary`.
+- `CreateTestActionBar`.
+
+### `/tests/[testId]`
+
+- `AttemptHeader` (timer + progress).
+- `QuestionNavigator`.
+- `QuestionRenderer`.
+- `AnswerInputControl`.
+- `SaveAndSubmitControls`.
+- `AttemptRecoveryHandler` (reload/persist safeguards).
+
+### `/tests/[testId]/analysis`
+
+- `ResultSummaryCard`.
+- `TopicBreakdownTable`.
+- `MistakeReviewList`.
+- `TimeAnalysisPanel`.
+- `NextActionRecommendations`.
+
+### `/tests/results` and `/tests/history`
+
+- `AttemptFilters` (type/subject/date/search).
+- `AttemptList` or `AttemptCards`.
+- `AttemptSummaryStats`.
+- `OpenAnalysisAction`.
+
+### `/tests/analytics`
+
+- `TrendChartContainer`.
+- `SubjectPerformancePanel`.
+- `WeakTopicPanel`.
+- `TimeDistributionPanel`.
+- `RecommendationInsightsPanel`.
+
+### `/library` and nested routes
+
+- `ExamSwitcher`.
+- `SyllabusSearchBar`.
+- `SubjectGrid`.
+- `ChapterListPanel`.
+- `ConceptListPanel`.
+- `BreadcrumbPath`.
+
+### `/cogni`
+
+- `TutorSessionHeader`.
+- `ConversationThread`.
+- `PromptComposer`.
+- `HintAndSocraticActions`.
+- `SessionStatePanel` (mastery/hints/time context).
+- `ConversationPersistenceHooks`.
+
+### `/notes-converter`
+
+- `InputSourcePanel` (paste/upload).
+- `ExtractionReviewEditor`.
+- `ConverterToolSelector`.
+- `GenerationStatePanel`.
+- `OutputRenderer` (flashcards/quiz/summary).
+- `OutputExportActions`.
+
+### `/settings`
+
+- `SettingsSectionNav`.
+- `ProfileSectionForm`.
+- `SecuritySectionForm`.
+- `PreferencesSectionForm`.
+- `TargetsAndLearningSection`.
+- `DataTransparencySection`.
+- `SaveStatusIndicator`.
+
+### `/arena`
+
+- `ArenaHeader`.
+- `StreakStatusCard`.
+- `LeaderboardPreview`.
+- `SquadManagementPanel`.
+- `ChallengeCard`.
+- `ParticipationActions`.
+
+### `/leaderboard`
+
+- `LeaderboardHeader`.
+- `CurrentUserRankCard`.
+- `RankedUserList`.
+- `RankFilters` (optional for MVP if only global).
+
+### `/teacher` and `/teacher/*`
+
+- `TeacherWorkspaceHeader`.
+- `TeacherStatsStrip`.
+- `BatchManagementPanel`.
+- `QuestionBankPanel`.
+- `TestAssignmentPanel`.
+- `TeacherAnalyticsPanel`.
+- `UploadAndIngestionPanel`.
+
+### `/admin/config` and `/admin/system-health`
+
+- `AdminConfigForm`.
+- `FeatureTogglePanel`.
+- `HealthChecksPanel`.
+- `SystemEventsPanel`.
+
+### Policy pages
+
+- `PolicyDocumentLayout`.
+- `LastUpdatedMetadata`.
+- `SectionAnchorNavigation`.
+
+---
+
+## ✅ Structure-First Planning Checklist
+
+- [ ] Confirm final route ownership between `/teacher/*` and `/teachers/*`.
+- [ ] Confirm whether `/admin` remains redirect-only or becomes a true dashboard.
+- [ ] Finalize page-level MVP acceptance criteria with engineering + product.
+- [ ] Add missing functional components listed above as tracked tasks.
+- [ ] Create test coverage for create-attempt-submit-analyze critical path.
 
 ---
 
@@ -251,7 +391,7 @@ Cognify-Uttej/
 ├── src/
 │   ├── app/                    # Next.js App Router — all pages & API routes
 │   │   ├── layout.tsx          # Global root layout (singleton)
-│   │   ├── globals.css         # Design system tokens (TailwindCSS v4)
+│   │   ├── globals.css         # Global app styles and shared UI tokens
 │   │   ├── dashboard/          # Student dashboard + study session tracker
 │   │   ├── tests/              # Test engine (create, active, results, history)
 │   │   ├── library/            # Syllabus browser
@@ -431,36 +571,17 @@ A `Caddyfile` is included for production HTTPS reverse proxy setup.
 
 ---
 
-## 📐 Design System
+## 🧱 Interface Standards (Design-Agnostic)
 
-Cognify uses **TailwindCSS v4** with a CSS custom property token system:
+Use these implementation constraints while exploring multiple visual themes.
 
-```css
-/* Light mode */
-:root {
-  --primary:    hsl(221.2 83.2% 53.3%);   /* Cognify Blue */
-  --background: hsl(210 40% 98%);
-  --foreground: hsl(222.2 84% 4.9%);
-}
-
-/* Dark mode */
-.dark {
-  --primary:    hsl(217.2 91.2% 59.8%);
-  --background: hsl(222.2 84% 4.9%);
-  --foreground: hsl(210 40% 98%);
-}
-```
-
-**Animation utilities available globally:**
-
-| Class | Effect |
-|-------|--------|
-| `.animate-fadeInUp` | Fade + slide up entrance |
-| `.animate-float` | 8s floating loop |
-| `.smooth-hover` | 180ms ease transitions |
-| `.hover-lift` | `translateY(-3px)` on hover |
-| `.blue-glow` | Blue box-shadow neon glow |
-| `.neon-edge` | Glowing border effect |
+- Keep route structure and component responsibilities stable across design variants.
+- Use a consistent state model on each page: loading, empty, success, error.
+- Keep primary actions in predictable locations on every route.
+- Avoid coupling business logic to visual components.
+- Ensure mobile and desktop interactions follow the same user flow.
+- Keep analytics event names stable even if UI changes.
+- Define API contracts first, then renderers.
 
 ---
 
