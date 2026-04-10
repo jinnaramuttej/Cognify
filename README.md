@@ -107,6 +107,90 @@ Every feature is built around answering one student question: **"What should I s
 
 ---
 
+## 🗺️ Product Surface Map (Pages, Scope, and Build Plan)
+
+Use this section as your planning board while building. It maps what already exists and what should be improved next.
+
+| Area | Route(s) | What the page currently has | Build / improve next |
+|------|----------|-----------------------------|----------------------|
+| **Landing + Marketing** | `/`, `/about`, `/features`, `/pricing`, `/contact`, `/blog`, `/careers`, `/courses`, `/lectures`, `/practice-tests`, `/practice-quizzes`, `/partners` | Marketing and product-discovery surface already scaffolded | Tighten conversion flow (hero → trust proof → CTA), unify visual system across all marketing pages |
+| **Auth** | `/auth`, `/auth/login`, `/auth/signup` | Entry points for sign-in and sign-up | Add better onboarding branching (student vs teacher), post-signup exam/class setup |
+| **Student Dashboard** | `/dashboard` | Live study session timer, assigned tests, streak + stats, rich hero cards | Add goal planner widget, today plan queue, and stronger empty states |
+| **Test Hub** | `/tests` | Test OS dashboard with snapshot cards, smart queue, category matrix | Connect all cards to real data and personalize recommendations from analytics |
+| **Test Creation** | `/tests/create` | Multi-step wizard (exam, subject/chapter, difficulty, timing, mode, PYQ filters) | Add presets (JEE Sprint, NEET Revision), validation hints, and saved templates |
+| **Test Execution + Analysis** | `/tests/[testId]`, `/tests/[testId]/analysis`, `/tests/results`, `/tests/history`, `/tests/analytics`, `/tests/active`, `/tests/mocks` | Attempt flow + post-test views are present with history and analytics pages | Normalize visual style across these pages and ensure every page uses the same performance vocabulary |
+| **Syllabus Library** | `/library`, `/library/[examId]/[subjectId]`, `/library/[examId]/[subjectId]/[chapterId]` | Exam tabs, subject cards, syllabus search, chapter drill-down routes | Add bookmarks/recently viewed + progress sync from test mistakes |
+| **AI Tutor (Cogni)** | `/cogni` | Full chat workspace with animated avatar states, session context, hints/mastery signals | Add conversation memory timeline, solved-problem notebook, and one-click "create test from this chat" |
+| **Notes Converter** | `/notes-converter` (and `/notes` redirects here) | 3-panel pipeline: ingest notes/PDF → review text → generate flashcards/quiz/summary | Add output export packs (PDF/Anki/CSV), source chunk traceability, and quality scoring |
+| **Settings** | `/settings` | Advanced grouped settings: profile, security, privacy, notifications, billing, learning prefs, AI prefs, targets, data, connected services | Add profile completeness meter, audit trail, and clearer danger-zone actions |
+| **Arena + Competition** | `/arena`, `/leaderboard` | Leaderboard, streaks, squads, weekly challenges, social competition widgets | Add live challenge states, rewards economy, and anti-cheat/verification UX |
+| **Teacher Workspace** | `/teacher`, `/teacher/tests`, `/teacher/questions`, `/teacher/batches`, `/teacher/analytics`, `/teacher/upload` | Operational dashboard with stats, question distribution, batches, recent tests/imports | Add assignment templates, batch-level insights, and moderation tools |
+| **Alternate Teacher Routes** | `/teachers`, `/teachers/dashboard`, `/teachers/question-bank`, `/teachers/question-import` | Additional teacher-facing routes exist | Decide whether to merge into `/teacher/*` or keep both with clear role separation |
+| **Admin Surface** | `/admin`, `/admin/config`, `/admin/system-health` | `/admin` currently redirects to `/teacher` for admin/teacher users | Decide final admin IA (separate command center vs teacher-extended mode) |
+| **Policy / Compliance** | `/privacy-policy`, `/terms-of-service`, `/cookie-policy`, `/data-protection`, `/compliance` | Legal/compliance pages present | Add consistent legal layout and update cadence/version metadata |
+
+### Quick Status Notes
+
+- `Notes` page is intentionally redirected to notes converter until a dedicated notes experience is built.
+- `Admin` page currently acts as role-based redirect, not a separate admin dashboard UI.
+- `Settings` already has a broad section map; this is one of the most complete feature surfaces.
+
+---
+
+## 🎨 UI Direction Comparison (Choose a System, Not Just a Theme)
+
+Pick one primary direction and one fallback direction. Then implement page by page.
+
+| Direction | Visual Character | Best For | Risks | Suggested Type Pairing |
+|-----------|------------------|----------|-------|-------------------------|
+| **A. Precision Console** | Dense but clean data panels, sharp cards, restrained motion, high info clarity | Analytics, tests, teacher/admin dashboards | Can feel too "enterprise" if overdone | `Sora` (headings) + `IBM Plex Sans` (body) + `IBM Plex Mono` (numbers) |
+| **B. Momentum Coach** | Bold gradients, progress-driven UI, motivational surfaces, energetic CTAs | Dashboard, arena, test hub, streak experiences | Can become noisy without strict spacing rules | `Outfit` (headings/body) + `Space Mono` (timers/scores) |
+| **C. Scholar Notebook** | Editorial, paper-like surfaces, calm spacing, reading-first hierarchy | Library, notes converter, Cogni, long-form learning pages | May underwhelm on competitive/social pages | `Merriweather Sans` (headings) + `Source Sans 3` (body) + `JetBrains Mono` (data) |
+
+### Recommended Hybrid for Cognify
+
+Use **B. Momentum Coach** as primary brand language and **A. Precision Console** for high-density data pages.
+
+| Page Cluster | Primary Direction | Secondary Direction |
+|--------------|-------------------|---------------------|
+| Dashboard, Arena, Leaderboard | B. Momentum Coach | A. Precision Console |
+| Tests (create, results, analytics, history) | A. Precision Console | B. Momentum Coach |
+| Library, Notes Converter, Cogni | C. Scholar Notebook | B. Momentum Coach |
+| Teacher/Admin operations | A. Precision Console | C. Scholar Notebook |
+| Marketing pages | B. Momentum Coach | C. Scholar Notebook |
+
+---
+
+## 🧪 Design Comparison Workflow (So You Can Decide Fast)
+
+Use this workflow to compare UI options without getting stuck.
+
+1. Pick three representative pages: `/dashboard`, `/tests/create`, `/notes-converter`.
+2. Build one lightweight mock variant for each direction (A, B, C) on those pages only.
+3. Score each variant from 1-5 on the rubric below.
+4. Choose one primary direction and one secondary direction for the whole app.
+5. Freeze tokens (typography, spacing scale, radii, shadows, motion durations) before full implementation.
+
+### Scoring Rubric
+
+| Criterion | What to ask | Weight |
+|-----------|-------------|--------|
+| Clarity | Can a student understand next action in < 3 seconds? | 30% |
+| Focus | Does the layout keep attention on exam tasks, not decoration? | 20% |
+| Data Readability | Are scores/time/accuracy readable at a glance? | 20% |
+| Mobile Usability | Is it comfortable on small screens for long sessions? | 20% |
+| Brand Distinctiveness | Does it look like Cognify, not a generic dashboard? | 10% |
+
+### Page Build Checklist (Living)
+
+- [ ] Finalize IA: unify `/teacher/*` and `/teachers/*` strategy.
+- [ ] Finalize admin strategy: dedicated admin UI vs redirect model.
+- [ ] Add dedicated `/notes` workspace (separate from converter) if needed.
+- [ ] Standardize design tokens and motion specs across tests/dashboard/library.
+- [ ] Add "design direction" tags in PRs (A/B/C or Hybrid) to keep consistency.
+
+---
+
 ## 🏗️ Architecture Overview
 
 ```
