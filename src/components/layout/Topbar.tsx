@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import ProfileDropdown from '@/components/ui/ProfileDropdown'
 
 export type TopbarNavItem = {
   label: string
@@ -85,7 +86,7 @@ export function Topbar({
             >
               notifications
             </button>
-            <div className="h-8 w-8 cursor-pointer overflow-hidden rounded-full border border-[#49473F] bg-[#2A2A2A]" />
+            <ProfileDropdown />
           </>
         )}
       </div>
