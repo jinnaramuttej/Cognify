@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   description: "Master any subject with personalized learning, gamified engagement, and real-time insights. All at 1/10th cost of traditional tutoring.",
   keywords: ["Cognify", "AI Tutor", "Personalized Learning", "JEE", "NEET", "EdTech", "Online Learning"],
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg",
   },
   openGraph: {
     title: "Cognify - Your Personal AI Tutor",

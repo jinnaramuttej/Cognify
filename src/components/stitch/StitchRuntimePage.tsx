@@ -133,7 +133,19 @@ export default function StitchRuntimePage({ pageKey, bodyClassName, html, styles
   const setAITopic = useAIStore((state) => state.setTopic);
   const incrementAIStep = useAIStore((state) => state.incrementStep);
   const [busy, setBusy] = useState(false);
-  const supabase = useMemo(() => createClientComponentClient(), []);
+  const supabase = useMemo(
+    () =>
+      createClientComponentClient({
+        options: {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+            detectSessionInUrl: false,
+          },
+        },
+      }),
+    []
+  );
 
   useEffect(() => {
     if (user) setProfile(user);

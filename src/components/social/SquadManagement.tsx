@@ -14,7 +14,15 @@ export default function SquadManagement() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-    const supabase = createClientComponentClient();
+    const supabase = createClientComponentClient({
+        options: {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false,
+                detectSessionInUrl: false,
+            },
+        },
+    });
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();

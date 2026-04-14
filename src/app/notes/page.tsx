@@ -161,7 +161,7 @@ export default function NotesPage() {
 
       <div
         className="pointer-events-none fixed inset-0 z-[39] opacity-[0.03]"
-        style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}
+        style={{ backgroundImage: 'url("/noise.svg")' }}
       />
     </AppLayout>
   )

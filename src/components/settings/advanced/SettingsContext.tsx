@@ -85,7 +85,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const [settings, setSettings] = useState<AdvancedSettings>(defaultSettings);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const supabase = createClientComponentClient();
+    const supabase = createClientComponentClient({
+        options: {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false,
+                detectSessionInUrl: false,
+            },
+        },
+    });
 
     // Load preferences on mount
     useEffect(() => {

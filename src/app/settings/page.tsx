@@ -107,7 +107,7 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
+              <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <label className="space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#919191]">Full Name</span>
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                     className="w-full resize-none rounded-lg border border-transparent bg-[#353534] px-4 py-3 text-sm text-[#E5E2E1] outline-none transition-colors focus:border-[#49473F]"
                   />
                 </label>
-              </form>
+              </div>
             </article>
           </div>
 

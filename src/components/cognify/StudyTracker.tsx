@@ -11,6 +11,7 @@ export default function StudyTracker() {
     const { user, isAuthenticated } = useAuth();
     const startTimeRef = useRef<number>(Date.now());
     const lastSyncRef = useRef<number>(Date.now());
+    const networkDisabledRef = useRef<boolean>(false);
 
     useEffect(() => {
         if (!isAuthenticated || !user) return;
@@ -21,6 +22,7 @@ export default function StudyTracker() {
 
         const syncStudyTime = async (durationSeconds: number) => {
             if (durationSeconds < 10) return; // Don't sync tiny increments
+            if (networkDisabledRef.current) return;
 
             try {
                 // 1. Log the study session
@@ -84,6 +86,11 @@ export default function StudyTracker() {
                 const msg = err?.message ?? String(err);
                 const code = err?.code ?? 'unknown';
                 console.warn(`StudyTracker Sync skipped [${code}]: ${msg}`);
+
+                if (msg.toLowerCase().includes('failed to fetch')) {
+                    // Stop retrying for the rest of this tab session when network/DNS is down.
+                    networkDisabledRef.current = true;
+                }
             }
         };
 
