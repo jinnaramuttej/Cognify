@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -52,8 +52,24 @@ function animateCount(el: HTMLElement) {
 
 export default function LandingPage() {
   const [typedText, setTypedText] = useState('')
-  const { isAuthenticated, loading } = useAuth()
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const { isAuthenticated, loading, logout } = useAuth()
   const router = useRouter()
+  const profileMenuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) return
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!profileMenuRef.current) return
+      if (!profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => document.removeEventListener('mousedown', handleOutsideClick)
+  }, [isProfileMenuOpen])
 
   useEffect(() => {
     let phraseIndex = 0
@@ -172,12 +188,39 @@ export default function LandingPage() {
               >
                 notifications
               </button>
-              <button
-                onClick={() => router.push('/settings')}
-                className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high"
-              >
-                account_circle
-              </button>
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  aria-expanded={isProfileMenuOpen}
+                  aria-haspopup="menu"
+                  onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+                  className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high"
+                >
+                  account_circle
+                </button>
+
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 top-full z-50 mt-2 w-40 rounded-md border border-white/10 bg-[#1C1B1B]/95 p-2 shadow-2xl backdrop-blur-xl">
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false)
+                        router.push('/settings')
+                      }}
+                      className="block w-full rounded-md px-3 py-2 text-left text-sm text-[#CBC6BC] transition-colors hover:bg-surface-container-high hover:text-primary-fixed"
+                    >
+                      Settings
+                    </button>
+                    <button
+                      onClick={async () => {
+                        setIsProfileMenuOpen(false)
+                        await logout()
+                      }}
+                      className="block w-full rounded-md px-3 py-2 text-left text-sm text-[#CBC6BC] transition-colors hover:bg-surface-container-high hover:text-primary-fixed"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           )}
 
