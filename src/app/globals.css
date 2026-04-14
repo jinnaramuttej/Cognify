@@ -1,12 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@source "../../.stitch/11699267970337931253/*.html";
 
 @theme {
   --color-border: var(--border);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,9 +40,62 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-outline-variant: var(--stitch-outline-variant);
+  --color-error: var(--stitch-error);
+  --color-inverse-primary: var(--stitch-inverse-primary);
+  --color-on-tertiary-fixed-variant: var(--stitch-on-tertiary-fixed-variant);
+  --color-surface-dim: var(--stitch-surface-dim);
+  --color-primary-container: var(--stitch-primary-container);
+  --color-on-secondary-fixed-variant: var(--stitch-on-secondary-fixed-variant);
+  --color-on-surface-variant: var(--stitch-on-surface-variant);
+  --color-surface-variant: var(--stitch-surface-variant);
+  --color-on-secondary-fixed: var(--stitch-on-secondary-fixed);
+  --color-on-primary: var(--stitch-on-primary);
+  --color-inverse-on-surface: var(--stitch-inverse-on-surface);
+  --color-secondary-dim: var(--stitch-secondary-dim);
+  --color-inverse-surface: var(--stitch-inverse-surface);
+  --color-surface-container-high: var(--stitch-surface-container-high);
+  --color-tertiary-dim: var(--stitch-tertiary-dim);
+  --color-tertiary-container: var(--stitch-tertiary-container);
+  --color-on-error: var(--stitch-on-error);
+  --color-on-primary-container: var(--stitch-on-primary-container);
+  --color-surface-container: var(--stitch-surface-container);
+  --color-on-primary-fixed-variant: var(--stitch-on-primary-fixed-variant);
+  --color-primary-fixed: var(--stitch-primary-fixed);
+  --color-surface: var(--stitch-surface);
+  --color-secondary-fixed-dim: var(--stitch-secondary-fixed-dim);
+  --color-surface-bright: var(--stitch-surface-bright);
+  --color-outline: var(--stitch-outline);
+  --color-on-tertiary-container: var(--stitch-on-tertiary-container);
+  --color-tertiary-fixed-dim: var(--stitch-tertiary-fixed-dim);
+  --color-primary-fixed-dim: var(--stitch-primary-fixed-dim);
+  --color-on-tertiary-fixed: var(--stitch-on-tertiary-fixed);
+  --color-surface-container-low: var(--stitch-surface-container-low);
+  --color-on-error-container: var(--stitch-on-error-container);
+  --color-on-secondary-container: var(--stitch-on-secondary-container);
+  --color-on-secondary: var(--stitch-on-secondary);
+  --color-surface-container-highest: var(--stitch-surface-container-highest);
+  --color-secondary-container: var(--stitch-secondary-container);
+  --color-surface-container-lowest: var(--stitch-surface-container-lowest);
+  --color-error-container: var(--stitch-error-container);
+  --color-on-tertiary: var(--stitch-on-tertiary);
+  --color-primary-dim: var(--stitch-primary-dim);
+  --color-on-background: var(--stitch-on-background);
+  --color-error-dim: var(--stitch-error-dim);
+  --color-on-primary-fixed: var(--stitch-on-primary-fixed);
+  --color-surface-tint: var(--stitch-surface-tint);
+  --color-on-surface: var(--stitch-on-surface);
+  --color-secondary-fixed: var(--stitch-secondary-fixed);
+  --color-tertiary-fixed: var(--stitch-tertiary-fixed);
+  --color-tertiary: var(--stitch-tertiary);
+  --font-headline: "Newsreader", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-label: "Inter", system-ui, sans-serif;
 }
 
 :root {
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-newsreader: "Newsreader", Georgia, serif;
   --radius: 0.625rem;
   --background: hsl(210 40% 98%);
   --foreground: hsl(222.2 84% 4.9%);
@@ -75,6 +129,129 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+.stitch-scope {
+  --background: #0e0e0e;
+  --foreground: #e7e5e4;
+  --primary: #ccc6b9;
+  --primary-foreground: #434036;
+  --secondary: #9d9e9e;
+  --secondary-foreground: #1f2021;
+  --border: #404040;
+  --input: #404040;
+  --ring: #ccc6b9;
+  --stitch-outline-variant: #2d2d2d;
+  --stitch-error: #ed7f64;
+  --stitch-inverse-primary: #635f54;
+  --stitch-on-tertiary-fixed-variant: #666666;
+  --stitch-surface-dim: #0e0e0e;
+  --stitch-primary-container: #4a473c;
+  --stitch-on-secondary-fixed-variant: #5a5c5c;
+  --stitch-on-surface-variant: #acabaa;
+  --stitch-surface-variant: #1f1f1f;
+  --stitch-on-secondary-fixed: #3e4040;
+  --stitch-on-primary: #434036;
+  --stitch-inverse-on-surface: #565555;
+  --stitch-secondary-dim: #9d9e9e;
+  --stitch-inverse-surface: #fcf9f8;
+  --stitch-surface-container-high: #1f1f1f;
+  --stitch-tertiary-dim: #ecebea;
+  --stitch-tertiary-container: #ecebea;
+  --stitch-on-error: #450900;
+  --stitch-on-primary-container: #d6d0c2;
+  --stitch-surface-container: #161616;
+  --stitch-on-primary-fixed-variant: #5f5b50;
+  --stitch-primary-fixed: #e9e2d4;
+  --stitch-surface: #0e0e0e;
+  --stitch-secondary-fixed-dim: #d4d4d4;
+  --stitch-surface-bright: #2c2c2c;
+  --stitch-outline: #404040;
+  --stitch-on-tertiary-container: #565757;
+  --stitch-tertiary-fixed-dim: #e6e5e5;
+  --stitch-primary-fixed-dim: #dad4c6;
+  --stitch-on-tertiary-fixed: #494a4a;
+  --stitch-surface-container-low: #131313;
+  --stitch-on-error-container: #ff9b82;
+  --stitch-on-secondary-container: #bfbfbf;
+  --stitch-on-secondary: #1f2021;
+  --stitch-surface-container-highest: #252626;
+  --stitch-secondary-container: #3a3c3c;
+  --stitch-surface-container-lowest: #000000;
+  --stitch-error-container: #7e2b17;
+  --stitch-on-tertiary: #5e5f5f;
+  --stitch-primary-dim: #beb8ab;
+  --stitch-on-background: #e7e5e4;
+  --stitch-error-dim: #ba573f;
+  --stitch-on-primary-fixed: #433f35;
+  --stitch-surface-tint: #ccc6b9;
+  --stitch-on-surface: #e7e5e4;
+  --stitch-secondary-fixed: #e3e2e2;
+  --stitch-tertiary-fixed: #f5f3f3;
+  --stitch-tertiary: #faf9f9;
+  background: #0e0e0e;
+  color: #e7e5e4;
+  min-height: 100vh;
+}
+
+.monograph-scope {
+  --primary: #e8e2d4;
+  --stitch-surface: #131313;
+  --stitch-surface-dim: #131313;
+  --stitch-surface-container-lowest: #0e0e0e;
+  --stitch-surface-container-low: #1c1b1b;
+  --stitch-surface-container: #201f1f;
+  --stitch-surface-container-high: #2a2a2a;
+  --stitch-surface-container-highest: #353534;
+  --stitch-surface-bright: #3a3939;
+  --stitch-primary-container: #ccc6b9;
+  --stitch-primary-fixed-dim: #ccc6b9;
+  --stitch-on-primary: #333027;
+  --stitch-on-primary-container: #565248;
+  --stitch-on-surface: #e5e2e1;
+  --stitch-on-surface-variant: #cbc6bc;
+  --stitch-surface-variant: #353534;
+  color-scheme: dark;
+  background: #131313;
+  color: #e5e2e1;
+}
+
+.stitch-scope .font-headline,
+.stitch-scope .font-manrope {
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+.stitch-scope .font-body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+.stitch-scope .font-label {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+.stitch-scope .material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes fill-up {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--target-width);
+  }
 }
 
 .dark {
@@ -113,7 +290,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-surface text-on-surface;
     transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
     font-size: clamp(14px, 2vw, 16px);
   }

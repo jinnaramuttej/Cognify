@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cognify 2026 | Engineered for Excellence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e8e2d4",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#e6e1e8",
+                        "primary": "#e8e2d4",
+                        "tertiary-container": "#cac5cc",
+                        "inverse-surface": "#e5e2e1",
+                        "outline-variant": "#49473f",
+                        "surface-container": "#201f1f",
+                        "inverse-primary": "#625e54",
+                        "on-primary-container": "#565248",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-surface-variant": "#cbc6bc",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-fixed-variant": "#4a473d",
+                        "surface-container-high": "#2a2a2a",
+                        "outline": "#959087",
+                        "on-secondary-container": "#b9b8b7",
+                        "background": "#131313",
+                        "secondary-fixed": "#e4e2d4",
+                        "on-secondary": "#303030",
+                        "tertiary": "#e6e1e8",
+                        "on-tertiary-fixed": "#1c1b20",
+                        "on-secondary-fixed": "#1b1c1b",
+                        "surface-variant": "#353534",
+                        "secondary": "#c8c6c5",
+                        "primary-container": "#ccc6b9",
+                        "on-primary-fixed": "#1e1b13",
+                        "on-primary": "#333027",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-fixed-dim": "#cac5cc",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#322f35",
+                        "secondary-container": "#494949",
+                        "surface-container-highest": "#353534",
+                        "surface-dim": "#131313",
+                        "inverse-on-surface": "#313030",
+                        "primary-fixed-dim": "#ccc6b9",
+                        "surface-tint": "#ccc6b9",
+                        "surface": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-tertiary-fixed-variant": "#48464b",
+                        "on-tertiary-container": "#545157"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e0e; }
+        .font-newsreader { font-family: 'Newsreader', serif; }
+        .marquee { white-space: nowrap; animation: marquee 30s linear infinite; }
+        .marquee:hover { animation-play-state: paused; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .star-field { background-image: radial-gradient(circle at 2px 2px, rgba(232, 226, 212, 0.05) 1px, transparent 0); background-size: 60px 60px; }
+        .glass-card { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(24px); }
+        
+        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        
+        .typewriter-cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #ccc6b9; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .reveal-card { opacity: 0; transform: scale(0.97) translateY(20px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-card.visible { opacity: 1; transform: scale(1) translateY(0); }
+
+        .hero-polish-overlay { background: linear-gradient(135deg, rgba(13,13,13,0.92) 0%, rgba(13,13,13,0.75) 50%, rgba(13,13,13,0.55) 100%); }
+    </style>
+</head>
+<body class="text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<header class="fixed top-0 w-full z-50 bg-[#131313]/90 backdrop-blur-xl flex justify-between items-center px-8 h-16 border-b border-white/5">
+<div class="text-2xl font-semibold text-[#CCC6B9] font-['Newsreader'] tracking-tight">Cognify 2026</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-[#E8E2D4] font-bold font-['Newsreader'] text-sm tracking-widest uppercase hover:text-[#E8E2D4] transition-colors" href="#">Dashboard</a>
+<a class="text-[#A1A1A1] font-['Newsreader'] text-sm tracking-widest uppercase hover:text-[#E8E2D4] transition-colors" href="#">Tests</a>
+<a class="text-[#A1A1A1] font-['Newsreader'] text-sm tracking-widest uppercase hover:text-[#E8E2D4] transition-colors" href="#">Library</a>
+<a class="text-[#A1A1A1] font-['Newsreader'] text-sm tracking-widest uppercase hover:text-[#E8E2D4] transition-colors" href="#">Arena</a>
+</nav>
+<div class="flex items-center gap-4 text-[#CCC6B9]">
+<button class="material-symbols-outlined p-2 hover:bg-surface-container-high rounded-full transition-colors">notifications</button>
+<button class="material-symbols-outlined p-2 hover:bg-surface-container-high rounded-full transition-colors">account_circle</button>
+</div>
+</header>
+<main class="relative pt-16 star-field overflow-hidden">
+<!-- Section 1: Hero Split Layout -->
+<section class="relative min-h-[95vh] flex flex-col md:flex-row items-center px-8 md:px-24 gap-12 py-20 overflow-hidden">
+<!-- Hero Background -->
+<div class="absolute inset-0 z-0">
+<img alt="Atmospheric Library Background" class="w-full h-full object-cover filter brightness-50 contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClzwFtFiRPNZit0GI3KKPGwLh2oqSNBy_Dv8vU1eMwBLZVzFFWm0wBOu-9FQmxhlK8F6j4UVnpPMfdHba27yW5Gxpb9Q4lsIx3qZ2JDoqck5_NJHNSouLypYUGdihpojA2jRgNPvmuSP8iou-J4qPJhtbtNX6sWTE7Hd6bt_JKHLZV-EzLV5yUBERgA3haEswEXaK1XAgQAW7t4CseimtOIF7aMy-52QM7mgpMEZix1tsrn2PFUQp1Jp99umuMgtSzYerxUxk95-lq"/>
+<div class="absolute inset-0 hero-polish-overlay"></div>
+</div>
+<div class="relative z-10 flex-1 space-y-10 max-w-2xl fade-up">
+<div class="inline-block px-4 py-1.5 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
+<span class="text-[10px] font-bold tracking-[0.3em] text-primary-fixed uppercase">Engineered for Excellence</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-newsreader font-light leading-[1.1] tracking-tighter text-primary-fixed">
+<span class="typewriter-cursor" id="typewriter"></span>
+</h1>
+<p class="text-xl text-on-surface-variant/80 max-w-lg leading-relaxed font-body">
+                A monograph-inspired learning ecosystem designed for deep cognitive rigor. Harness the power of generative intelligence to master the world's most demanding academic domains.
+            </p>
+<div class="flex flex-wrap gap-6 pt-6">
+<button class="px-10 py-5 bg-primary-container text-on-primary-container font-semibold rounded-md hover:brightness-105 transition-all shadow-xl shadow-black/40">Begin Examination</button>
+<button class="px-10 py-5 bg-transparent border border-outline-variant text-primary-fixed font-semibold rounded-md hover:bg-white/5 transition-all">Watch Monograph</button>
+</div>
+</div>
+<div class="relative z-10 flex-1 w-full flex flex-col items-center md:items-end justify-center gap-6">
+<!-- Stacked Stats Cards -->
+<div class="fade-up glass-card p-8 rounded-xl border border-white/10 w-full max-w-sm shadow-2xl relative z-[3] -translate-x-0">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/60">Community</span>
+<span class="material-symbols-outlined text-primary/40">groups</span>
+</div>
+<div class="text-3xl font-newsreader text-primary-fixed">12,400+ scholars</div>
+<p class="text-sm text-on-surface-variant mt-2 italic">Active candidates in the 2026 cohort.</p>
+</div>
+<div class="fade-up glass-card p-8 rounded-xl border border-white/10 w-full max-w-sm shadow-2xl relative z-[2] translate-x-4">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/60">Performance</span>
+<span class="material-symbols-outlined text-primary/40">show_chart</span>
+</div>
+<div class="text-3xl font-newsreader text-primary-fixed">99.4% Success</div>
+<p class="text-sm text-on-surface-variant mt-2 italic">Average score improvement over baseline.</p>
+</div>
+<div class="fade-up glass-card p-8 rounded-xl border border-white/10 w-full max-w-sm shadow-2xl relative z-[1] translate-x-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/60">Benchmark</span>
+<span class="material-symbols-outlined text-primary/40">military_tech</span>
+</div>
+<div class="text-3xl font-newsreader text-primary-fixed">Top 1% Median</div>
+<p class="text-sm text-on-surface-variant mt-2 italic">National percentile rank among users.</p>
+</div>
+</div>
+</section>
+<!-- Section 2: Marquee Strip -->
+<section class="py-16 bg-surface-container-low border-y border-white/5 overflow-hidden fade-up">
+<div class="marquee flex items-center gap-24">
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">ADAPTIVE LEARNING</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">AI TUTOR</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">COGNITIVE RIGOR</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">EDITORIAL DESIGN</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">NEURAL MAPPING</span>
+<!-- Duplicate -->
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">ADAPTIVE LEARNING</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">AI TUTOR</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">COGNITIVE RIGOR</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">·</span>
+<span class="text-3xl font-newsreader italic text-primary-fixed/30 tracking-widest">EDITORIAL DESIGN</span>
+</div>
+</section>
+<!-- Section 3: Product Ecosystem Bento -->
+<section class="py-32 px-8 md:px-24 max-w-[1400px] mx-auto">
+<div class="mb-24 space-y-6 fade-up">
+<h2 class="text-6xl font-newsreader text-primary-fixed">The Ecosystem.</h2>
+<p class="text-on-surface-variant max-w-2xl text-lg font-body leading-relaxed">Tools designed for those who demand more than superficial understanding. A curated suite of intellectual companions for the modern scholar.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Card 1: Cogni -->
+<div class="reveal-card md:col-span-8 group relative overflow-hidden rounded-2xl bg-[#1a1a1a] h-[480px] border border-white/5">
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYCtx7yISokuj7NY4zC0aRahAwY5IByYmI7oPFwDkJ3FiLve5MNHCCVY1Ir_3vOZEBJsLGotM-Cn9gaPX0rB6gKjZ-Nj3zg51XYVPntB7nHVFUQDawggjzdU_sOLn0EU6q4UWRH6ySSIvBEAHLGYrTY981kLDqTW068s0lFY75af51XZ8xGNiQ-ka6CNYLqRcNxKmFNT2RZ20oAaVADwubYQVo9BoV22DODVvjDsmFkSUT3j2SIRkYKW8j34gy-BAn4tUaiHC0x4TH"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-10">
+<span class="text-primary font-newsreader italic text-2xl mb-3 block">Cogni AI</span>
+<h3 class="text-4xl font-newsreader text-primary-fixed mb-5 leading-tight">Deep Interactive Dialogue</h3>
+<p class="text-on-surface-variant max-w-lg leading-relaxed">Engage in high-level academic discourse with an AI that understands context, nuance, and your personal learning trajectory.</p>
+</div>
+</div>
+<!-- Card 2: Tests -->
+<div class="reveal-card md:col-span-4 group relative overflow-hidden rounded-2xl bg-[#1a1a1a] h-[480px] border border-white/5">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApiQ9Blwo_rhnQk7rN3UAueFlpus9SiHOdZurFDWgjZ6pKVBNBpSWaYxs6wB2YipLW1bA__blwwkGBVQlWZAWrJuszZSinYSPDCt0z_yMuzb1ER3cD9Y8jYHAVX2iGwJvqJ0lRJb491pd4FoVK7DXw9g13MhGgS3c3j8rVVAPSiAKueA9fFpYTAkpxcDXFCpi4-nzgEkGIYDBMpQ-ZURtRoNo2nqtj0JBLdJyjgblc_yfQBw1io2uh3dqHYTaMrt60XG2QAUMD3Vxb"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-10">
+<span class="text-primary font-newsreader italic text-2xl mb-3 block">The Arena</span>
+<h3 class="text-3xl font-newsreader text-primary-fixed mb-5 leading-tight">Simulated Mastery</h3>
+<p class="text-on-surface-variant leading-relaxed">Adaptive testing environments that evolve as your knowledge deepens.</p>
+</div>
+</div>
+<!-- Card 3: Library -->
+<div class="reveal-card md:col-span-5 group relative overflow-hidden rounded-2xl bg-[#1a1a1a] h-[480px] border border-white/5">
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClzwFtFiRPNZit0GI3KKPGwLh2oqSNBy_Dv8vU1eMwBLZVzFFWm0wBOu-9FQmxhlK8F6j4UVnpPMfdHba27yW5Gxpb9Q4lsIx3qZ2JDoqck5_NJHNSouLypYUGdihpojA2jRgNPvmuSP8iou-J4qPJhtbtNX6sWTE7Hd6bt_JKHLZV-EzLV5yUBERgA3haEswEXaK1XAgQAW7t4CseimtOIF7aMy-52QM7mgpMEZix1tsrn2PFUQp1Jp99umuMgtSzYerxUxk95-lq"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-10">
+<span class="text-primary font-newsreader italic text-2xl mb-3 block">Library</span>
+<h3 class="text-3xl font-newsreader text-primary-fixed mb-5 leading-tight">Eternal Repository</h3>
+<p class="text-on-surface-variant leading-relaxed">Your personal archive of knowledge, synthesized and searchable by intent.</p>
+</div>
+</div>
+<!-- Card 4: Dashboard -->
+<div class="reveal-card md:col-span-7 group relative overflow-hidden rounded-2xl bg-[#1a1a1a] h-[480px] border border-white/5">
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5oD4LSq_U7Mf8RMoM-8W4n0GLOPcMWB8w0maBReI90NzDpUv75WDJ27iZnglQJMz5DAQfICDYabRYvP--wnOrkC5PvDfuHu-Po2HUlTRnuwe0NX432ogAtdnZ-OvQNKLqrlafFm4OT8oQTTbSC8bhICCFVxm16N28bSNJwuHefyMrn68JE88IpLHrsAjQF75ldYYxLblJ6C_WqO6dcPJh6UGxWWgPaglGaB2ToKv0fWBBW61yyBdq6mlCFaWE-lYuRocZ1DyDJiKp"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent"></div>
+<div class="absolute bottom-0 p-10">
+<span class="text-primary font-newsreader italic text-2xl mb-3 block">Dashboard</span>
+<h3 class="text-4xl font-newsreader text-primary-fixed mb-5 leading-tight">Cognitive Mapping</h3>
+<p class="text-on-surface-variant max-w-sm leading-relaxed">Visualize your progress through architectural data landscapes that reveal hidden connections in your learning.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Light CTA section -->
+<section class="py-40 bg-[#F5F3EF] flex flex-col items-center justify-center text-center px-8 relative overflow-hidden">
+<div class="max-w-3xl space-y-10 fade-up relative z-10">
+<h2 class="text-6xl md:text-7xl font-newsreader text-[#333027] leading-[1.1] tracking-tight">Ready to transcend standard learning?</h2>
+<p class="text-[#565248] text-xl font-body leading-relaxed max-w-2xl mx-auto">Join the 2026 cohort and experience the future of intellectual growth. Refined, rigorous, and result-oriented.</p>
+<div class="pt-8">
+<button class="px-14 py-6 bg-[#333027] text-[#F5F3EF] font-bold text-xl rounded-md hover:bg-black transition-all hover:scale-105 shadow-2xl">Apply for Early Access</button>
+</div>
+<div class="pt-16 flex justify-center gap-16 text-[#959087]">
+<div class="text-left">
+<span class="block text-3xl font-newsreader text-[#333027] count-up" data-target="12000">0</span>
+<span class="text-xs uppercase tracking-[0.2em] font-bold mt-1 block">Scholars</span>
+</div>
+<div class="text-left">
+<span class="block text-3xl font-newsreader text-[#333027]"><span class="count-up" data-decimal="1" data-target="99.4">0</span>%</span>
+<span class="text-xs uppercase tracking-[0.2em] font-bold mt-1 block">Success Rate</span>
+</div>
+<div class="text-left">
+<span class="block text-3xl font-newsreader text-[#333027] count-up" data-target="2026">0</span>
+<span class="text-xs uppercase tracking-[0.2em] font-bold mt-1 block">Standard</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#0e0e0e] py-24 px-8 md:px-24 border-t border-white/5 fade-up">
+<div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between gap-20">
+<div class="space-y-8">
+<div class="text-4xl font-newsreader text-primary tracking-tighter">Cognify</div>
+<p class="text-on-surface-variant/70 max-w-sm text-base leading-relaxed font-body">
+                    Cognify. Precision AI preparation for the world's most demanding academic examinations.
+                </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-16">
+<div class="space-y-6">
+<h4 class="text-xs font-bold tracking-[0.25em] uppercase text-primary-fixed/40">Platform</h4>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Cogni AI</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">The Arena</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Digital Library</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h4 class="text-xs font-bold tracking-[0.25em] uppercase text-primary-fixed/40">Community</h4>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Journal</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Forums</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Events</a></li>
+</ul>
+</div>
+<div class="space-y-6">
+<h4 class="text-xs font-bold tracking-[0.25em] uppercase text-primary-fixed/40">Legal</h4>
+<ul class="space-y-3 text-on-surface-variant text-sm">
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Terms of Use</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-[1400px] mx-auto mt-24 pt-10 border-t border-white/5 flex justify-between items-center text-[10px] text-on-surface-variant/40 tracking-[0.3em] uppercase font-bold">
+<span>© 2026 Cognify Labs</span>
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors" href="#">Twitter</a>
+<a class="hover:text-primary transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+</footer>
+</main>
+<script>
+    // Fixed Typewriter Effect: types one full phrase at a time
+    const phrases = ["Study Smarter.", "Rank Higher.", "Think Deeper."];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typewriterElement = document.getElementById('typewriter');
+
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
+        
+        if (isDeleting) {
+            typewriterElement.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            typewriterElement.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+        }
+
+        let typeSpeed = isDeleting ? 40 : 100;
+
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            typeSpeed = 2500; // Pause at end of phrase
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            typeSpeed = 500;
+        }
+
+        setTimeout(type, typeSpeed);
+    }
+
+    // Scroll Observer for reveals
+    const observerOptions = {
+        threshold: 0.05,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                
+                // Handle count-up animations
+                const counters = entry.target.querySelectorAll('.count-up');
+                if (counters.length > 0) {
+                    counters.forEach(counter => animateCount(counter));
+                } else if (entry.target.classList.contains('count-up')) {
+                    animateCount(entry.target);
+                }
+            }
+        });
+    }, observerOptions);
+
+    function animateCount(el) {
+        if (el.dataset.animated) return;
+        el.dataset.animated = "true";
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimal || 0);
+        let current = 0;
+        const duration = 2500;
+        const start = performance.now();
+
+        function update(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            // Ease out quad
+            const easedProgress = 1 - (1 - progress) * (1 - progress);
+            current = easedProgress * target;
+            
+            let displayVal = current.toFixed(decimals);
+            if (target >= 1000 && decimals === 0) {
+                displayVal = Math.floor(current).toLocaleString();
+                if (target >= 12000) displayVal += '+';
+            }
+            
+            el.textContent = displayVal;
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                let finalVal = target.toFixed(decimals);
+                if (target >= 1000 && decimals === 0) {
+                    finalVal = target.toLocaleString();
+                    if (target >= 12000) finalVal += '+';
+                }
+                el.textContent = finalVal;
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        type();
+        
+        // Ensure ALL major containers have scroll trigger reveals
+        document.querySelectorAll('.fade-up, .reveal-card, section, footer').forEach(el => {
+            if (!el.classList.contains('fade-up') && !el.classList.contains('reveal-card')) {
+                el.classList.add('fade-up');
+            }
+            observer.observe(el);
+        });
+
+        // Specifically observe counters
+        document.querySelectorAll('.count-up').forEach(el => observer.observe(el));
+    });
+</script>
+</body></html>

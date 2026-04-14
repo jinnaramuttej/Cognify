@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cognify | Intelligent Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#2D2D2D",
+                    "error": "#ed7f64",
+                    "inverse-primary": "#635f54",
+                    "on-tertiary-fixed-variant": "#666666",
+                    "surface-dim": "#0E0E0E",
+                    "primary-container": "#4a473c",
+                    "on-secondary-fixed-variant": "#5a5c5c",
+                    "on-surface-variant": "#acabaa",
+                    "surface-variant": "#1F1F1F",
+                    "on-secondary-fixed": "#3e4040",
+                    "on-primary": "#434036",
+                    "inverse-on-surface": "#565555",
+                    "secondary-dim": "#9d9e9e",
+                    "inverse-surface": "#fcf9f8",
+                    "primary": "#ccc6b9",
+                    "surface-container-high": "#1F1F1F",
+                    "tertiary-dim": "#ecebea",
+                    "tertiary-container": "#ecebea",
+                    "on-error": "#450900",
+                    "on-primary-container": "#d6d0c2",
+                    "surface-container": "#161616",
+                    "background": "#0E0E0E",
+                    "on-primary-fixed-variant": "#5f5b50",
+                    "primary-fixed": "#e9e2d4",
+                    "surface": "#0E0E0E",
+                    "secondary-fixed-dim": "#d4d4d4",
+                    "surface-bright": "#2c2c2c",
+                    "outline": "#404040",
+                    "on-tertiary-container": "#565757",
+                    "tertiary-fixed-dim": "#e6e5e5",
+                    "primary-fixed-dim": "#dad4c6",
+                    "on-tertiary-fixed": "#494a4a",
+                    "surface-container-low": "#131313",
+                    "secondary": "#9d9e9e",
+                    "on-error-container": "#ff9b82",
+                    "on-secondary-container": "#bfbfbf",
+                    "on-secondary": "#1f2021",
+                    "surface-container-highest": "#252626",
+                    "secondary-container": "#3a3c3c",
+                    "surface-container-lowest": "#000000",
+                    "error-container": "#7e2b17",
+                    "on-tertiary": "#5e5f5f",
+                    "primary-dim": "#beb8ab",
+                    "on-background": "#e7e5e4",
+                    "error-dim": "#ba573f",
+                    "on-primary-fixed": "#433f35",
+                    "surface-tint": "#ccc6b9",
+                    "on-surface": "#e7e5e4",
+                    "secondary-fixed": "#e3e2e2",
+                    "tertiary-fixed": "#f5f3f3",
+                    "tertiary": "#faf9f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem",
+                    "3xl": "1.5rem",
+                    "card": "16px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            },
+            "animation": {
+                "typing": "typing 3.5s steps(40, end), blink-caret .75s step-end infinite",
+                "float": "float 6s ease-in-out infinite",
+                "glow": "glow 2s ease-in-out infinite alternate",
+                "fill-up": "fill-up 1.5s ease-out forwards"
+            },
+            "keyframes": {
+                "typing": {
+                    "from": { width: "0" },
+                    "to": { width: "100%" }
+                },
+                "blink-caret": {
+                    "from, to": { "border-color": "transparent" },
+                    "50%": { "border-color": "#ccc6b9" }
+                },
+                "float": {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "50%": { transform: "translateY(-10px)" }
+                },
+                "glow": {
+                    "from": { "box-shadow": "0 0 5px rgba(204, 198, 185, 0.1)" },
+                    "to": { "box-shadow": "0 0 20px rgba(204, 198, 185, 0.3)" }
+                },
+                "fill-up": {
+                    "from": { width: "0" },
+                    "to": { width: "var(--target-width)" }
+                }
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; font-size: 14px; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .font-label { font-family: 'Space Grotesk', sans-serif; }
+        
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #ccc6b9;
+            animation: typing 3s steps(60, end), blink-caret .75s step-end infinite;
+        }
+
+        .card-standard {
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .card-standard:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5), 0 0 15px rgba(204,198,185,0.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ccc6b9 0%, #a49e92 100%);
+            color: #434036;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #404040;
+            color: #e7e5e4;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: #acabaa;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost:hover { color: #e7e5e4; }
+
+        .sidebar-item-active {
+            border-left: 3px solid #ccc6b9;
+            background-color: rgba(31, 31, 31, 0.5);
+            color: #e7e5e4;
+            font-weight: 600;
+        }
+
+        .custom-tooltip-trigger { position: relative; }
+        .custom-tooltip-trigger:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            background: #1F1F1F;
+            color: #ccc6b9;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 100;
+            border: 1px solid rgba(204,198,185,0.2);
+            pointer-events: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #2d2d2d; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary selection:text-on-primary antialiased">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 hidden lg:flex flex-col border-r border-outline-variant bg-[#111111] font-manrope tracking-tight text-sm py-8 sticky top-0 z-50">
+<div class="mb-10 px-8">
+<h1 class="text-xl font-bold tracking-tighter text-primary">Cognify</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-secondary-dim mt-1.5 opacity-60">High-Level Cognition</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-3 px-8 sidebar-item-active transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">quiz</span>
+            Tests
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+            Library
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+            Cogni
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">emoji_events</span>
+            Arena
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+            Notes
+        </a>
+<a class="flex items-center gap-3 py-3 px-8 text-secondary hover:text-on-surface hover:bg-surface-variant transition-all duration-300 mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+            Settings
+        </a>
+</nav>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 min-h-screen bg-surface-container relative overflow-x-hidden flex flex-col">
+<!-- TopNavBar -->
+<header class="top-0 sticky z-40 bg-background/80 backdrop-blur-xl border-b border-outline-variant flex justify-between items-center w-full px-8 py-4">
+<div class="flex-1">
+<h2 class="text-xl font-black tracking-widest text-primary">COGNIFY</h2>
+</div>
+<div class="flex-1 flex justify-center">
+<div class="hidden md:flex items-center bg-background border border-outline-variant px-5 py-2 rounded-full w-full max-w-[400px] focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-secondary text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder:text-secondary-dim w-full ml-3" placeholder="Search cognitive assets..." type="text"/>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-end gap-6">
+<button class="material-symbols-outlined text-secondary-dim hover:text-primary transition-colors custom-tooltip-trigger" data-tooltip="3 Priority Alerts">notifications</button>
+<div class="flex items-center gap-4 pl-5 border-l border-outline-variant cursor-pointer group">
+<div class="text-right hidden sm:block">
+<div class="text-[11px] font-bold text-on-surface">Uttej R.</div>
+<div class="text-[9px] text-primary uppercase font-bold tracking-tighter">ELITE RANK #12</div>
+</div>
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-primary/30 p-0.5 group-hover:border-primary transition-all">
+<img alt="Profile" class="rounded-full w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA9KUu6dik662g940ZXQyW0P-tMV-JbTRHcyrKmYlnTPn-RavHCLOlUhrY1AZOHPkKSAHfjmAO4bo_udgi12z_zRLRT2YvJJ8QhuVZoF3BCTG6EpsnovRCHKMPeDMYmldlIsZqoqPa9tiYztBxqog8Q22qBPzrlCdExvqdrKAcjGz4o9qg_zq1terzI9rR6T5T2E_0bMWDqtCP5tDcLO8brTBjE5Nw0Ze4MFSjGqzz0jShRT6yll9njE5rlzizmMrRGhdBAFHh9Dm4"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 lg:p-12 space-y-12 max-w-7xl mx-auto flex-1">
+<!-- Top Section: Asymmetrical Hero -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Deep Focus Card -->
+<div class="lg:col-span-8">
+<div class="bg-surface-container-high card-standard relative overflow-hidden group">
+<div class="absolute -right-20 -top-20 w-80 h-80 bg-primary/5 rounded-full blur-[80px] group-hover:bg-primary/10 transition-colors"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-8">
+<span class="inline-flex h-2 w-2 rounded-full bg-error animate-pulse shadow-[0_0_10px_#ed7f64]"></span>
+<span class="text-[10px] font-label uppercase tracking-[0.25em] text-secondary font-bold">Session Integrity: High</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div>
+<h3 class="text-6xl md:text-7xl font-headline font-black tracking-tighter text-on-surface mb-5 tabular-nums">01:42:58</h3>
+<p class="text-secondary max-w-md text-sm leading-relaxed">
+                                    Current: <span class="text-primary font-bold italic">"Advanced Neural Architectures"</span><br/>
+                                    Focus Stability Index: <span class="text-primary font-bold">98.4/100</span>
+</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="btn-secondary px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[20px]">pause_circle</span>
+                                    Pause
+                                </button>
+<button class="btn-primary px-6 py-3 rounded-xl flex items-center gap-2 shadow-xl shadow-primary/10">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                                    Finalize
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recommendation Card -->
+<div class="lg:col-span-4 h-full">
+<div class="relative bg-surface-container-high card-standard overflow-hidden h-full flex flex-col group p-0">
+<div class="h-40 overflow-hidden relative">
+<img alt="Physics Visualization" class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm_mz9RSCaQwsO6x0DosZwLydQpjLBe2yiJk3Y1sm5NcQNgvKl-IBxAcWR5PbupemT_8z-ouaFn8rvvOZpFRoQlIL0llw5VV2MANzyE8BuwX3vnddAwpNDn9zBWf_gvAvWr_I5RdIqS9493KOgNDUg-aJDpl6VjDTWwFPVHoPbWzLb---kagCJyS7Bdmxb0aVQf-37aHosjuJrfx8pSYcliRGeKj4ydN6h6fYLp8oaGKTIWQ5SUUSB_dhtXwKkMmLf77OI2YMckmUv"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/40 to-transparent"></div>
+<div class="absolute top-4 left-4 bg-primary text-on-primary text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[10px] animate-pulse">auto_fix_high</span> AI Suggestion
+                        </div>
+</div>
+<div class="p-5 pt-4 flex-1 flex flex-col">
+<h4 class="text-xl font-headline font-bold text-on-surface mb-3">Rotational Dynamics</h4>
+<div class="bg-background/50 p-4 rounded-xl mb-6 border border-outline-variant/30 flex-1">
+<p class="text-[12px] text-secondary leading-relaxed italic">
+                                "Algorithm detected a <span class="text-error font-semibold">9% drift</span> in moment of inertia retention. Corrective module recommended."
+                            </p>
+</div>
+<button class="btn-secondary w-full py-3 rounded-xl text-xs hover:border-primary/50">
+                            Synchronize Knowledge
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Middle Section: Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Streak Stat -->
+<div class="bg-surface-container-high card-standard flex flex-col items-center justify-center text-center space-y-6">
+<div class="relative">
+<div class="w-24 h-24 rounded-full border border-error/20 flex items-center justify-center animate-float">
+<span class="material-symbols-outlined text-6xl text-error" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+</div>
+<div>
+<h4 class="text-5xl font-headline font-black text-on-surface tracking-tighter tabular-nums">14 Days</h4>
+<p class="text-[12px] text-secondary-dim mt-2 font-medium">Continuous Engagement</p>
+</div>
+<div class="w-full pt-2">
+<div class="w-full bg-background h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full animate-[fill-up_1.5s_ease-out_forwards]" style="--target-width: 70%"></div>
+</div>
+</div>
+</div>
+<!-- Accuracy Stat -->
+<div class="bg-surface-container-high card-standard flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-8">
+<h4 class="text-[12px] uppercase tracking-wider text-secondary font-semibold">Accuracy Index</h4>
+<span class="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded font-bold">TOP 2%</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-6xl font-headline font-bold text-on-surface">92</span>
+<span class="text-2xl font-headline font-medium text-primary">%</span>
+</div>
+</div>
+<div class="flex gap-2.5 items-end h-20 mt-8">
+<div class="bg-outline-variant/30 w-full h-[45%] rounded-t-lg"></div>
+<div class="bg-outline-variant/30 w-full h-[65%] rounded-t-lg"></div>
+<div class="bg-outline-variant/30 w-full h-[82%] rounded-t-lg"></div>
+<div class="bg-primary w-full h-[95%] rounded-t-lg shadow-[0_0_15px_rgba(204,198,185,0.2)]"></div>
+</div>
+</div>
+<!-- Active Queue -->
+<div class="bg-surface-container-high card-standard flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h4 class="text-[12px] uppercase tracking-wider text-secondary font-semibold">Processing Queue</h4>
+<span class="bg-background text-[10px] px-2 py-1 rounded-md text-primary font-bold border border-outline-variant">4 NODES</span>
+</div>
+<div class="space-y-5">
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-outline-variant group-hover:border-primary/50">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary text-lg">functions</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">Calculus III</p>
+<p class="text-[10px] text-error font-bold uppercase tracking-tight">Priority</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary-dim text-lg">chevron_right</span>
+</div>
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-lg">psychology</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Neuro-Linguistics</p>
+<p class="text-[10px] text-secondary-dim font-bold uppercase tracking-tight">Research</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary-dim text-lg">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Pathways Section -->
+<section class="space-y-6">
+<div class="flex justify-between items-end border-b border-outline-variant pb-6">
+<div>
+<h2 class="text-[32px] font-headline font-bold text-on-surface tracking-tight">Accelerated Pathways</h2>
+<p class="text-secondary text-sm mt-1">Strategic cognitive development modules.</p>
+</div>
+<button class="btn-ghost text-xs uppercase tracking-widest flex items-center gap-2">
+                    System Roadmap
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-surface-container-high card-standard group cursor-pointer">
+<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center mb-5">
+<span class="material-symbols-outlined text-primary text-xl">hub</span>
+</div>
+<h5 class="text-[20px] font-semibold text-on-surface mb-2">Systems Theory</h5>
+<p class="text-[12px] text-secondary leading-relaxed mb-6 h-12 overflow-hidden">Master complex feedback loops through adaptive structures.</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold text-primary uppercase">LVL 4</span>
+<span class="material-symbols-outlined text-secondary text-sm opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+</div>
+</div>
+<div class="bg-surface-container-high card-standard group cursor-pointer">
+<div class="w-10 h-10 rounded-xl bg-secondary/5 flex items-center justify-center mb-5">
+<span class="material-symbols-outlined text-secondary text-xl">biotech</span>
+</div>
+<h5 class="text-[20px] font-semibold text-on-surface mb-2">Synthetic Biology</h5>
+<p class="text-[12px] text-secondary leading-relaxed mb-6 h-12 overflow-hidden">Architecting gene circuits with precise benchmarks.</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold text-secondary uppercase">LVL 2</span>
+<span class="material-symbols-outlined text-secondary text-sm opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+</div>
+</div>
+<div class="bg-surface-container-high card-standard group cursor-pointer">
+<div class="w-10 h-10 rounded-xl bg-error/5 flex items-center justify-center mb-5">
+<span class="material-symbols-outlined text-error text-xl">monitoring</span>
+</div>
+<h5 class="text-[20px] font-semibold text-on-surface mb-2">Algorithmic Trade</h5>
+<p class="text-[12px] text-secondary leading-relaxed mb-6 h-12 overflow-hidden">Analyzing market volatility via simulations.</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold text-error uppercase">LVL 7</span>
+<span class="material-symbols-outlined text-secondary text-sm opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+</div>
+</div>
+<div class="bg-surface-container-high card-standard border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-surface-variant p-5">
+<div class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-secondary-dim text-2xl">add</span>
+</div>
+<p class="text-[10px] font-bold text-secondary-dim uppercase tracking-widest">Discovery Hub</p>
+</div>
+</div>
+</section>
+<!-- Intelligence Node Section -->
+<section class="bg-surface-container-high rounded-[2rem] overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-2xl relative border border-white/5">
+<div class="p-10 lg:p-14 space-y-6">
+<div class="bg-primary/10 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Cognify Insight</p>
+</div>
+<h3 class="text-[32px] md:text-[40px] font-headline font-bold leading-tight text-on-surface tracking-tight">
+                    "Neuro-plasticity optimizes when challenging established priors in low-entropy zones."
+                </h3>
+<p class="text-secondary text-base leading-relaxed">
+                    Your metabolic focus peaks in the next 45 minutes. Divert cognitive load to <span class="text-on-surface font-bold underline decoration-primary/40 underline-offset-8">Complex Systems Theory</span> to maximize retention.
+                </p>
+<div class="pt-4 flex">
+<button class="btn-primary px-8 py-4 rounded-xl text-xs uppercase tracking-widest flex items-center gap-3">
+                        Initialize Dive
+                        <span class="material-symbols-outlined text-base">arrow_right_alt</span>
+</button>
+</div>
+</div>
+<div class="relative min-h-[400px] overflow-hidden bg-background hidden lg:block">
+<img class="absolute inset-0 w-full h-full object-cover grayscale opacity-70" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcefvPyt2wk4Jgwsxy6nF4AoIwB1CIeLtUpz1_calOZnv-SLsAf4KlsLc9bd91WVkmfOlpRKP5ORgi-Ky6hlKmwZ34xbaOlqpoVjJ4SYVCzX12Dap0dPGGFkZC2EcHBOU-dhIwA679-ouv-kxYnGGG3xLWYFyzaHAA5p3ZSuWLO1LiiwcwdBFJH1rlX7SFvrVHocrQ75SGkjIlpkS2b_LqZw2rVz-naERZwlqeLvrq9xR2K3tQzrzBp_5k3krPgVwAfSWzsMJYDEJ8"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-high via-surface-container-high/10 to-transparent"></div>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="px-8 py-10 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-xs text-secondary-dim">
+            © 2026 Cognify AI. All rights reserved.
+        </div>
+<div class="flex gap-6">
+<a class="btn-ghost text-xs" href="#">Privacy Protocol</a>
+<a class="btn-ghost text-xs" href="#">Security Matrix</a>
+<a class="btn-ghost text-xs" href="#">System Status</a>
+</div>
+</footer>
+<!-- Bottom padding for mobile -->
+<div class="h-28 lg:hidden"></div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 bg-background/90 backdrop-blur-2xl lg:hidden border-t border-outline-variant rounded-t-[2.5rem]">
+<a class="flex items-center justify-center text-primary bg-surface-variant w-12 h-12 rounded-xl border border-outline-variant" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</a>
+<a class="flex items-center justify-center text-secondary-dim w-12 h-12" href="#">
+<span class="material-symbols-outlined text-[24px]">quiz</span>
+</a>
+<a class="flex items-center justify-center text-secondary-dim w-12 h-12" href="#">
+<span class="material-symbols-outlined text-[24px]">auto_awesome</span>
+</a>
+<a class="flex items-center justify-center text-secondary-dim w-12 h-12" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</a>
+</nav>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.width = entry.target.dataset.targetWidth || entry.target.style.width;
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-\\[fill-up\\]').forEach(bar => {
+            observer.observe(bar);
+        });
+    });
+</script>
+</body></html>

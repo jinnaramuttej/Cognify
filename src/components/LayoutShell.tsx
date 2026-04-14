@@ -23,7 +23,7 @@ import PageAnimate from '@/components/Motion/PageAnimate';
  *   TEACHER → Bare wrapper (teacher page has its own sidebar/guard)
  */
 
-type Shell = 'public' | 'app' | 'test' | 'settings' | 'admin' | 'teacher';
+type Shell = 'public' | 'app' | 'test' | 'settings' | 'admin' | 'teacher' | 'stitch';
 
 const PUBLIC_PATHS = [
     '/', '/about', '/blog', '/careers', '/compliance', '/contact',
@@ -32,9 +32,23 @@ const PUBLIC_PATHS = [
     '/auth', '/auth/login', '/auth/signup', '/auth/forgot-password',
 ];
 
+const STITCH_PATHS = [
+    '/dashboard',
+    '/tests',
+    '/analytics',
+    '/cogni',
+    '/library',
+    '/notes',
+    '/arena',
+    '/settings',
+    '/support',
+];
+
 function getShell(pathname: string): Shell {
     // Exact public paths
     if (PUBLIC_PATHS.includes(pathname)) return 'public';
+
+    if (STITCH_PATHS.includes(pathname)) return 'stitch';
 
     // Admin routes
     if (pathname.startsWith('/admin')) return 'admin';
@@ -77,16 +91,22 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     const shell = getShell(pathname || '/');
+    const isRootLanding = (pathname || '/') === '/';
 
     // Auth guard for protected shells
     React.useEffect(() => {
-        if (!loading && !isAuthenticated && (shell === 'app' || shell === 'settings' || shell === 'admin' || shell === 'teacher')) {
+        if (!loading && !isAuthenticated && (shell === 'app' || shell === 'settings' || shell === 'admin' || shell === 'teacher' || shell === 'stitch')) {
             router.push('/auth/login');
         }
     }, [loading, isAuthenticated, shell, router]);
 
     // ── PUBLIC SHELL ──────────────────────────────────────────
     if (shell === 'public') {
+        // The root landing page now owns its full visual chrome.
+        if (isRootLanding) {
+            return <PageAnimate>{children}</PageAnimate>;
+        }
+
         return (
             <>
                 <NavbarWrapper />
@@ -117,6 +137,12 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
                 <PageAnimate>{children}</PageAnimate>
             </>
         );
+    }
+
+    // Stitch-integrated routes include their own generated navigation chrome.
+    if (shell === 'stitch') {
+        if (!isAuthenticated && !loading) return null;
+        return <>{children}</>;
     }
 
     // ── TEST EXECUTION SHELL ──────────────────────────────────

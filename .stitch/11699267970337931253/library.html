@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Syllabus Library | Cognify Learning Exploration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#484848",
+                        "tertiary": "#faf9f9",
+                        "inverse-primary": "#635f54",
+                        "primary-container": "#4a473c",
+                        "on-error-container": "#ff9b82",
+                        "primary-fixed": "#e9e2d4",
+                        "surface-variant": "#252626",
+                        "secondary-dim": "#9d9e9e",
+                        "tertiary-dim": "#ecebea",
+                        "on-tertiary-fixed": "#494a4a",
+                        "surface-container-lowest": "#000000",
+                        "tertiary-fixed": "#f5f3f3",
+                        "surface-container-high": "#1f2020",
+                        "primary-dim": "#beb8ab",
+                        "on-primary-fixed-variant": "#5f5b50",
+                        "surface-container-low": "#131313",
+                        "on-primary-fixed": "#433f35",
+                        "primary": "#ccc6b9",
+                        "error": "#ed7f64",
+                        "on-error": "#450900",
+                        "on-primary-container": "#d6d0c2",
+                        "surface-container-highest": "#252626",
+                        "tertiary-container": "#ecebea",
+                        "outline": "#767575",
+                        "on-surface": "#e7e5e4",
+                        "tertiary-fixed-dim": "#e6e5e5",
+                        "on-secondary-container": "#bfbfbf",
+                        "on-secondary-fixed-variant": "#5a5c5c",
+                        "on-tertiary-fixed-variant": "#666666",
+                        "on-tertiary-container": "#565757",
+                        "inverse-surface": "#fcf9f8",
+                        "error-dim": "#ba573f",
+                        "surface": "#0e0e0e",
+                        "secondary-container": "#3a3c3c",
+                        "secondary-fixed": "#e3e2e2",
+                        "secondary": "#9d9e9e",
+                        "surface-container": "#191a1a",
+                        "on-surface-variant": "#acabaa",
+                        "surface-tint": "#ccc6b9",
+                        "inverse-on-surface": "#565555",
+                        "on-secondary-fixed": "#3e4040",
+                        "on-background": "#e7e5e4",
+                        "on-tertiary": "#5e5f5f",
+                        "error-container": "#7e2b17",
+                        "on-primary": "#434036",
+                        "secondary-fixed-dim": "#d4d4d4",
+                        "background": "#0e0e0e",
+                        "surface-dim": "#0e0e0e",
+                        "primary-fixed-dim": "#dad4c6",
+                        "on-secondary": "#1f2021",
+                        "surface-bright": "#2c2c2c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #0e0e0e; color: #e7e5e4; font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { background: rgba(37, 38, 38, 0.7); backdrop-filter: blur(20px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .card-lift {
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.4s cubic-bezier(0.2, 0, 0, 1), border-color 0.4s ease;
+        }
+        .card-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(204, 198, 185, 0.1);
+            border-color: rgba(204, 198, 185, 0.3);
+        }
+        .glow-hover {
+            position: relative;
+        }
+        .glow-hover::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(204, 198, 185, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            z-index: 0;
+        }
+        .glow-hover:hover::after {
+            opacity: 1;
+        }
+        .connector-line {
+            position: absolute;
+            left: 50%;
+            bottom: -20px;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, #ccc6b9, transparent);
+        }
+    </style>
+</head>
+<body class="antialiased">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-zinc-950/70 backdrop-blur-xl shadow-2xl shadow-black/50 font-manrope tracking-tight border-b border-outline-variant/15">
+<div class="flex justify-between items-center px-8 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#CCC6B9] tracking-tighter">Cognify Library</span>
+<div class="hidden md:flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-1.5 w-96 group focus-within:border-primary/40 transition-all">
+<span class="material-symbols-outlined text-secondary text-lg mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-full placeholder:text-secondary-dim" placeholder="Search topics, chapters..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-sm font-medium">
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1" href="#">JEE</a>
+<a class="text-[#9D9E9E] hover:text-[#E7E5E4] transition-all duration-300" href="#">NEET</a>
+<a class="text-[#9D9E9E] hover:text-[#E7E5E4] transition-all duration-300" href="#">BITSAT</a>
+</div>
+<div class="h-6 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-secondary hover:bg-[#252626]/50 p-2 rounded-lg transition-all">notifications</button>
+<button class="material-symbols-outlined text-secondary hover:bg-[#252626]/50 p-2 rounded-lg transition-all">settings</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/50">
+<img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuUnMEY0-4plFjhrxSGfBO6t2MbLXi6joTSofPEx2j_rIO-vX20jrrmqgnUDvTW84gA40xrMPbhdWmu3ufjoW0-gwCpblnslU-qXVwd0bejivh-2eRCbI_rsSCa7JJkknImg8bf5ZiQq1r7nmFX-PUGNAqvMZqwUDNfF-QY_Esk1CJf7Ro0RR-v8_MaEmm3Vu43NWfsRkt8t6yHwRISjSawhXhZ8N16Z6pRVbJbxmto6iMTEBYrOYGKhsHBR9AmR5RiDewhr1LZFHWr"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-40 bg-[#131313] border-r border-[#484848]/15 flex flex-col pt-20 pb-8 px-4 hidden lg:flex">
+<div class="mb-8 px-4">
+<h2 class="text-lg font-black text-[#CCC6B9]">Cognify</h2>
+<p class="text-xs text-secondary-dim font-label tracking-widest uppercase">Premium Prep</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-inter text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#CCC6B9] font-bold border-r-4 border-[#CCC6B9] bg-[#252626] rounded-l-lg" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-inter text-sm">Subjects</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">functions</span>
+<span class="font-inter text-sm">Formulas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-inter text-sm">Diagrams</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-inter text-sm">History</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<div class="bg-primary-container/20 p-4 rounded-xl border border-primary/10">
+<p class="text-xs text-primary font-bold mb-2">Upgrade to Pro</p>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">Access personalized AI analysis and premium mock tests.</p>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-[#9D9E9E] hover:text-[#E7E5E4] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">help</span>
+<span class="text-xs">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#9D9E9E] hover:text-[#E7E5E4] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+<span class="text-xs">Sign Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="lg:ml-64 pt-24 px-8 pb-12">
+<!-- Hero Section -->
+<header class="mb-14">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<p class="font-label text-xs uppercase tracking-[0.4em] text-primary/70 mb-3">Academic Curriculum</p>
+<h1 class="font-headline text-5xl lg:text-6xl font-extrabold tracking-tighter text-on-surface">The Digital <span class="text-primary italic">Atelier</span></h1>
+</div>
+<div class="flex items-center gap-6 bg-surface-container-high/60 p-1.5 pr-6 rounded-2xl border border-outline-variant/10 backdrop-blur-sm">
+<div class="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-xl">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div class="flex items-center gap-8">
+<div class="text-left">
+<p class="text-[10px] text-secondary-dim font-label uppercase tracking-wider mb-0.5">Chapters Tracked</p>
+<p class="text-xl font-bold text-on-surface">142</p>
+</div>
+<div class="w-px h-10 bg-outline-variant/20"></div>
+<div class="text-left">
+<p class="text-[10px] text-secondary-dim font-label uppercase tracking-wider mb-0.5">Total Progress</p>
+<p class="text-xl font-bold text-primary">68.4%</p>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Subject Cards Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<!-- Physics -->
+<div class="card-lift glow-hover group relative bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10 cursor-pointer overflow-hidden min-h-[220px]">
+<img alt="Physics Circuit" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGJGOOTMxZmuoyVurXiNjxxvKWEqazLJxeJ1WN-XyA6TINuA2ailGEH3sAE_-2NATLCJ57LxhIjPq4N61WKvq94Ot7fDQI_IteLzwkPqzsJMopWJgdsxM4VfvmW9HOaHzMdnRqWmglE-2cW25xzOQNTxfztWYLKGtFvmXTvLWJVYqiR3kQny4I87lCH40yxMq8kz-01yKO9Ls3zVgwugZzQCf2_W4o3ioU_tHzvBAjhlp6t4jurhKsAydNPOCzJYi7hZ0f0dkzkNpx"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-16">
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-md rounded-2xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-3xl">architecture</span>
+</div>
+<span class="text-[11px] font-label font-bold text-secondary-dim tracking-wider bg-surface-container-highest/50 px-3 py-1.5 rounded-full border border-outline-variant/10 backdrop-blur-md">48 CHAPTERS</span>
+</div>
+<h2 class="font-headline text-3xl font-bold mb-5 drop-shadow-lg">Physics</h2>
+<div class="space-y-3">
+<div class="flex justify-between text-xs text-secondary font-label font-medium uppercase tracking-widest">
+<span>Mastery Status</span>
+<span class="text-primary font-bold">72%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[72%] shadow-[0_0_12px_rgba(204,198,185,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Chemistry -->
+<div class="card-lift glow-hover group relative bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10 cursor-pointer overflow-hidden min-h-[220px]">
+<img alt="Chemistry Molecule" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADQhVCfbTRhPFSeG8OYXDcQoaElxMzNI39sarQXUv3CgRUoc8ldYDUj43FEKtQOS0JamcjOvh6zjFmGktYS8kPTXeROp-NBG5dWJ0QoO6An3uPmHgT9V7B8lpddiWjsgN8gMO-QSU60hyYNDEjj7P2a3cuBygzVMArYdSDLpxFjNCOdK3YfzxQYDQSQwTsGXmMF0AmaQTdg70nhPK-STBxjxFx13w9D1KBjojfG4flQUb2a74tl35h8Btfqt2o8gdWxVZ92AHEtD08"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-16">
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-md rounded-2xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-3xl">science</span>
+</div>
+<span class="text-[11px] font-label font-bold text-secondary-dim tracking-wider bg-surface-container-highest/50 px-3 py-1.5 rounded-full border border-outline-variant/10 backdrop-blur-md">54 CHAPTERS</span>
+</div>
+<h2 class="font-headline text-3xl font-bold mb-5 drop-shadow-lg">Chemistry</h2>
+<div class="space-y-3">
+<div class="flex justify-between text-xs text-secondary font-label font-medium uppercase tracking-widest">
+<span>Mastery Status</span>
+<span class="text-primary font-bold">58%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[58%] shadow-[0_0_12px_rgba(204,198,185,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Mathematics -->
+<div class="card-lift glow-hover group relative bg-surface-container-low rounded-3xl p-8 border border-outline-variant/10 cursor-pointer overflow-hidden min-h-[220px]">
+<img alt="Mathematics Geometry" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAu8gex27e1di8fGwD0QkJZtYaGFrpKnmukFisVjp-71guUAt-Z_Fi_38J2iVU4tzdtGV-tOjhb4ILe2pK4uiimLLSBT9h4rfMFe7zBREr_g5g1ic_F_vWnHklPCyyhwgiSAQYTTCJipAgQvvEq3u9lYU_5Tz1fv1EcLbvn1iqSWprUy6PsXC6zBu3WpgUvvMPhI_AVV7qQblpsYYn3hEP94xNn3Wv0wOJ-Y04SpSVUJPn1eY5MQQGtxWz1sT2113eGhJIx020LiV-"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-16">
+<div class="w-12 h-12 flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-md rounded-2xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-3xl">calculate</span>
+</div>
+<span class="text-[11px] font-label font-bold text-secondary-dim tracking-wider bg-surface-container-highest/50 px-3 py-1.5 rounded-full border border-outline-variant/10 backdrop-blur-md">40 CHAPTERS</span>
+</div>
+<h2 class="font-headline text-3xl font-bold mb-5 drop-shadow-lg">Mathematics</h2>
+<div class="space-y-3">
+<div class="flex justify-between text-xs text-secondary font-label font-medium uppercase tracking-widest">
+<span>Mastery Status</span>
+<span class="text-primary font-bold">64%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest/50 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[64%] shadow-[0_0_12px_rgba(204,198,185,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+<!-- Left Column: Chapter Detail -->
+<div class="lg:col-span-8">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<h3 class="font-headline text-2xl font-bold text-on-surface">Physics</h3>
+<span class="material-symbols-outlined text-secondary-dim">chevron_right</span>
+<h4 class="font-headline text-2xl font-medium text-secondary">Mechanics</h4>
+</div>
+<div class="flex gap-2">
+<button class="px-5 py-2 text-xs font-bold font-label bg-surface-container-high rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container-highest transition-all">Filter Subjects</button>
+<button class="px-5 py-2 text-xs font-bold font-label bg-surface-container-high rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container-highest transition-all">Progress Order</button>
+</div>
+</div>
+<div class="space-y-5 relative">
+<!-- Chapter Card -->
+<div class="card-lift glow-hover group bg-surface-container-low border border-outline-variant/10 rounded-2xl overflow-hidden cursor-pointer">
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex gap-6 items-center">
+<div class="w-14 h-14 flex items-center justify-center bg-surface-container-highest rounded-2xl text-primary font-black text-xl">01</div>
+<div>
+<h5 class="font-bold text-lg text-on-surface">Units and Measurements</h5>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-primary font-label font-bold uppercase tracking-tighter px-2 py-0.5 bg-primary/10 rounded">HIGH WEIGHT</span>
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[90%]"></div>
+</div>
+</div>
+<div class="w-1 h-1 bg-outline-variant/50 rounded-full"></div>
+<p class="text-[10px] text-secondary-dim font-label font-medium uppercase tracking-wider">Completed 12 days ago</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<div class="text-right hidden sm:block">
+<p class="text-[10px] text-secondary-dim font-label font-bold uppercase tracking-widest mb-1">Success Rate</p>
+<p class="text-sm font-bold text-on-surface">94% Accuracy</p>
+</div>
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="5"></circle>
+<circle class="text-primary transition-all duration-1000" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="17.6" stroke-linecap="round" stroke-width="5"></circle>
+</svg>
+<span class="absolute text-[11px] font-black text-primary">90%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Active Chapter Card -->
+<div class="relative">
+<div class="bg-surface-container border-2 border-primary/20 rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 relative z-10">
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-outline-variant/10">
+<div class="flex gap-6 items-center">
+<div class="w-14 h-14 flex items-center justify-center bg-primary text-on-primary rounded-2xl font-black text-xl shadow-lg shadow-primary/20">02</div>
+<div>
+<h5 class="font-bold text-lg text-on-surface">Kinematics: Motion in a Straight Line</h5>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-[#A5A296] font-label font-bold uppercase tracking-tighter px-2 py-0.5 bg-surface-container-highest rounded">MEDIUM WEIGHT</span>
+<div class="w-24 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[40%]"></div>
+</div>
+</div>
+<div class="w-1 h-1 bg-outline-variant/50 rounded-full"></div>
+<p class="text-[10px] text-primary font-label font-bold uppercase tracking-wider">Session Active</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<div class="text-right hidden sm:block">
+<p class="text-[10px] text-secondary-dim font-label font-bold uppercase tracking-widest mb-1">Current Focus</p>
+<p class="text-sm font-bold text-primary italic">Instantaneous Velocity</p>
+</div>
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="5"></circle>
+<circle class="text-primary" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="105.5" stroke-linecap="round" stroke-width="5"></circle>
+</svg>
+<span class="absolute text-[11px] font-black text-primary">40%</span>
+</div>
+</div>
+</div>
+<!-- Content Detail Expansion -->
+<div class="p-8 bg-surface-container-lowest grid grid-cols-1 md:grid-cols-2 gap-10">
+<div class="space-y-8">
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xl">play_circle</span>
+</div>
+<h6 class="text-sm font-bold text-on-surface">Learning Module: Concepts</h6>
+</div>
+<div class="aspect-video w-full rounded-2xl overflow-hidden relative group/video cursor-pointer border border-outline-variant/10">
+<img alt="Video preview" class="object-cover w-full h-full opacity-60 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4m5XhfU2rAbfxfPR4kXBBWC6rgSS6HpY4BaWpV7J6e_5Tm58YpvS4MWl2WqqrGUmDhy640FWqJzm01qPhHc4mRyELXzTSnw3NZhuWhpAJob4SV0zFLjJ_RAulUH_ncWdjIHSKh_aoAuhVo2mZ_of9DMOyNdLf74wOQIrxh9ucv6DXZrvJ80dfLso7K8_SastQRz1R2qaDJMdnjsRcvyG3W9N9SgXIHVpsd_Kav7OmlQN3bWBIDdPbpBU3aojGklM1bBzowA6M-FCl"/>
+<div class="absolute inset-0 flex flex-col items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors">
+<div class="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center text-on-primary shadow-xl shadow-primary/30 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<p class="mt-4 text-xs font-bold text-white tracking-widest uppercase drop-shadow-md">Resume Session</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-xl">terminal</span>
+</div>
+<h6 class="text-sm font-bold text-on-surface">Foundational Formula</h6>
+</div>
+<div class="bg-surface-container-high/50 p-6 rounded-2xl font-mono text-sm text-primary border-l-4 border-primary shadow-inner">
+                                            v = \lim_{\Delta t \to 0} \frac{\Delta x}{\Delta t} = \frac{dx}{dt}
+                                        </div>
+</div>
+</div>
+<div class="space-y-5">
+<div class="flex items-center justify-between">
+<h6 class="text-sm font-bold text-on-surface">Curriculum Roadmap</h6>
+<span class="text-[11px] text-primary font-label font-bold px-3 py-1 bg-primary/10 rounded-full">5 of 12 MODULES COMPLETED</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-high/40 rounded-xl text-[13px] border border-transparent hover:border-outline-variant/20 transition-all cursor-default">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-surface-variant">Position, Path length &amp; Displacement</span>
+</div>
+<span class="text-[10px] font-black text-secondary-dim uppercase">Done</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-primary/10 rounded-xl text-[13px] border border-primary/20 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+</div>
+<span class="text-on-surface font-bold">Average Velocity and Average Speed</span>
+</div>
+<span class="text-[10px] font-black text-primary uppercase">Current</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-high/40 rounded-xl text-[13px] opacity-60">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-outline-variant text-xl">lock</span>
+<span class="text-on-surface-variant">Relative Velocity &amp; Acceleration</span>
+</div>
+<span class="text-[10px] font-black text-secondary-dim uppercase tracking-widest">Locked</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Connector Visual -->
+<div class="absolute -left-6 top-0 bottom-0 w-1 flex flex-col items-center">
+<div class="h-10 w-1 bg-primary/30 rounded-full"></div>
+<div class="flex-1 w-px border-l-2 border-dashed border-primary/20 my-2"></div>
+<div class="h-10 w-1 bg-primary/30 rounded-full"></div>
+</div>
+</div>
+<!-- Theory & PYQ Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-10">
+<div class="group relative overflow-hidden rounded-2xl h-40 border border-outline-variant/10 cursor-pointer">
+<div class="absolute inset-0 bg-gradient-to-br from-[#1E2020] via-[#252626] to-[#131313] z-0"></div>
+<div class="absolute inset-0 opacity-10 mix-blend-overlay">
+<img alt="Notes preview" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7szycTtgEjBDzVWfnHVIMLSdiHDV54um-Lg7mIEdvZM8DsZc7Am5MLEwCOoeEqbdKF47iKz7epAejKU6b7sTaJZek7Vxfdl6S_6NOHCUODceFHBCzJIagajsd-7h_umOJDOyBNGAAu3gb6tp_91xiTSWY1k-2mOjg3KuCR5TiXDZharc9c8u1tjZ6C1m3mS2mtBT9JBiSjV549AQa7rsRA0rf3d8YsWc7gdj6U5_Pzcrcac4dX-f12-v0W0yuFAq9wmQYAofaX5XQ"/>
+</div>
+<div class="relative z-10 p-6 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<span class="text-[10px] font-bold text-secondary-dim uppercase tracking-widest bg-black/30 px-2 py-1 rounded">24 Pages</span>
+</div>
+<div>
+<h6 class="font-bold text-on-surface">Theory Notes</h6>
+<p class="text-xs text-secondary-dim mt-1">Detailed concept breakdown with examples</p>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary w-0 group-hover:w-full transition-all duration-500"></div>
+</div>
+<div class="group relative overflow-hidden rounded-2xl h-40 border border-outline-variant/10 cursor-pointer">
+<div class="absolute inset-0 bg-gradient-to-br from-[#191a1a] via-[#1f2020] to-[#0e0e0e] z-0"></div>
+<div class="absolute inset-0 opacity-10 mix-blend-overlay">
+<img alt="PYQ preview" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT93j7eyDa3otwI87leBjDPvGdJC4RM5Dz5anLIs8l34CStfFuytk-Wvf0Qr-hD50IOT-YrxnMO63HC4VYUUpVCCKpTotQZ6JONtAdU7JRrmfzKXGNZIwk6VSKwoHljUfNf71R960q5gPjqa0pMHUs13u9RW8dYI4Du4scoky-d3SBELfkTu4NCd3B9FNEahz9eDLssAiXRcibdRbSjAeLlMZV59NPyICHzjsG4kIi88uV_dFHXS8H_E1oiE2-zU2A3pTOz2Q_VaHs"/>
+</div>
+<div class="relative z-10 p-6 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">history_edu</span>
+</div>
+<span class="text-[10px] font-bold text-secondary-dim uppercase tracking-widest bg-black/30 px-2 py-1 rounded">15 Years</span>
+</div>
+<div>
+<h6 class="font-bold text-on-surface">Previous Year Questions</h6>
+<p class="text-xs text-secondary-dim mt-1">JEE Mains &amp; Advanced (2010-2024)</p>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-secondary w-0 group-hover:w-full transition-all duration-500"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Smart Card & Performance -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Smart Study Nudge -->
+<div class="bg-[#191a1a] rounded-3xl overflow-hidden border border-primary/20 shadow-2xl relative group">
+<div class="h-48 w-full overflow-hidden relative">
+<img alt="Immersive Study Environment" class="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000 opacity-60 group-hover:opacity-80 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgX4YfJ5MqrH2O5pvDHwEqOkPQ-9P6mQE9S2DXY3g9hp5wlyGAE43j6vInsjXY1MtzRvwKnBB1BW_XIpLlXOlcZLcQizOkbQhZrr1XbWQY4WFlOur_l0f8uIaazAJvdfTNkZFCwacCN283z-ncbEOw1M6OAQWcZGLKmDODUNDxEVIkdrvjbtQ-6CYthcs6MFssht-_agM0GivFTpz7XFR9f-Cq-TmT3y6liaUxHXr6ggjdulDCIq3UDScCqqdph119Cye9ojEL1QIq"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#191a1a] via-[#191a1a]/40 to-transparent"></div>
+<div class="absolute top-5 left-5 bg-primary text-on-primary px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl backdrop-blur-md">AI PREDICTION</div>
+</div>
+<div class="p-8">
+<h3 class="font-headline text-2xl font-bold mb-3">Optimize Your Path</h3>
+<p class="text-secondary-dim text-sm leading-relaxed mb-8">Data from your last mock session shows a pattern: mastering <span class="text-on-surface font-bold">Rotational Dynamics</span> now will unlock 15% higher accuracy in upcoming sections.</p>
+<div class="bg-surface-container-highest/60 p-5 rounded-2xl border border-outline-variant/10 mb-8 backdrop-blur-sm">
+<div class="flex justify-between items-center mb-3">
+<p class="text-xs font-bold text-on-surface uppercase tracking-wider">Target Objective</p>
+<span class="text-[10px] text-error font-black px-2 py-0.5 bg-error/10 rounded border border-error/20">CRITICAL GAP</span>
+</div>
+<p class="text-sm font-medium text-secondary mb-3">Rotational Motion Concepts</p>
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-error w-[32%] shadow-[0_0_10px_rgba(237,127,100,0.5)]"></div>
+</div>
+<p class="text-[10px] text-secondary-dim mt-2 text-right">Current Mastery: 32%</p>
+</div>
+<button class="w-full bg-primary text-on-primary font-black py-4 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+                            Fix Critical Gap Now
+                            <span class="material-symbols-outlined text-lg">bolt</span>
+</button>
+</div>
+</div>
+<!-- Learning Velocity -->
+<div class="bg-surface-container-low p-8 rounded-3xl border border-outline-variant/10">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline text-xs font-bold text-secondary-dim uppercase tracking-[0.2em]">Learning Velocity</h3>
+<span class="material-symbols-outlined text-primary text-xl">trending_up</span>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between text-xs mb-3">
+<span class="text-secondary-dim font-medium">Daily Study Hours</span>
+<span class="text-on-surface font-black">4.2 <span class="text-secondary-dim font-normal">/ 5.0</span></span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[84%] shadow-[0_0_8px_rgba(204,198,185,0.4)]"></div>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2">
+<div class="h-10 bg-primary/20 rounded-md"></div>
+<div class="h-10 bg-primary/40 rounded-md"></div>
+<div class="h-10 bg-primary/10 rounded-md"></div>
+<div class="h-10 bg-primary/60 rounded-md"></div>
+<div class="h-10 bg-primary/90 rounded-md"></div>
+<div class="h-10 bg-primary/40 rounded-md"></div>
+<div class="h-10 bg-primary rounded-md ring-2 ring-primary ring-offset-4 ring-offset-surface-container-low shadow-lg shadow-primary/20"></div>
+</div>
+<div class="p-4 bg-surface-container-high rounded-xl border border-outline-variant/5">
+<p class="text-[11px] text-primary font-bold text-center leading-relaxed">Top 5% Achievement: Your consistency this week is elite.</p>
+</div>
+</div>
+</div>
+<!-- Content Tags -->
+<div class="flex flex-wrap gap-2 pt-2">
+<span class="px-3 py-1.5 bg-surface-container-high/60 rounded-lg text-[10px] font-bold font-label text-secondary hover:text-primary hover:bg-surface-container-highest transition-all border border-outline-variant/10 cursor-pointer uppercase tracking-tighter">#mechanics</span>
+<span class="px-3 py-1.5 bg-surface-container-high/60 rounded-lg text-[10px] font-bold font-label text-secondary hover:text-primary hover:bg-surface-container-highest transition-all border border-outline-variant/10 cursor-pointer uppercase tracking-tighter">#calculus-core</span>
+<span class="px-3 py-1.5 bg-surface-container-high/60 rounded-lg text-[10px] font-bold font-label text-secondary hover:text-primary hover:bg-surface-container-highest transition-all border border-outline-variant/10 cursor-pointer uppercase tracking-tighter">#trending</span>
+<span class="px-3 py-1.5 bg-surface-container-high/60 rounded-lg text-[10px] font-bold font-label text-error/80 hover:text-error hover:bg-error/10 transition-all border border-error/10 cursor-pointer uppercase tracking-tighter">#action-required</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Subtle mouse tracking for glow effect
+        document.querySelectorAll('.glow-hover').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--x', `${x}%`);
+                card.style.setProperty('--y', `${y}%`);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tests &amp; Mocks | Cognify</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500&amp;family=Space+Grotesk:wght@300;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-primary-fixed": "#433f35",
+                "primary-fixed-dim": "#dad4c6",
+                "primary": "#ccc6b9",
+                "on-tertiary": "#5e5f5f",
+                "tertiary": "#faf9f9",
+                "on-error": "#450900",
+                "secondary-container": "#3a3c3c",
+                "surface-dim": "#0e0e0e",
+                "on-secondary": "#1f2021",
+                "tertiary-fixed": "#f5f3f3",
+                "surface-container": "#191a1a",
+                "surface-container-high": "#1f2020",
+                "secondary-fixed": "#e3e2e2",
+                "error-dim": "#ba573f",
+                "on-secondary-fixed": "#3e4040",
+                "on-primary-fixed-variant": "#5f5b50",
+                "outline-variant": "#484848",
+                "surface-tint": "#ccc6b9",
+                "primary-container": "#4a473c",
+                "on-surface": "#e7e5e4",
+                "surface-container-highest": "#252626",
+                "surface-container-lowest": "#000000",
+                "surface-container-low": "#131313",
+                "secondary-dim": "#9d9e9e",
+                "surface-variant": "#252626",
+                "background": "#0e0e0e",
+                "tertiary-dim": "#ecebea",
+                "on-primary": "#434036",
+                "error-container": "#7e2b17",
+                "on-background": "#e7e5e4",
+                "inverse-primary": "#635f54",
+                "tertiary-container": "#ecebea",
+                "outline": "#767575",
+                "on-secondary-fixed-variant": "#5a5c5c",
+                "secondary": "#9d9e9e",
+                "on-tertiary-container": "#565757",
+                "surface": "#0e0e0e",
+                "tertiary-fixed-dim": "#e6e5e5",
+                "secondary-fixed-dim": "#d4d4d4",
+                "primary-fixed": "#e9e2d4",
+                "on-primary-container": "#d6d0c2",
+                "on-tertiary-fixed": "#494a4a",
+                "on-error-container": "#ff9b82",
+                "on-surface-variant": "#acabaa",
+                "surface-bright": "#2c2c2c",
+                "error": "#ed7f64",
+                "primary-dim": "#beb8ab",
+                "on-secondary-container": "#bfbfbf",
+                "inverse-on-surface": "#565555",
+                "on-tertiary-fixed-variant": "#666666",
+                "inverse-surface": "#fcf9f8"
+            },
+            "borderRadius": {
+                "DEFAULT": "16px",
+                "lg": "16px",
+                "xl": "16px",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #252626;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ccc6b9 0%, #a8a398 100%);
+            color: #434036;
+        }
+        .sidebar-active {
+            border-left: 3px solid #ccc6b9;
+            color: #e7e5e4;
+            background: rgba(255, 255, 255, 0.03);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary antialiased">
+<!-- SideNavBar Implementation -->
+<div class="hidden lg:flex fixed left-0 top-0 h-screen w-20 bg-surface-container-lowest flex-col items-center py-8 border-r border-white/5 z-[110]">
+<div class="mb-12">
+<span class="font-black text-primary text-xl tracking-tighter">CO</span>
+</div>
+<div class="flex flex-col w-full">
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1" href="#" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Dash</span>
+</a>
+<a class="flex flex-col items-center py-4 sidebar-active gap-1" href="#" title="Tests">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Tests</span>
+</a>
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1" href="#" title="Library">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Lib</span>
+</a>
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1" href="#" title="Cogni">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Cogni</span>
+</a>
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1" href="#" title="Arena">
+<span class="material-symbols-outlined">swords</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Arena</span>
+</a>
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1" href="#" title="Notes">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Notes</span>
+</a>
+<a class="flex flex-col items-center py-4 text-stone-500 hover:text-primary transition-colors gap-1 mt-auto" href="#" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-label uppercase tracking-widest">Set</span>
+</a>
+</div>
+</div>
+<div class="lg:pl-20">
+<!-- TopNavBar Implementation -->
+<nav class="bg-background/80 backdrop-blur-xl sticky top-0 border-b border-white/5 z-[100] flex justify-between items-center px-8 h-16 w-full">
+<div class="flex items-center">
+<span class="text-2xl font-bold tracking-tighter text-primary">Cognify</span>
+</div>
+<div class="hidden md:flex flex-1 max-w-xl mx-8">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">search</span>
+<input class="bg-surface-container-low border-none ring-1 ring-white/5 focus:ring-primary/40 rounded-full pl-12 pr-4 py-2 w-full font-body text-sm transition-all placeholder:text-stone-600" placeholder="Search resources, tests, or analytics..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-stone-500 cursor-pointer hover:text-stone-300 transition-colors">notifications</span>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-white/10">
+<span class="hidden sm:block text-xs font-label text-stone-400">Alex Graham</span>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-stone-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_3hlbCrTb1gVvp1xkB62RMMtA-niku7emrAZbU2XD5xcE6jYS1WKMmp_0szPWNfdap-Erg_mTpJnaFeO7Heh4xL5jUkA8u72DkhvK6e8UlxjooFtKudpq-LkqrgO2V4MsDQPC-hysMBSgZuMpN1aYe6gWAfRsmCHncWTPWBQxY2ByxU8m--ydhD6awWU1mTLsC6yuyXLpXkoB3UGF8ZfAC2vTuwq-UaUY7OcNY9xOucc8QmXsYn4JYUquuWIvPA-isRb2QZ6O4GWz"/>
+</div>
+</div>
+</nav>
+<main class="max-w-[1440px] mx-auto px-8 py-12">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+<div class="space-y-2">
+<p class="font-label text-secondary uppercase tracking-[0.3em] text-[12px]">Assessment Module</p>
+<h1 class="font-headline text-[40px] font-extrabold tracking-tighter text-on-surface leading-tight">Tests &amp; Mocks</h1>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center justify-center gap-2 px-6 py-2.5 bg-surface-container-high text-on-surface rounded-full border border-white/10 hover:bg-surface-bright transition-all active:scale-95 text-sm font-label uppercase tracking-widest font-bold">
+<span class="material-symbols-outlined text-sm">tune</span>
+                        Filters
+                    </button>
+</div>
+</header>
+<!-- Recommended Scroll Section -->
+<section class="mb-20">
+<div class="flex items-center justify-between mb-8">
+<h2 class="font-headline text-[20px] font-semibold tracking-tight">Recommended for You</h2>
+<div class="flex gap-2">
+<button class="p-2 rounded-full border border-white/10 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-2 rounded-full border border-white/10 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+<div class="flex gap-6 overflow-x-auto pb-8 snap-x no-scrollbar">
+<!-- Recommended Card 1 -->
+<div class="min-w-[400px] snap-start relative group rounded-[16px] overflow-hidden aspect-[16/9] flex flex-col justify-end p-5 border border-white/10 shadow-xl">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD05krqtM4RJb9tzkw9Dnfq_Anz3XI5cGcYaK0jjSQoFAfcWJejuWBO2jhZro569BRcHKzkvO9InRv_Gtr9WycwGEUg0S565XPSBdj_O5eN_ZOoopYIdbLNYYaunefFzYmhD2QcYIxuHfYQcpmq6Spz6CNd5XUTPUOPS_dmkRk_b7bcxoQXOqisAvYO2nghckbOoT0Q9Jft3z-HEhy6N1QYe05mNGWAfPNPQL-cGaf8jbuQ9sLRey8uIGUaNMhJP_TaDjVeM9H_0TE1"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+</div>
+<div class="relative z-10 space-y-3">
+<span class="inline-block px-3 py-1 glass-panel text-[12px] font-label font-bold uppercase tracking-widest text-primary rounded-full">Top Pick</span>
+<h3 class="font-headline text-[20px] font-semibold tracking-tight text-on-surface">Advanced Quantum Mechanics</h3>
+<p class="text-on-surface-variant text-[14px] line-clamp-2 max-w-xs">Full-length diagnostic focus on wave functions and particle duality.</p>
+<div class="pt-2 flex items-center gap-4">
+<button class="btn-primary px-6 py-2 rounded-full font-label text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity">Launch Now</button>
+<span class="text-primary font-label text-[12px]">+12.4 pts Potential</span>
+</div>
+</div>
+</div>
+<!-- Recommended Card 2 -->
+<div class="min-w-[400px] snap-start relative group rounded-[16px] overflow-hidden aspect-[16/9] flex flex-col justify-end p-5 border border-white/10 shadow-xl">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3c22GgpNEvvYkJtCIiICPJQFy6F5qqfxI-iMik2YK7AgTT2DrrB0nOmsG0aNLyiiRQrObTmz5I-aV2PnrH7ijUCM8j8DEZt9kx1X_u5PGORXRMRhzYfWfuLjZqbEGMaIdwn72CndxKlYw4bz-ud8e9EnTqDKDjyAOsQN_U2kbUlAoQSFJ1wzsOhJBhdrsRzNCPhBDWIC8ROIZ73585Ethb_LecNHq4yWMzGeKymsLfmYvXdO17CxaGMpZPriR6BkSqv_5-wboSqHj"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+</div>
+<div class="relative z-10 space-y-3">
+<span class="inline-block px-3 py-1 glass-panel text-[12px] font-label font-bold uppercase tracking-widest text-primary rounded-full">New Release</span>
+<h3 class="font-headline text-[20px] font-semibold tracking-tight text-on-surface">Organic Synthesis Mastery</h3>
+<p class="text-on-surface-variant text-[14px] line-clamp-2 max-w-xs">Reagent prediction and mechanism tracing for elite tier students.</p>
+<div class="pt-2 flex items-center gap-4">
+<button class="btn-primary px-6 py-2 rounded-full font-label text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity">Launch Now</button>
+<span class="text-primary font-label text-[12px]">+8.1 pts Potential</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Test Grid and Sidebar Filters -->
+<div class="flex flex-col lg:flex-row gap-12">
+<!-- Sidebar Filters -->
+<aside class="w-full lg:w-64 space-y-10 shrink-0">
+<div>
+<h4 class="font-label text-[12px] uppercase tracking-[0.3em] text-secondary mb-6">By Subject</h4>
+<div class="space-y-4">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-4 h-4 rounded-sm bg-surface-container-highest border border-white/10 group-hover:border-primary transition-colors flex items-center justify-center">
+<div class="w-2 h-2 bg-primary scale-0 group-has-[:checked]:scale-100 transition-transform"></div>
+</div>
+<input checked="" class="hidden" type="checkbox"/>
+<span class="text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">Mathematics</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-4 h-4 rounded-sm bg-surface-container-highest border border-white/10 group-hover:border-primary transition-colors"></div>
+<input class="hidden" type="checkbox"/>
+<span class="text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">Physics</span>
+</label>
+</div>
+</div>
+<div>
+<h4 class="font-label text-[12px] uppercase tracking-[0.3em] text-secondary mb-6">Complexity</h4>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 text-[12px] font-label bg-surface-container-highest text-on-surface-variant rounded border border-white/5 hover:border-primary/50 transition-colors">Beginner</button>
+<button class="px-3 py-1.5 text-[12px] font-label bg-primary text-on-primary rounded border border-primary transition-colors">Intermediate</button>
+<button class="px-3 py-1.5 text-[12px] font-label bg-surface-container-highest text-on-surface-variant rounded border border-white/5 hover:border-primary/50 transition-colors">Expert</button>
+</div>
+</div>
+</aside>
+<!-- Test Grid -->
+<div class="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Test Card 1 -->
+<div class="bg-surface-container rounded-[16px] p-5 border border-white/5 hover:bg-surface-container-high transition-all duration-300 group shadow-lg">
+<div class="aspect-[4/3] rounded-[16px] mb-6 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuFFJnGXlxUu3JeiIbeyvSSrohT5-dAxZDp8efFkG0YZu65jg71uvhp5Bi9FHwKgKxXy_rVrmId9X67qxVKEiQkWigYomif9YCmqGi_pdPKZHM_-3MTBjZYhAoRerJ8RK1QqzsJmsSSRkOmhCMhPP2vpIGVaagPnUvK9AOb-nmbKHGz_-PirDnZufChl7G7QiCvSs9bGbftfolITlLTINOLLxIvDegBIgOybWxepjObQXLPpgeOeeGNTJh4WDpOFKUHg9RkPHb4A33"/>
+<div class="absolute top-4 right-4 bg-primary-container/80 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="font-label text-[12px] font-bold text-primary">+6.2 pts</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label text-[12px] uppercase tracking-widest text-secondary">Mathematics</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-on-surface-variant">timer</span>
+<span class="font-label text-[12px] text-on-surface-variant">45m</span>
+</div>
+</div>
+<h3 class="font-headline text-[20px] font-semibold text-on-surface leading-tight">Statistical Inference</h3>
+<div class="flex items-center gap-4 py-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-stone-500">quiz</span>
+<span class="font-label text-[12px] text-on-surface-variant">30 Qs</span>
+</div>
+</div>
+<button class="w-auto btn-primary px-8 py-3 rounded-full font-label text-[12px] font-bold uppercase tracking-[0.2em] transition-all active:scale-[0.98]">Start Test</button>
+</div>
+</div>
+<!-- Test Card 2 -->
+<div class="bg-surface-container rounded-[16px] p-5 border border-white/5 hover:bg-surface-container-high transition-all duration-300 group shadow-lg">
+<div class="aspect-[4/3] rounded-[16px] mb-6 overflow-hidden relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOR6YvWuXaTvErEArNe6lnesYLK1SOwoLVYFjOJhFgfaYoGChtzU3NbFbenHmc6abskh74rh19_honv2nTFSiXq02OAJ5Dfq32I4WvBsqxnHH26l93hf8XnEYEREWZ6PPfWSkXGoHarddsIkUOIGX3_xfCaARWcORaoQUnjGOyruV0yhQKb5kfHvf_FzrWrOLZ7m9XKZp1JTsARzwiiUFmLNlj9X5K9on2Nq1zwB_aENafvJOqNi6UfvqNYAo9RvO5HGAY27j0AclZ"/>
+<div class="absolute top-4 right-4 bg-primary-container/80 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="font-label text-[12px] font-bold text-primary">+4.8 pts</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label text-[12px] uppercase tracking-widest text-secondary">Chemistry</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-on-surface-variant">timer</span>
+<span class="font-label text-[12px] text-on-surface-variant">60m</span>
+</div>
+</div>
+<h3 class="font-headline text-[20px] font-semibold text-on-surface leading-tight">Thermodynamics</h3>
+<div class="flex items-center gap-4 py-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-stone-500">quiz</span>
+<span class="font-label text-[12px] text-on-surface-variant">45 Qs</span>
+</div>
+</div>
+<button class="w-auto border border-white/20 hover:bg-white/5 px-8 py-3 rounded-full font-label text-[12px] font-bold uppercase tracking-[0.2em] transition-all active:scale-[0.98]">Preview</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-20 px-8 py-12 border-t border-white/5 text-center">
+<p class="font-label text-[12px] text-stone-500 tracking-widest uppercase">© 2026 Cognify AI.</p>
+</footer>
+</div>
+</body></html>

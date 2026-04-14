@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cogni AI Tutor Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#b9b8b7",
+                        "surface-dim": "#131313",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "outline": "#959087",
+                        "on-tertiary-fixed": "#1c1b20",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed-dim": "#cac5cc",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#ccc6b9",
+                        "secondary-container": "#494949",
+                        "on-background": "#e5e2e1",
+                        "on-error": "#690005",
+                        "on-tertiary-container": "#545157",
+                        "surface-bright": "#3a3939",
+                        "primary-fixed": "#e8e2d4",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474746",
+                        "background": "#131313",
+                        "on-primary-container": "#565248",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#e8e2d4",
+                        "tertiary-fixed": "#e6e1e8",
+                        "on-surface-variant": "#cbc6bc",
+                        "on-secondary-fixed": "#1b1c1b",
+                        "on-primary": "#333027",
+                        "on-tertiary": "#322f35",
+                        "on-secondary": "#303030",
+                        "secondary-fixed": "#e4e2e1",
+                        "inverse-primary": "#625e54",
+                        "surface-tint": "#ccc6b9",
+                        "primary-container": "#ccc6b9",
+                        "tertiary": "#e6e1e8",
+                        "tertiary-container": "#cac5cc",
+                        "surface-variant": "#353534",
+                        "on-primary-fixed-variant": "#4a473d",
+                        "surface-container-highest": "#353534",
+                        "surface": "#131313",
+                        "secondary": "#c8c6c5",
+                        "on-primary-fixed": "#1e1b13",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container": "#201f1f",
+                        "outline-variant": "#49473f",
+                        "on-tertiary-fixed-variant": "#48464b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "inverse-on-surface": "#313030"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #131313; }
+        .font-serif { font-family: 'Newsreader', serif; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #131313; }
+        ::-webkit-scrollbar-thumb { background: #2A2A2A; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-on-surface selection:bg-primary/30">
+<!-- Sidebar Navigation (JSON: SideNavBar) -->
+<aside class="w-[200px] h-screen fixed left-0 top-0 bg-[#201F1F] dark:bg-[#201F1F] flex flex-col py-8 z-50">
+<div class="text-2xl font-serif text-[#CCC6B9] mb-8 px-4">Cogni-Ed</div>
+<nav class="flex-1 space-y-1">
+<a class="text-stone-500 py-3 px-6 flex items-center hover:text-stone-300 transition-all hover:bg-[#2A2A2A] duration-150" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-['Newsreader'] tracking-tight">Dashboard</span>
+</a>
+<a class="text-[#CCC6B9] font-semibold border-l-2 border-[#CCC6B9] py-3 px-6 flex items-center transition-all bg-[#2A2A2A]/50" href="#">
+<span class="material-symbols-outlined mr-3">psychology</span>
+<span class="font-['Newsreader'] tracking-tight">Cogni</span>
+</a>
+<a class="text-stone-500 py-3 px-6 flex items-center hover:text-stone-300 transition-all hover:bg-[#2A2A2A] duration-150" href="#">
+<span class="material-symbols-outlined mr-3">quiz</span>
+<span class="font-['Newsreader'] tracking-tight">Tests</span>
+</a>
+<a class="text-stone-500 py-3 px-6 flex items-center hover:text-stone-300 transition-all hover:bg-[#2A2A2A] duration-150" href="#">
+<span class="material-symbols-outlined mr-3">library_books</span>
+<span class="font-['Newsreader'] tracking-tight">Library</span>
+</a>
+<a class="text-stone-500 py-3 px-6 flex items-center hover:text-stone-300 transition-all hover:bg-[#2A2A2A] duration-150" href="#">
+<span class="material-symbols-outlined mr-3">sports_esports</span>
+<span class="font-['Newsreader'] tracking-tight">Arena</span>
+</a>
+<a class="text-stone-500 py-3 px-6 flex items-center hover:text-stone-300 transition-all hover:bg-[#2A2A2A] duration-150" href="#">
+<span class="material-symbols-outlined mr-3">description</span>
+<span class="font-['Newsreader'] tracking-tight">Notes</span>
+</a>
+</nav>
+<div class="px-6 space-y-4">
+<a class="text-stone-500 flex items-center text-sm hover:text-stone-300" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">settings</span>Settings
+            </a>
+<div class="flex items-center pt-4 border-t border-outline-variant/10">
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional man in high-end studio lighting with soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC7huEeD0rb5gqm2eraa7cVy27TjYKhATjPqbbsJht3NgnbDRDD7MHE0ozUvAR5ulG5FCQVsOPiWB7F6qnazt9gvwX_9RerDdu6VtYxQydzk5BR35LPFjQe4NBQ5ApcERfujFqMfoN8rX8UjjHHxJL5ChhyEts8Az4Pegz1HpT2DO00t1httNaTeEKbGYU0_tM_2ycXQmYMZw3FBF1CfyZsugWJ2Ne1WNthD_aAaquvXdvTdBBe8FnBHrYXLQv1YsE_eoj0MrfVWGH"/>
+</div>
+<div class="ml-3">
+<div class="text-xs font-bold text-primary-fixed-dim">Elite Tier</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation (JSON: TopNavBar) -->
+<header class="fixed top-0 right-0 w-[calc(100%-200px)] h-16 bg-[#131313]/80 dark:bg-[#131313]/80 backdrop-blur-xl flex justify-between items-center px-12 z-40">
+<div class="flex items-center space-x-8">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-500 text-sm">search</span>
+<input class="bg-surface-container-highest border-none rounded-md pl-10 pr-4 py-1.5 text-xs font-body w-64 focus:ring-1 focus:ring-outline-variant transition-all" placeholder="Search insights..." type="text"/>
+</div>
+<nav class="flex space-x-6 text-sm uppercase tracking-widest font-['Inter']">
+<a class="text-stone-400 hover:text-[#CCC6B9] transition-colors" href="#">Dashboard</a>
+<a class="text-[#CCC6B9] font-bold" href="#">Workspace</a>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<span class="material-symbols-outlined text-stone-400 hover:text-primary cursor-pointer transition-opacity opacity-80 hover:opacity-100">notifications</span>
+<span class="material-symbols-outlined text-stone-400 hover:text-primary cursor-pointer transition-opacity opacity-80 hover:opacity-100">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[200px] pt-16 h-screen overflow-hidden flex">
+<!-- Left Column: Session History -->
+<section class="w-72 bg-surface-container-low border-r border-outline-variant/5 flex flex-col p-6">
+<h3 class="font-serif text-lg text-primary-fixed-dim mb-6">History</h3>
+<div class="space-y-6 overflow-y-auto pr-2">
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-stone-500 font-bold mb-3 block">Today</span>
+<div class="space-y-4">
+<div class="group cursor-pointer">
+<div class="text-xs font-semibold text-on-surface group-hover:text-primary transition-colors">Quantum Electrodynamics Basics</div>
+<div class="text-[10px] text-stone-500 mt-1">2 hours ago • Physics</div>
+</div>
+<div class="group cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<div class="text-xs font-semibold text-on-surface">Neural Network Optimization</div>
+<div class="text-[10px] text-stone-500 mt-1">5 hours ago • AI</div>
+</div>
+</div>
+</div>
+<div>
+<span class="text-[10px] uppercase tracking-tighter text-stone-500 font-bold mb-3 block">Yesterday</span>
+<div class="space-y-4">
+<div class="group cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<div class="text-xs font-semibold text-on-surface">Advanced Linear Algebra</div>
+<div class="text-[10px] text-stone-500 mt-1">1 day ago • Math</div>
+</div>
+<div class="group cursor-pointer opacity-60 hover:opacity-100 transition-opacity">
+<div class="text-xs font-semibold text-on-surface">Stoic Philosophy &amp; Logic</div>
+<div class="text-[10px] text-stone-500 mt-1">1 day ago • Humanities</div>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-auto flex items-center justify-center gap-2 bg-surface-container-high py-3 rounded-md text-xs font-bold tracking-widest uppercase hover:bg-primary-container hover:text-on-primary-container transition-all">
+<span class="material-symbols-outlined text-sm">add</span> New Session
+            </button>
+</section>
+<!-- Center Column: Chat Interface -->
+<section class="flex-1 flex flex-col bg-surface overflow-hidden">
+<div class="flex-1 overflow-y-auto px-12 py-8 space-y-10">
+<!-- User Query -->
+<div class="flex flex-col items-end">
+<div class="max-w-[80%] bg-surface-container-high p-5 rounded-xl rounded-tr-none text-sm leading-relaxed text-on-surface">
+                        Can you explain the relationship between entropy and the Second Law of Thermodynamics, specifically in isolated systems?
+                    </div>
+</div>
+<!-- AI Structured Response -->
+<div class="flex flex-col items-start space-y-6">
+<!-- Section: Concept -->
+<div class="w-full">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Core Concept</span>
+</div>
+<h2 class="font-serif text-2xl mb-4 leading-snug">The Arrow of Irreversibility</h2>
+<p class="text-on-surface-variant leading-relaxed font-light">
+                            Entropy ($S$) is a measure of the molecular disorder or randomness of a system. The Second Law states that for an isolated system, the total entropy can never decrease over time; it can only remain constant or increase.
+                        </p>
+</div>
+<!-- Section: Step-by-Step with LaTeX-like styling -->
+<div class="w-full bg-surface-container-lowest p-8 rounded-xl border-l-2 border-primary-container/20">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm">functions</span>
+<span class="text-[10px] uppercase tracking-widest font-bold text-stone-500">Mathematical Framework</span>
+</div>
+<div class="space-y-6 font-mono text-sm text-primary-fixed">
+<div class="flex items-start gap-4">
+<span class="text-stone-600 font-bold">01.</span>
+<div>
+<div class="mb-1 text-on-surface">Boltzmann Entropy Formula</div>
+<div class="text-lg py-2">$S = k_B \ln \Omega$</div>
+<div class="text-[11px] text-stone-500">Where $k_B$ is Boltzmann's constant and $\Omega$ is the number of microstates.</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="text-stone-600 font-bold">02.</span>
+<div>
+<div class="mb-1 text-on-surface">Clausius Inequality</div>
+<div class="text-lg py-2">$\Delta S \geq \int \frac{dQ}{T}$</div>
+<div class="text-[11px] text-stone-500">For isolated systems, $dQ = 0$, thus $\Delta S \geq 0$.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Final Insights -->
+<div class="w-full grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-5 rounded-lg border border-outline-variant/10">
+<div class="text-[10px] uppercase font-bold text-primary mb-2">Synthesis</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Isolated systems gravitate toward thermal equilibrium, the state of maximum entropy.</p>
+</div>
+<div class="bg-surface-container p-5 rounded-lg border border-outline-variant/10">
+<div class="text-[10px] uppercase font-bold text-primary mb-2">Cognitive Link</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Think of entropy as the "tax" paid for every energetic exchange in the universe.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="p-8 bg-surface/50 backdrop-blur-md">
+<div class="relative max-w-4xl mx-auto">
+<textarea class="w-full bg-surface-container-high border-none rounded-xl p-5 pr-24 text-sm font-body resize-none focus:ring-1 focus:ring-primary/50 min-h-[60px]" placeholder="Ask Cogni about complex dynamics..."></textarea>
+<div class="absolute right-4 bottom-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-stone-500 hover:text-primary cursor-pointer">mic</span>
+<span class="material-symbols-outlined text-stone-500 hover:text-primary cursor-pointer">attach_file</span>
+<button class="bg-primary text-on-primary p-2 rounded-lg hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">north</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Cognitive Insights -->
+<section class="w-80 bg-surface-container border-l border-outline-variant/5 p-8 flex flex-col">
+<h3 class="font-serif text-lg text-primary-fixed-dim mb-8">Cognitive Insights</h3>
+<!-- Circular Mastery Ring -->
+<div class="flex flex-col items-center mb-10">
+<div class="relative w-40 h-40 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="110" stroke-width="4"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="text-3xl font-serif font-bold">75%</span>
+<span class="text-[10px] uppercase tracking-widest text-stone-500">Mastery</span>
+</div>
+</div>
+<div class="mt-4 text-center">
+<div class="text-sm font-semibold">Thermodynamics</div>
+<div class="text-[10px] text-stone-500 mt-1 uppercase tracking-tighter">Level: Advanced Undergraduate</div>
+</div>
+</div>
+<!-- Verified Sources -->
+<div class="mb-10">
+<div class="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-4">Verified Sources</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-3 bg-surface-container-high rounded-md">
+<span class="material-symbols-outlined text-primary text-lg">book</span>
+<div class="text-[11px]">
+<div class="font-bold">Zemansky's Heat</div>
+<div class="text-stone-500">Academic Standard</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-high rounded-md">
+<span class="material-symbols-outlined text-primary text-lg">school</span>
+<div class="text-[11px]">
+<div class="font-bold">MIT OpenCourseWare</div>
+<div class="text-stone-500">Video Lectures</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Knowledge Map Preview -->
+<div class="mt-auto">
+<div class="text-[10px] uppercase tracking-widest font-bold text-stone-500 mb-4">Knowledge Node</div>
+<div class="aspect-video w-full rounded-lg overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="abstract scientific visualization of connected particles in a deep obsidian space with glowing cream lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG6xsG2N1x5cPIkoyoGk8Z3dxf_sRRQYTT_zjKwjeniIvzxDlsaLs14I-R6aSgWLZHiz3fyIOeTMZhcTrbYQl93wnz83nuX7WySGVsDfieBdE85lJ-zhjb-CM7Oz474WBRrt3KqhGpoc2kuwkCdjGbII5KxtUhHgQjmwQwWFyeY71jzQ3Q_gK0vK2_nFxcCf3G4sg2E8Huxm295YrN_fPvVV5wgJBB9JmutYPZ-jVurSnqiV7qhzeVWBiqLdv5wcmTJ96Nps4wDywc"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+<span class="text-[10px] font-bold uppercase tracking-widest bg-background px-3 py-1 rounded-full">Expand Map</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

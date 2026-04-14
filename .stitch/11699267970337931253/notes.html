@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Digital Atelier | Cognify Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(37, 38, 38, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #252626;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484848;
+        }
+        .asymmetric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1.5fr;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#494a4a",
+                      "inverse-primary": "#635f54",
+                      "surface-bright": "#2c2c2c",
+                      "on-primary": "#434036",
+                      "secondary-container": "#3a3c3c",
+                      "secondary-fixed": "#e3e2e2",
+                      "primary-fixed": "#e9e2d4",
+                      "on-surface": "#e7e5e4",
+                      "primary-container": "#4a473c",
+                      "secondary-fixed-dim": "#d4d4d4",
+                      "secondary-dim": "#9d9e9e",
+                      "surface-dim": "#0e0e0e",
+                      "outline-variant": "#484848",
+                      "outline": "#767575",
+                      "tertiary-fixed-dim": "#e6e5e5",
+                      "surface": "#0e0e0e",
+                      "surface-container-low": "#131313",
+                      "on-background": "#e7e5e4",
+                      "surface-tint": "#ccc6b9",
+                      "surface-container-high": "#1f2020",
+                      "tertiary-fixed": "#f5f3f3",
+                      "error": "#ed7f64",
+                      "tertiary-dim": "#ecebea",
+                      "on-secondary-container": "#bfbfbf",
+                      "surface-container": "#191a1a",
+                      "on-secondary-fixed-variant": "#5a5c5c",
+                      "on-secondary-fixed": "#3e4040",
+                      "on-tertiary-fixed-variant": "#666666",
+                      "on-primary-fixed-variant": "#5f5b50",
+                      "tertiary-container": "#ecebea",
+                      "surface-variant": "#252626",
+                      "on-primary-fixed": "#433f35",
+                      "secondary": "#9d9e9e",
+                      "on-secondary": "#1f2021",
+                      "inverse-on-surface": "#565555",
+                      "inverse-surface": "#fcf9f8",
+                      "primary-dim": "#beb8ab",
+                      "error-container": "#7e2b17",
+                      "background": "#0e0e0e",
+                      "on-error-container": "#ff9b82",
+                      "surface-container-highest": "#252626",
+                      "error-dim": "#ba573f",
+                      "surface-container-lowest": "#000000",
+                      "on-tertiary-container": "#565757",
+                      "on-error": "#450900",
+                      "primary-fixed-dim": "#dad4c6",
+                      "primary": "#ccc6b9",
+                      "tertiary": "#faf9f9",
+                      "on-surface-variant": "#acabaa",
+                      "on-tertiary": "#5e5f5f",
+                      "on-primary-container": "#d6d0c2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Space Grotesk"]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body overflow-hidden">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-[#252626]/70 backdrop-blur-xl flex justify-between items-center px-8 h-16 w-full shadow-[0px_24px_48px_rgba(0,0,0,0.5)] border-t-[0.5px] border-[#484848]/30">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#CCC6B9] font-headline">The Digital Atelier</span>
+<nav class="hidden md:flex gap-6 font-headline tracking-tight text-sm">
+<a class="text-[#9D9E9E] hover:text-[#E7E5E4] transition-colors duration-300" href="#">Curriculum</a>
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1" href="#">Studio</a>
+<a class="text-[#9D9E9E] hover:text-[#E7E5E4] transition-colors duration-300" href="#">Performance</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 mr-4">
+<span class="material-symbols-outlined text-[#9D9E9E] cursor-pointer hover:text-[#E7E5E4]">bolt</span>
+<span class="material-symbols-outlined text-[#9D9E9E] cursor-pointer hover:text-[#E7E5E4]">notifications</span>
+</div>
+<button class="bg-[#CCC6B9] text-[#434036] px-4 py-1.5 rounded-md text-sm font-semibold transition-transform scale-95 active:scale-90">Create New</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User Profile" data-alt="Close-up portrait of a thoughtful young professional man in a minimal studio setting with soft directional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWRVCCTwa8r1xg30gWR71fCY-vZBfF6e41WTtb64s4jlEq4OLkyt4zXP2mR8UK7NRdi1J1tviRzeD2iJZI1PfuKzR0rHst0wAcTHFhoUJ5483GeudeJ_iAbjjEAWru6OXBzonZPNgyQM5iZ-etXbb6eP6CWda38hrOJgXMIAVAQ7Bswg8R55wuanMTP514cyrxvtC2irUgiRGgVpM7YfoRFpoHnLk3-0ffvE0npU8kQwLtdeNI-gOmoRwFoJAQCC8NX7Bflbq9-6go"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-[60] bg-[#131313] flex flex-col py-6 px-4 gap-y-2 font-body text-sm font-medium">
+<div class="mb-8 px-2">
+<h2 class="font-headline font-black uppercase tracking-widest text-[#CCC6B9] text-lg">Atelier Studio</h2>
+<p class="text-[#9D9E9E] text-[10px] uppercase tracking-tighter">High-Performance Lab</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-[#252626] text-[#CCC6B9] rounded-md transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="clinical_notes">clinical_notes</span>
+<span>Workspace</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#9D9E9E] hover:bg-[#252626]/50 hover:text-[#E7E5E4] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>Archive</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#9D9E9E] hover:bg-[#252626]/50 hover:text-[#E7E5E4] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#9D9E9E] hover:bg-[#252626]/50 hover:text-[#E7E5E4] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span>AI Tutor</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#9D9E9E] hover:bg-[#252626]/50 hover:text-[#E7E5E4] transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<div class="p-4 bg-primary-container rounded-lg border border-primary/20">
+<p class="text-xs text-on-primary-container mb-2 font-label">Trained on 1.2M tokens.</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded text-xs font-bold uppercase tracking-widest">Upgrade to Pro</button>
+</div>
+<div class="flex flex-col gap-1 border-t border-outline-variant/20 pt-4">
+<a class="flex items-center gap-3 px-3 py-1.5 text-[#9D9E9E] text-xs hover:text-[#E7E5E4]" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span> Help
+                </a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-[#9D9E9E] text-xs hover:text-[#E7E5E4]" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="rate_review">rate_review</span> Feedback
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 h-screen overflow-hidden flex flex-col">
+<!-- Studio Header -->
+<div class="px-10 py-8 border-b border-outline-variant/10 flex justify-between items-end">
+<div>
+<span class="text-secondary font-label uppercase tracking-widest text-[10px]">Cognify Studio // v2.0</span>
+<h1 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface mt-1 italic">Transformation Studio</h1>
+</div>
+<div class="flex gap-4 mb-1">
+<div class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full text-xs font-medium text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    AI Engine Active
+                </div>
+</div>
+</div>
+<!-- 3-Panel Asymmetric Layout -->
+<div class="flex-grow grid grid-cols-12 gap-0 overflow-hidden">
+<!-- LEFT PANEL: Input -->
+<section class="col-span-3 border-r border-outline-variant/10 bg-surface-container-low p-6 flex flex-col gap-6">
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<label class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Source Material</label>
+<span class="text-[10px] text-secondary">0 / 10,000 chars</span>
+</div>
+<div class="relative group">
+<textarea class="w-full h-64 bg-surface-container-lowest border border-outline-variant/20 rounded-lg p-4 text-sm text-on-surface focus:outline-none focus:border-primary/40 transition-all resize-none placeholder:text-outline/50" placeholder="Paste your raw lecture notes, transcripts, or research findings here..."></textarea>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<button class="p-1.5 rounded bg-surface-variant text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">content_paste</span>
+</button>
+<button class="p-1.5 rounded bg-surface-variant text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] font-label text-secondary uppercase tracking-widest mb-3">Or Upload Assets</p>
+<div class="border-2 border-dashed border-outline-variant/30 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary" data-icon="upload_file">upload_file</span>
+</div>
+<div class="text-center">
+<p class="text-xs font-medium">Drop PDF or Images</p>
+<p class="text-[10px] text-outline mt-1 italic">OCR processing enabled</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto">
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 group overflow-hidden relative">
+<span class="z-10">INITIALIZE ANALYSIS</span>
+<span class="material-symbols-outlined text-lg z-10 group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+<div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</button>
+</div>
+</section>
+<!-- CENTER PANEL: Tool Selector -->
+<section class="col-span-4 bg-surface p-6 overflow-y-auto border-r border-outline-variant/10">
+<header class="mb-8">
+<h3 class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Conversion Engine</h3>
+<p class="text-sm text-secondary mt-1">Select your desired output format.</p>
+</header>
+<div class="grid grid-cols-1 gap-3">
+<!-- Tool Card: Active -->
+<div class="p-4 rounded-xl bg-surface-container-highest border border-primary/30 ring-1 ring-primary/20 cursor-pointer group hover:bg-surface-bright transition-all">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(204,198,185,0.2)]">
+<span class="material-symbols-outlined text-primary" data-icon="style" style="font-variation-settings: 'FILL' 1;">style</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center">
+<h4 class="font-headline font-bold text-on-surface">Flashcards</h4>
+<span class="px-2 py-0.5 bg-primary text-on-primary text-[9px] font-bold rounded uppercase">Active</span>
+</div>
+<p class="text-xs text-secondary mt-1 leading-relaxed">Spaced-repetition optimized cards with front/back logic.</p>
+</div>
+</div>
+</div>
+<!-- Tool Card -->
+<div class="p-4 rounded-xl bg-surface-container-high border border-outline-variant/10 cursor-pointer group hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" data-icon="quiz">quiz</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Practice Questions</h4>
+<p class="text-xs text-outline mt-1 leading-relaxed">Multi-choice and short answer prompts for self-testing.</p>
+</div>
+</div>
+</div>
+<!-- Tool Card -->
+<div class="p-4 rounded-xl bg-surface-container-high border border-outline-variant/10 cursor-pointer group hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" data-icon="summarize">summarize</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Executive Summary</h4>
+<p class="text-xs text-outline mt-1 leading-relaxed">High-level distillation with bulleted key insights.</p>
+</div>
+</div>
+</div>
+<!-- Tool Card -->
+<div class="p-4 rounded-xl bg-surface-container-high border border-outline-variant/10 cursor-pointer group hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" data-icon="account_tree">account_tree</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Mind Map</h4>
+<p class="text-xs text-outline mt-1 leading-relaxed">Visual hierarchy layout for complex conceptual nodes.</p>
+</div>
+</div>
+</div>
+<!-- Tool Card -->
+<div class="p-4 rounded-xl bg-surface-container-high border border-outline-variant/10 cursor-pointer group hover:bg-surface-container-highest transition-all">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-lowest flex items-center justify-center group-hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors" data-icon="functions">functions</span>
+</div>
+<div class="flex-grow">
+<h4 class="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">Formula Sheet</h4>
+<p class="text-xs text-outline mt-1 leading-relaxed">Mathematical proofs and variable definitions extracted.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT PANEL: Output Studio -->
+<section class="col-span-5 bg-surface-container-lowest p-8 flex flex-col overflow-hidden relative">
+<!-- Perspective Grid Background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#484848 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+<div class="relative z-10 flex flex-col h-full">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="text-xs font-label uppercase tracking-widest text-primary">Preview Studio</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-on-surface font-headline font-bold">12 Flashcards Generated</span>
+<span class="text-[10px] text-secondary bg-surface-variant px-2 py-0.5 rounded">PDF Export Ready</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-bright transition-colors border border-outline-variant/20">
+<span class="material-symbols-outlined text-xl">refresh</span>
+</button>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-lg text-xs font-bold border border-outline-variant/20 flex items-center gap-2 hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-sm">download</span> Export
+                            </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg text-xs font-bold flex items-center gap-2 shadow-[0px_10px_20px_rgba(0,0,0,0.3)]">
+<span class="material-symbols-outlined text-sm">save</span> Save
+                            </button>
+</div>
+</div>
+<!-- Flashcard Deck Area -->
+<div class="flex-grow flex flex-col items-center justify-center gap-12">
+<!-- Main Preview Card -->
+<div class="w-full max-w-md aspect-[1.6/1] perspective-1000 group">
+<div class="relative w-full h-full text-center transition-all duration-500 rounded-3xl bg-surface-variant border border-primary/20 shadow-2xl flex flex-col items-center justify-center p-10 overflow-hidden">
+<!-- Top Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/10 via-primary to-primary/10"></div>
+<span class="absolute top-6 left-6 font-label text-[10px] uppercase text-secondary tracking-widest">Card 04 // Term</span>
+<h2 class="text-2xl font-headline font-bold text-on-surface leading-tight">Heuristic Systematic Model (HSM)</h2>
+<p class="mt-4 text-sm text-secondary italic">Click to reveal definition</p>
+<div class="absolute bottom-6 right-6 flex items-center gap-1 text-[10px] font-label text-outline uppercase">
+<span class="material-symbols-outlined text-xs">visibility</span> 4.2s Avg
+                                </div>
+</div>
+</div>
+<!-- Card Controls -->
+<div class="flex items-center gap-8">
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:text-on-surface hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-6 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:text-on-surface hover:border-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Skeleton Loader for secondary items -->
+<div class="mt-auto grid grid-cols-3 gap-4 pt-8 border-t border-outline-variant/10">
+<div class="space-y-2 opacity-40">
+<div class="h-2 w-16 bg-outline-variant rounded"></div>
+<div class="h-10 w-full bg-surface-container-high rounded-lg"></div>
+</div>
+<div class="space-y-2 opacity-40">
+<div class="h-2 w-20 bg-outline-variant rounded"></div>
+<div class="h-10 w-full bg-surface-container-high rounded-lg"></div>
+</div>
+<div class="space-y-2 opacity-40">
+<div class="h-2 w-12 bg-outline-variant rounded"></div>
+<div class="h-10 w-full bg-surface-container-high rounded-lg"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB (Suppressed as per rules for transactional screen, but if this were dashboard we'd show it) -->
+</body></html>

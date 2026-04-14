@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#0e0e0e",
+                    "surface-container-low": "#131313",
+                    "secondary-dim": "#9d9e9e",
+                    "error-dim": "#ba573f",
+                    "tertiary-container": "#ecebea",
+                    "on-secondary": "#1f2021",
+                    "error-container": "#7e2b17",
+                    "on-tertiary-fixed-variant": "#666666",
+                    "inverse-on-surface": "#565555",
+                    "primary-fixed": "#e9e2d4",
+                    "error": "#ed7f64",
+                    "surface-tint": "#ccc6b9",
+                    "on-primary-fixed-variant": "#5f5b50",
+                    "surface-variant": "#252626",
+                    "tertiary-dim": "#ecebea",
+                    "inverse-surface": "#fcf9f8",
+                    "surface": "#0e0e0e",
+                    "surface-container-lowest": "#000000",
+                    "on-surface-variant": "#acabaa",
+                    "on-error": "#450900",
+                    "background": "#0e0e0e",
+                    "secondary-fixed": "#e3e2e2",
+                    "on-tertiary-container": "#565757",
+                    "tertiary-fixed-dim": "#e6e5e5",
+                    "on-secondary-fixed": "#3e4040",
+                    "tertiary-fixed": "#f5f3f3",
+                    "on-secondary-fixed-variant": "#5a5c5c",
+                    "surface-container-high": "#1f2020",
+                    "primary": "#ccc6b9",
+                    "on-primary-fixed": "#433f35",
+                    "secondary-container": "#3a3c3c",
+                    "on-tertiary-fixed": "#494a4a",
+                    "surface-container": "#191a1a",
+                    "tertiary": "#faf9f9",
+                    "surface-container-highest": "#252626",
+                    "outline": "#767575",
+                    "surface-bright": "#2c2c2c",
+                    "on-tertiary": "#5e5f5f",
+                    "secondary": "#9d9e9e",
+                    "primary-dim": "#beb8ab",
+                    "primary-fixed-dim": "#dad4c6",
+                    "on-error-container": "#ff9b82",
+                    "on-background": "#e7e5e4",
+                    "on-surface": "#e7e5e4",
+                    "on-primary-container": "#d6d0c2",
+                    "inverse-primary": "#635f54",
+                    "outline-variant": "#484848",
+                    "primary-container": "#4a473c",
+                    "secondary-fixed-dim": "#d4d4d4",
+                    "on-primary": "#434036",
+                    "on-secondary-container": "#bfbfbf"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "1rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; font-size: 14px; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #252626;
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #CCC6B9;
+            margin-top: -6px;
+            cursor: pointer;
+        }
+        [data-panel] { display: none; }
+        [data-panel].active { display: block; }
+        
+        .tab-link.active {
+            color: #ffffff;
+            background-color: #1f2020;
+            border-left: 3px solid #CCC6B9;
+            font-weight: 600;
+        }
+
+        .custom-card {
+            border-radius: 1rem;
+            padding: 20px;
+            background-color: #131313;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #CCC6B9 0%, #A39E94 100%);
+            color: #1f2021;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 24px;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #484848;
+            color: #e7e5e4;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 24px;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: #CCC6B9; }
+
+        .btn-ghost {
+            background: transparent;
+            color: #9D9E9E;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 24px;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost:hover { color: #e7e5e4; }
+        
+        h1 { font-size: 36px; font-weight: 800; line-height: 1.1; }
+        h2, .section-title { font-size: 20px; font-weight: 600; }
+        .meta-text { font-size: 12px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-x-hidden selection:bg-primary-container selection:text-primary">
+<nav class="fixed top-0 w-full z-50 bg-[#0E0E0E]/80 backdrop-blur-xl border-b border-outline-variant/10 px-8 h-16 flex items-center">
+<div class="flex-1 flex items-center">
+<div class="text-2xl font-bold tracking-tighter text-[#CCC6B9] cursor-pointer active:scale-95">Cognify</div>
+</div>
+<div class="flex-1 hidden md:flex justify-center">
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant/15 rounded-full px-4 py-1.5 focus-within:border-primary/40 transition-all w-full max-w-md">
+<span class="material-symbols-outlined text-secondary text-sm mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-secondary" placeholder="Search Cognify..." type="text"/>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-end space-x-6">
+<span class="material-symbols-outlined cursor-pointer text-secondary hover:text-[#EDE6D8] transition-colors" data-icon="notifications">notifications</span>
+<div class="h-9 w-9 rounded-full overflow-hidden border border-primary/20 cursor-pointer">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBXd2v9phl5MJ9JsKFaZUJbKqIoH36tkiTz6qX38EOTnnR3OORUL-5jAj-63_OfId95_iLyy1eMcncTwtrphxlMK5FWkPVTthciKWtWSPuqNJpligvHXdVMsigUNn64I4afTwANWrSFaOlfvlGY3ermwnx_PsDZWPXSmpjBuSBEi3iOciW4l26V3FegtvIj1cpaU-dNtRO0iOfy0CfMxYAfXv4Zh4ek4bpxrxGTNB43cl0MfG8W1cT4QgwJBxyAioMRWD68i-AIe_"/>
+</div>
+</div>
+</nav>
+<div class="flex pt-16 min-h-screen">
+<aside class="hidden md:flex h-screen w-64 fixed left-0 top-16 bg-[#0E0E0E] border-r border-outline-variant/10 flex-col py-6 px-3 space-y-1 font-['Inter'] text-sm">
+<div class="px-4 mb-6">
+<h2 class="section-title text-[#CCC6B9]">Settings</h2>
+<p class="text-[#9D9E9E] meta-text">Manage your Cognify</p>
+</div>
+<nav class="space-y-1">
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all" onclick="window.location.reload()">
+<span class="material-symbols-outlined mr-3 text-lg">dashboard</span> Dashboard
+            </button>
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all">
+<span class="material-symbols-outlined mr-3 text-lg">assignment</span> Tests
+            </button>
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all">
+<span class="material-symbols-outlined mr-3 text-lg">auto_stories</span> Library
+            </button>
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all">
+<span class="material-symbols-outlined mr-3 text-lg">psychology</span> Cogni
+            </button>
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all">
+<span class="material-symbols-outlined mr-3 text-lg">swords</span> Arena
+            </button>
+<button class="flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all">
+<span class="material-symbols-outlined mr-3 text-lg">sticky_note_2</span> Notes
+            </button>
+<button class="tab-link active flex w-full items-center px-4 py-3 rounded-md text-[#9D9E9E] hover:bg-[#1F2020] transition-all" data-tab="profile" onclick="switchTab('profile')">
+<span class="material-symbols-outlined mr-3 text-lg">settings</span> Settings
+            </button>
+</nav>
+<div class="mt-auto px-4 pb-12">
+<button class="btn-primary w-full">Upgrade Plan</button>
+</div>
+</aside>
+<main class="flex-1 md:ml-64 p-8 md:p-12 lg:p-16 bg-background max-w-7xl mx-auto">
+<!-- Profile Panel -->
+<section class="active" data-panel="profile">
+<div class="mb-10">
+<span class="font-label meta-text uppercase tracking-widest text-secondary mb-2 block">Identity &amp; Access</span>
+<h1 class="font-headline tracking-tighter text-on-surface">Profile Management</h1>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-4">
+<div class="custom-card text-center">
+<div class="relative inline-block group/avatar mb-4">
+<div class="h-32 w-32 rounded-full overflow-hidden border-2 border-primary/20 bg-surface-container-highest relative">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3mOErIanQIxc265xZt7-spjTRo34e4Ntp_J40QDHYqi3pddp5DV6q1WHvM8u2sd_vy2FQf9_D7MIZvtCoVGoWXzc4Kv0pACxDtfv-8tltEnJ7KzdL4AK3YASb0YxWPTmcUQpbc2VFiRtnRWaNDQk7fdqFbCF8VYRz8Di4020kG1wPtLiDr3CzG9f3Rhlodi9lrqIHuOksN0RYKFP_ztEnytCvwf7LryRFR0LYQTVy_6iv8UBLFuyxB3O_y007PKKEa51l3KIdNg99"/>
+<div class="absolute inset-0 bg-black/40 hidden group-hover/avatar:flex items-center justify-center cursor-pointer transition-opacity">
+<span class="material-symbols-outlined text-white">crop</span>
+</div>
+</div>
+<button class="absolute bottom-0 right-0 h-9 w-9 bg-surface-bright rounded-full flex items-center justify-center text-primary shadow-lg border border-outline-variant/30 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-base">photo_camera</span>
+</button>
+</div>
+<h3 class="section-title mb-1">Julian Sterling</h3>
+<p class="meta-text text-secondary mb-6 uppercase tracking-widest font-label">Scholar Tier</p>
+<div class="space-y-3 text-left">
+<div class="flex justify-between meta-text font-label uppercase tracking-widest">
+<span class="text-secondary">Profile Progress</span>
+<span class="text-primary">85%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%] rounded-full shadow-[0_0_8px_rgba(204,198,185,0.4)]"></div>
+</div>
+<ul class="meta-text space-y-1 text-secondary font-label uppercase tracking-wider">
+<li class="flex items-center gap-1.5"><span class="material-symbols-outlined text-xs text-primary">check_circle</span> Avatar set</li>
+<li class="flex items-center gap-1.5"><span class="material-symbols-outlined text-xs text-primary">check_circle</span> Email verified</li>
+<li class="flex items-center gap-1.5"><span class="material-symbols-outlined text-xs text-outline">circle</span> Add academic goal</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8">
+<div class="custom-card space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="meta-text font-label text-secondary uppercase tracking-widest">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-md py-2.5 px-4 text-sm focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none text-on-surface" type="text" value="Julian Sterling"/>
+</div>
+<div class="space-y-2">
+<label class="meta-text font-label text-secondary uppercase tracking-widest">Email Address</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-md py-2.5 px-4 text-sm focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none text-on-surface" type="email" value="j.sterling@cognify.edu"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="meta-text font-label text-secondary uppercase tracking-widest">Bio &amp; Academic Goals</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant/15 rounded-md py-2.5 px-4 text-sm focus:ring-1 focus:ring-primary/40 focus:border-primary/40 outline-none text-on-surface" placeholder="E.g. Aiming for Top 100 in JEE Advanced with a focus on Thermodynamics..." rows="4"></textarea>
+</div>
+<div class="flex justify-end gap-3 pt-4">
+<button class="btn-ghost">Discard Changes</button>
+<button class="btn-primary">Save Changes</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Other panels follow same UI patterns -->
+<footer class="mt-24 pt-12 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-6 meta-text font-label text-secondary uppercase tracking-widest">
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<p>© 2026 Cognify AI.</p>
+</footer>
+</main>
+</div>
+<script>
+    function switchTab(tabId) {
+        document.querySelectorAll('[data-panel]').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        const targetPanel = document.querySelector(`[data-panel="${tabId}"]`);
+        if (targetPanel) targetPanel.classList.add('active');
+
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-tab') === tabId) {
+                link.classList.add('active');
+            }
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+</body></html>

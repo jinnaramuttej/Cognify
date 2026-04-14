@@ -1,194 +1,205 @@
-'use client';
+import { AppLayout } from '@/components/layout/AppLayout'
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import {
-  Target, TrendingUp, AlertCircle, BookOpen,
-  Play, Zap, Sparkles, Brain, Clock, ShieldAlert,
-  ChevronRight
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+const heroCards = [
+  {
+    badge: 'Diagnostic',
+    duration: '45 MINS',
+    title: 'Classical Mechanics Mastery',
+    subtitle: 'Full-spectrum evaluation of Newtonian principles and orbital dynamics.',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCnjL3WgDv_w_9V6ZxVchF9tEJkE7JaGi3t4t_3QWxlIjd4-onlZBi90fVV23Pul0MJnVdhCfNXYn8RO6TSOtt7FARthSIeK89SCVotcdCOCymXpuc7mihqZrs_t5OC5YwEyaJJrbOxVz8NrCE2jcIXSTYMfNgfikOgQ_F5X-E8XY4bweFHbwkpkPNbN2LK4vbvfOnp_eJfQeLdbTxFDw4uOgzXmCOxr5FBjxodKaWNoj6m_LOBR0lRKDbyw-Gl3jKfPmetwYMVck9M',
+  },
+  {
+    badge: 'Live Mock',
+    duration: '120 MINS',
+    title: 'Molecular Kinetics Analysis',
+    subtitle: 'Advanced simulations on reaction rates and thermodynamic stability.',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuAy-XkOcak6PAvUk6M9l4GHjuy-atb9cKof4LQ7tFanHdnZHGeoetSyAdSKMTxW79HnsO5LPALKaU8qYzA0cblMQW0Fcvs10At026cCJYyQQMkcMAC1CZz31GqbPKv-Mq-4sM6YGORQOlrRCXW7K26K6ue6KLH2H74dcz7gSbmCIloRMTCU4SqmUB-BPcO2gN12j0PSGEZ84wN0ZgQDbsKm4aDSeOwe8LbrY6QXnB06jElEryyVNMXfeKoQ_uNRCPSd1-Afji_RwJV0',
+  },
+]
 
-// ============================================
-// PERFORMANCE SNAPSHOT
-// ============================================
+const testCards = [
+  {
+    subject: 'Statistics',
+    title: 'Statistical Inference & Regression',
+    reward: '+450 pts',
+    duration: '40m',
+    level: 'Level 4',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBoRPXlbN1p1vZyUf5kv60ll-jGdMsbjFx87hlz16SeYBAFYub5ttYl2sMpJ6g5VUojPKapgZQMdcYoNd2HHcM6h7I1jPmTqWKp8bDG9Pwt4CnWhmDs91lZBQrNgnCOvsStUGqGmjIKTroy90Vr6-QgFVh2ztW3ftW9nDNPVsAM45rivf_7qhW82oR_FFEbzp7c2L9ujYAW1p-ec5NByYPIeOoDLcCKXtmJ00Zd7ztSujZcsRTslBIdxf44Zb2KBWwNqCUlfCXiVuP5',
+  },
+  {
+    subject: 'Physics',
+    title: 'Thermodynamics & Kinetics',
+    reward: '+600 pts',
+    duration: '60m',
+    level: 'Level 7',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuBNju_HqyemqxqOdPMZWWB5HbGPzPg_NbDFfgI-Ohaci7fBLuAPTRWbdS6T0sDMK-T3hqHM2t5aoNeWapS5y-c7-5atoditSsnRSC6fjb7h4Uk7FPYBEqI2U-21k4tdcIEKDilV9MhtVh9tF5-FzzfLgQrmvbvAJGRIGvSVo8ufU92oe9EneHi1jkTPsBAMvj41grQELcwGXVJG987li3CtPCf7aoA_1rXwhbHHs1-m9_7b5MZNFB0LHGzPq6id0E3lcJerWq9AaBVd',
+  },
+  {
+    subject: 'Logic',
+    title: 'Abstract Reasoning Matrix',
+    reward: '+320 pts',
+    duration: '25m',
+    level: 'Level 5',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuAV6OX-wcLzXTC4b543p2YyW1upgOc7W-tbKxO7hYHEqLkIG7JEsq6yo2A2-LRt672WKzPCBYQ1DrkkyAeVG73owqhj8th2iZXbqeMTYP9Tlq0vQVCmTcv0R_WFFVd6rJsEQ0b3fW95BDzGzYtkO2pIKMj1lk-4MouDieoso-uR3wuG1OWWehz6O0abqZasKYUP0ZVtwSPeJmw58KHRpmMUSRoYPrLQHT8Q2so3fsfpvSn3_ULa0S4fUEZFcxZzjIrhZYVvXgcWCLcy',
+  },
+]
 
-function PerformanceOverview() {
+export default function TestsPage() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground mb-3">
-          <Target size={16} className="text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Net Accuracy</span>
-        </div>
-        <div className="flex items-end gap-3">
-          <span className="text-3xl font-bold text-foreground">72%</span>
-          <span className="text-sm font-medium text-emerald-500 flex items-center mb-1">
-            <TrendingUp size={14} className="mr-1" /> +4%
-          </span>
-        </div>
-      </div>
+    <AppLayout
+      breadcrumb="Tests"
+      topbar={{
+        searchPlaceholder: 'Search assessments...',
+      }}
+      pageClassName="relative"
+    >
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-[0.02]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
+        }}
+      />
 
-      <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground mb-3">
-          <Sparkles size={16} className="text-amber-500" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Strongest</span>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="mb-10">
+          <h1 className="mb-2 text-4xl font-medium tracking-tight text-[#E8E2D4] md:text-5xl" style={{ fontFamily: 'Newsreader, Georgia, serif' }}>
+            Tests &amp; Mocks
+          </h1>
+          <p className="max-w-2xl text-sm font-light text-[#919191] md:text-base">
+            Advance your mastery through adaptive diagnostic assessments and precision-timed simulated environments.
+          </p>
         </div>
-        <span className="text-xl font-bold text-foreground block mb-1">Physics</span>
-        <span className="text-xs text-muted-foreground">81% average</span>
-      </div>
 
-      <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground mb-3">
-          <AlertCircle size={16} className="text-destructive" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Weakest</span>
-        </div>
-        <span className="text-xl font-bold text-foreground block mb-1">Chemistry</span>
-        <span className="text-xs text-muted-foreground">42% average</span>
-      </div>
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+          <aside className="w-full rounded-md border border-[#49473F]/30 bg-[#1C1B1B] p-5 lg:w-64 lg:border-none lg:bg-transparent lg:p-0">
+            <div className="space-y-8">
+              <div>
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#919191]">Discipline</h3>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 text-sm text-[#CBC6BC]">
+                    <span className="h-4 w-4 rounded-sm border border-[#49473F] bg-[#353534]" />
+                    Physics &amp; Mechanics
+                  </label>
+                  <label className="flex items-center gap-3 text-sm text-[#E5E2E1]">
+                    <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-[#CCC6B9] bg-[#CCC6B9] text-[10px] text-[#333027]">
+                      ✓
+                    </span>
+                    Theoretical Chemistry
+                  </label>
+                  <label className="flex items-center gap-3 text-sm text-[#CBC6BC]">
+                    <span className="h-4 w-4 rounded-sm border border-[#49473F] bg-[#353534]" />
+                    Advanced Mathematics
+                  </label>
+                  <label className="flex items-center gap-3 text-sm text-[#CBC6BC]">
+                    <span className="h-4 w-4 rounded-sm border border-[#49473F] bg-[#353534]" />
+                    Cognitive Science
+                  </label>
+                </div>
+              </div>
 
-      <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
-        <div className="flex items-center gap-2 text-muted-foreground mb-3">
-          <Clock size={16} className="text-blue-500" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Time/Quest</span>
-        </div>
-        <div className="flex items-end gap-3">
-          <span className="text-3xl font-bold text-foreground">1m 12s</span>
-          <span className="text-xs text-destructive flex items-center mb-1">
-            <TrendingUp size={12} className="mr-0.5" /> Slow
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+              <div>
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#919191]">Complexity</h3>
+                <div className="flex flex-wrap gap-2">
+                  <button className="rounded-full bg-[#2A2A2A] px-3 py-1.5 text-xs text-[#CBC6BC]">Foundation</button>
+                  <button className="rounded-full bg-[#CCC6B9] px-3 py-1.5 text-xs font-medium text-[#333027]">Professional</button>
+                  <button className="rounded-full bg-[#2A2A2A] px-3 py-1.5 text-xs text-[#CBC6BC]">Elite</button>
+                </div>
+              </div>
 
-// ============================================
-// SMART RECOMMENDATIONS
-// ============================================
+              <div>
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#919191]">Duration</h3>
+                <input type="range" className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-[#353534] accent-[#CCC6B9]" />
+                <div className="mt-2 flex justify-between text-[10px] uppercase tracking-[0.2em] text-[#919191]">
+                  <span>15 mins</span>
+                  <span>180 mins</span>
+                </div>
+              </div>
+            </div>
+          </aside>
 
-function SmartRecommendations() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="md:col-span-2 p-6 rounded-3xl bg-primary/5 border border-primary/20 flex flex-col md:flex-row gap-6 items-center">
-        <div className="w-16 h-16 shrink-0 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-          <Brain size={32} />
-        </div>
-        <div className="flex-1 text-center md:text-left">
-          <div className="flex items-center gap-2 justify-center md:justify-start mb-1">
-            <Badge className="bg-primary/20 text-primary hover:bg-primary/20 font-semibold text-[10px] uppercase">Priority 1</Badge>
-            <span className="text-xs text-muted-foreground font-medium">Concept Leak Detected</span>
+          <div className="min-w-0 flex-1">
+            <div className="mb-10 grid grid-cols-1 gap-6 xl:grid-cols-2">
+              {heroCards.map((hero) => (
+                <article key={hero.title} className="group relative h-[320px] overflow-hidden rounded-md">
+                  <img src={hero.image} alt={hero.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/40 to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-6 md:p-8">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="rounded bg-[#CCC6B9] px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#333027]">
+                        {hero.badge}
+                      </span>
+                      <span className="text-xs tracking-wider text-[#919191]">{hero.duration}</span>
+                    </div>
+                    <h2 className="text-3xl text-[#E8E2D4]" style={{ fontFamily: 'Newsreader, Georgia, serif' }}>
+                      {hero.title}
+                    </h2>
+                    <p className="mt-2 max-w-md text-sm font-light text-[#CBC6BC]">{hero.subtitle}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {testCards.map((test) => (
+                <article
+                  key={test.title}
+                  className="group flex flex-col rounded-md bg-[#2A2A2A] p-5 transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <div className="mb-5 h-40 overflow-hidden rounded">
+                    <img
+                      src={test.image}
+                      alt={test.title}
+                      className="h-full w-full object-cover opacity-60 grayscale transition-all duration-500 group-hover:opacity-100 group-hover:grayscale-0"
+                    />
+                  </div>
+
+                  <div className="mb-3 flex items-start justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#919191]">{test.subject}</span>
+                    <span className="inline-flex items-center text-xs font-medium text-[#E8E2D4]">
+                      <span className="material-symbols-outlined mr-1 text-sm">add_circle</span>
+                      {test.reward}
+                    </span>
+                  </div>
+
+                  <h3 className="mb-3 flex-grow text-xl leading-tight text-[#E5E2E1]" style={{ fontFamily: 'Newsreader, Georgia, serif' }}>
+                    {test.title}
+                  </h3>
+
+                  <div className="mb-5 flex items-center gap-4 text-xs text-[#919191]">
+                    <span className="inline-flex items-center">
+                      <span className="material-symbols-outlined mr-1 text-sm">timer</span>
+                      {test.duration}
+                    </span>
+                    <span className="inline-flex items-center">
+                      <span className="material-symbols-outlined mr-1 text-sm">bar_chart</span>
+                      {test.level}
+                    </span>
+                  </div>
+
+                  <button className="w-full rounded-sm bg-[#494949] py-3 text-xs font-bold uppercase tracking-[0.2em] text-[#C8C6C5] transition-colors hover:bg-[#CCC6B9] hover:text-[#333027]">
+                    Start Test
+                  </button>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-12 flex justify-center">
+              <button className="group flex flex-col items-center">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#919191] transition-colors group-hover:text-[#E8E2D4]">
+                  View All Assessments
+                </span>
+                <span className="material-symbols-outlined mt-2 text-[#919191]">keyboard_double_arrow_down</span>
+              </button>
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-foreground mb-2">Revise Kinematics (1D)</h3>
-          <p className="text-sm text-muted-foreground">Your accuracy across 4 recent tests dropped to <span className="text-destructive font-bold">38%</span>. Take a targeted Mistake Revision test.</p>
-        </div>
-        <Button className="shrink-0 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
-          Fix Weakness
-        </Button>
-      </div>
-
-      <div className="p-6 rounded-3xl bg-card border border-border hover:border-primary/50 transition-colors flex flex-col justify-between group cursor-pointer">
-        <div>
-          <div className="flex items-center gap-2 mb-3 text-muted-foreground">
-            <BookOpen size={16} />
-            <span className="text-xs font-semibold uppercase">Daily Challenge</span>
-          </div>
-          <h3 className="font-bold text-foreground text-lg leading-tight mb-2 group-hover:text-primary transition-colors">11th Full PCM Revision Mock</h3>
-        </div>
-        <div className="flex items-center justify-between mt-4">
-          <span className="text-xs text-muted-foreground font-medium">90 mins • 75 Qs</span>
-          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Play size={14} className="ml-0.5" />
-          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// ============================================
-// TEST CATEGORIES GRID
-// ============================================
-
-const mockCategories = [
-  { title: 'Full Length Mocks', subtitle: 'JEE Main, Advanced, NEET', icon: Target, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  { title: 'Chapter Tests', subtitle: 'Target specific syllabus units', icon: BookOpen, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-  { title: 'Time Attack', subtitle: 'Speed run easy questions', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-  { title: 'Previous Year', subtitle: 'Authentic past papers', icon: Clock, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  { title: 'Mistake Vault', subtitle: 'Re-test failed questions', icon: ShieldAlert, color: 'text-red-500', bg: 'bg-red-500/10' },
-  { title: 'AI Adaptive', subtitle: 'Engine tests your limits', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-500/10' }
-];
-
-// ============================================
-// MAIN PAGE
-// ============================================
-
-export default function TestsOSDashboard() {
-  return (
-    <>
-      <div className="space-y-8 animate-in fade-in duration-500">
-
-        {/* Header Area */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black text-foreground tracking-tight">Test OS Studio</h1>
-            <p className="text-sm text-muted-foreground mt-1">Intelligent mock engine and performance analytics.</p>
-          </div>
-
-          <Link href="/tests/create">
-            <Button className="rounded-xl bg-foreground text-background hover:bg-foreground/90 font-semibold px-6 shadow-lg shadow-foreground/10 h-11">
-              <Play size={16} className="mr-2" /> Quick Create
-            </Button>
-          </Link>
-        </div>
-
-        {/* Section 1: Snapshot */}
-        <section>
-          <PerformanceOverview />
-        </section>
-
-        {/* Section 2: Recommendations */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles className="text-primary" size={20} /> Smart Queue
-          </h2>
-          <SmartRecommendations />
-        </section>
-
-        {/* Section 3: Categories Matrix */}
-        <section className="space-y-4 pt-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-foreground">Test Library</h2>
-            <Link href="/tests/results" className="text-sm text-primary hover:underline font-medium flex items-center">
-              View History <ChevronRight size={16} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {mockCategories.map((cat, i) => {
-              const Icon = cat.icon;
-              return (
-                <Link href="/tests/create" key={i}>
-                  <Card className="hover:border-primary/50 transition-all hover:shadow-md hover:-translate-y-1 cursor-pointer bg-card overflow-hidden group">
-                    <CardContent className="p-6">
-                      <div className={`w-12 h-12 rounded-xl ${cat.bg} ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                        <Icon size={24} />
-                      </div>
-                      <h3 className="font-bold text-foreground">{cat.title}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">{cat.subtitle}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-
-      </div>
-    </>
-  );
+    </AppLayout>
+  )
 }

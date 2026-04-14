@@ -11,7 +11,7 @@ function applyClassToDOM(mode: 'light' | 'dark') {
   if (typeof window === 'undefined') return;
   const root = document.documentElement;
   root.classList.remove('light', 'dark');
-  root.classList.add(mode);
+  root.classList.add('dark');
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -19,13 +19,12 @@ export const useThemeStore = create<ThemeState>()(
     (set, get) => ({
       mode: 'dark',
       applyTheme: (mode) => {
-        applyClassToDOM(mode);
-        set({ mode });
+        applyClassToDOM('dark');
+        set({ mode: 'dark' });
       },
       toggleTheme: () => {
-        const next = get().mode === 'light' ? 'dark' : 'light';
-        applyClassToDOM(next);
-        set({ mode: next });
+        applyClassToDOM('dark');
+        set({ mode: 'dark' });
       },
     }),
     {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useThemeStore } from '@/lib/theme-store';
 
 /**
  * ThemeProvider — applies the persisted theme class to <html> on mount.
@@ -9,13 +8,11 @@ import { useThemeStore } from '@/lib/theme-store';
  * rather than next-themes, to avoid two systems fighting each other.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const mode = useThemeStore((s) => s.mode);
-
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(mode);
-  }, [mode]);
+    root.classList.remove('light');
+    root.classList.add('dark');
+  }, []);
 
   return <>{children}</>;
 }

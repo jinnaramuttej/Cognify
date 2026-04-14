@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -8,14 +8,18 @@ import StudyTracker from "@/components/cognify/StudyTracker";
 import LayoutShell from "@/components/LayoutShell";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const newsreader = Newsreader({
   subsets: ["latin"],
+  variable: "--font-newsreader",
+  style: ["normal", "italic"],
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,10 +46,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`dark ${inter.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="bg-surface text-on-surface antialiased">
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>

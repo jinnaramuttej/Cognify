@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Atelier | Cognify Performance Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=Space+Grotesk:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#484848",
+                      "inverse-primary": "#635f54",
+                      "tertiary": "#faf9f9",
+                      "primary-container": "#4a473c",
+                      "on-error-container": "#ff9b82",
+                      "surface-variant": "#252626",
+                      "secondary-dim": "#9d9e9e",
+                      "primary-fixed": "#e9e2d4",
+                      "tertiary-dim": "#ecebea",
+                      "on-tertiary-fixed": "#494a4a",
+                      "surface-container-lowest": "#000000",
+                      "surface-container-high": "#1f2020",
+                      "tertiary-fixed": "#f5f3f3",
+                      "surface-container-low": "#131313",
+                      "primary-dim": "#beb8ab",
+                      "on-primary-fixed-variant": "#5f5b50",
+                      "primary": "#ccc6b9",
+                      "on-primary-fixed": "#433f35",
+                      "error": "#ed7f64",
+                      "on-primary-container": "#d6d0c2",
+                      "on-error": "#450900",
+                      "tertiary-container": "#ecebea",
+                      "outline": "#767575",
+                      "surface-container-highest": "#252626",
+                      "on-surface": "#e7e5e4",
+                      "tertiary-fixed-dim": "#e6e5e5",
+                      "on-secondary-container": "#bfbfbf",
+                      "on-secondary-fixed-variant": "#5a5c5c",
+                      "on-tertiary-fixed-variant": "#666666",
+                      "on-tertiary-container": "#565757",
+                      "inverse-surface": "#fcf9f8",
+                      "error-dim": "#ba573f",
+                      "secondary-container": "#3a3c3c",
+                      "surface": "#0e0e0e",
+                      "secondary-fixed": "#e3e2e2",
+                      "secondary": "#9d9e9e",
+                      "surface-container": "#191a1a",
+                      "surface-tint": "#ccc6b9",
+                      "on-surface-variant": "#acabaa",
+                      "on-secondary-fixed": "#3e4040",
+                      "on-background": "#e7e5e4",
+                      "inverse-on-surface": "#565555",
+                      "on-tertiary": "#5e5f5f",
+                      "error-container": "#7e2b17",
+                      "secondary-fixed-dim": "#d4d4d4",
+                      "background": "#0e0e0e",
+                      "on-primary": "#434036",
+                      "surface-dim": "#0e0e0e",
+                      "primary-fixed-dim": "#dad4c6",
+                      "on-secondary": "#1f2021",
+                      "surface-bright": "#2c2c2c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Space Grotesk"]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #e7e5e4;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #252626;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-on-primary overflow-x-hidden">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-72 fixed left-0 top-0 z-40 bg-[#131313] flex flex-col py-8 hidden md:flex">
+<div class="px-8 mb-10">
+<h1 class="font-headline font-bold text-[#CCC6B9] text-xl tracking-tighter">The Atelier</h1>
+<p class="font-body text-[10px] uppercase tracking-widest text-[#9D9E9E] mt-1">Premium Learning</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-8 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-all font-label text-sm uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="psychology">psychology</span>
+                Cognitive Lab
+            </a>
+<a class="flex items-center px-8 py-3 text-[#CCC6B9] border-r-2 border-[#CCC6B9] bg-[#252626] font-label text-sm uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="analytics">analytics</span>
+                Insight Engine
+            </a>
+<a class="flex items-center px-8 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-all font-label text-sm uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="collections_bookmark">collections_bookmark</span>
+                Module Library
+            </a>
+<a class="flex items-center px-8 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-all font-label text-sm uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="group">group</span>
+                Peer Network
+            </a>
+<a class="flex items-center px-8 py-3 text-[#9D9E9E] hover:bg-[#252626] hover:text-[#E7E5E4] transition-all font-label text-sm uppercase tracking-widest cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="history">history</span>
+                Archive
+            </a>
+</nav>
+<div class="px-8 mt-auto space-y-6">
+<button class="w-full bg-[#CCC6B9] text-[#434036] py-3 rounded-lg font-label font-bold text-xs uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">
+                New Inquiry
+            </button>
+<div class="space-y-1 pt-4 border-t border-outline-variant/20">
+<a class="flex items-center py-2 text-[#9D9E9E] hover:text-[#E7E5E4] font-label text-[10px] uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-sm mr-3" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center py-2 text-[#9D9E9E] hover:text-[#E7E5E4] font-label text-[10px] uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-sm mr-3" data-icon="help_outline">help_outline</span>
+                    Support
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-72 min-h-screen bg-background">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-0 md:left-72 z-50 bg-[#252626]/70 backdrop-blur-xl flex justify-between items-center px-8 py-4 w-full shadow-[0px_24px_48px_rgba(0,0,0,0.5)]">
+<div class="flex items-center space-x-4">
+<span class="font-headline font-bold tracking-tighter text-[#CCC6B9] text-2xl">Digital Atelier</span>
+<div class="h-4 w-[1px] bg-outline-variant/30 hidden sm:block"></div>
+<div class="hidden sm:flex items-center bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm p-0 w-48 text-on-surface" placeholder="Search insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors cursor-pointer" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="User profile" data-alt="professional portrait of a creative professional in a dark studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_QWcMmg43zmmPSdEma4-tcbrj9lNK4QVKRDcAwbaHG-NhDYKqGTVMWL5y_e_unH2EFS5SCERlAy3dbRPWvxpAgLH5qkFFNBWxkk6lpNVMYfXeFwXN-i6rEDXSSQOj92qb-teybIXxiqNTlTljILIgQrkWUbkQQUhJc4_k9HR99PUBw32-u5t_4fD3INwWKSOzA55PJh34_13j73WfTfuS3BrriMfEmAHcVJdty5CBQQ9fC4S8ynWqpi14XZEtW-ZsAhewlC_2JYio"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="pt-24 px-8 pb-12 max-w-7xl mx-auto space-y-12">
+<!-- Section 1: Performance Overview (Asymmetric) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<div class="md:col-span-12 lg:col-span-4 flex flex-col justify-end">
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface mb-4">Pulse.</h2>
+<p class="text-secondary body-md max-w-xs">A real-time distillation of your cognitive velocity and accuracy across all learning modules.</p>
+</div>
+<div class="md:col-span-12 lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-high p-6 rounded-xl hover:bg-surface-bright transition-all duration-300">
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-secondary mb-2">Overall Accuracy</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-bold text-primary">84.2%</span>
+<span class="text-xs text-primary-dim flex items-center"><span class="material-symbols-outlined text-xs mr-1" data-icon="north_east">north_east</span> 2.1%</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl hover:bg-surface-bright transition-all duration-300">
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-secondary mb-2">Tests Completed</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-bold text-on-surface">128</span>
+<span class="text-xs text-secondary-dim font-label">AUG-SEP</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl hover:bg-surface-bright transition-all duration-300">
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-secondary mb-2">Study Hours</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-bold text-on-surface">42.5</span>
+<span class="text-xs text-error flex items-center"><span class="material-symbols-outlined text-xs mr-1" data-icon="south_east">south_east</span> 1.4h</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-6 rounded-xl hover:bg-surface-bright transition-all duration-300">
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-secondary mb-2">Rank Change</p>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-headline font-bold text-primary">#14</span>
+<span class="text-xs text-primary-dim flex items-center"><span class="material-symbols-outlined text-xs mr-1" data-icon="north">north</span> 4</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2 & 5: Radar & AI Insights (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Subject Accuracy Radar (Simplified Visualization) -->
+<div class="md:col-span-12 lg:col-span-7 bg-surface-container-low p-8 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h3 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Subject Domains</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-secondary mt-1">Multi-vector Accuracy Mapping</p>
+</div>
+<div class="flex space-x-2">
+<span class="px-3 py-1 bg-primary-container/20 text-primary border border-primary/20 text-[10px] font-label uppercase rounded-full">Current Period</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-8 items-center">
+<div class="flex flex-col items-center space-y-4">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="36.4" stroke-width="6"></circle>
+</svg>
+<span class="absolute font-headline text-xl font-bold">90%</span>
+</div>
+<span class="font-label text-xs uppercase tracking-widest">Physics</span>
+</div>
+<div class="flex flex-col items-center space-y-4">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-secondary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="102" stroke-width="6"></circle>
+</svg>
+<span class="absolute font-headline text-xl font-bold">72%</span>
+</div>
+<span class="font-label text-xs uppercase tracking-widest">Chemistry</span>
+</div>
+<div class="flex flex-col items-center space-y-4">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-container-highest" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-primary-dim" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="70" stroke-width="6"></circle>
+</svg>
+<span class="absolute font-headline text-xl font-bold">81%</span>
+</div>
+<span class="font-label text-xs uppercase tracking-widest">Biology</span>
+</div>
+</div>
+</div>
+<!-- AI Priority Insights (The 'Cogni' Panel) -->
+<div class="md:col-span-12 lg:col-span-5 bg-surface-container-highest p-8 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+<span class="material-symbols-outlined text-8xl text-primary" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-headline text-2xl font-bold tracking-tight text-primary">Cogni Insights</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-secondary mt-1 mb-8">AI-Synthesized Priority Zones</p>
+<div class="space-y-4">
+<div class="bg-primary-container/20 p-4 rounded-lg backdrop-blur-md border border-primary/10 group-hover:translate-x-2 transition-transform duration-300">
+<div class="flex items-center mb-1">
+<span class="material-symbols-outlined text-primary text-sm mr-2" data-icon="priority_high">priority_high</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary">Critical Attention</span>
+</div>
+<p class="text-on-surface text-sm font-medium">Thermodynamics: Entropy Laws</p>
+<p class="text-secondary text-[11px] mt-1">Accuracy fell by 14% in last 3 modular tests.</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/10 group-hover:translate-x-2 transition-transform duration-300 delay-75">
+<div class="flex items-center mb-1">
+<span class="material-symbols-outlined text-on-surface text-sm mr-2" data-icon="trending_down">trending_down</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-secondary">Efficiency Sink</span>
+</div>
+<p class="text-on-surface text-sm font-medium">Organic: Reaction Mechanisms</p>
+<p class="text-secondary text-[11px] mt-1">Avg. 140s per question vs expected 45s.</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/10 group-hover:translate-x-2 transition-transform duration-300 delay-150">
+<div class="flex items-center mb-1">
+<span class="material-symbols-outlined text-on-surface text-sm mr-2" data-icon="psychology">psychology</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-secondary">Concept Gap</span>
+</div>
+<p class="text-on-surface text-sm font-medium">Plant Physiology: Photosynthesis</p>
+<p class="text-secondary text-[11px] mt-1">Recurring errors in ATP cycle calculations.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Time Management Heatmap & Section 4: Learning Velocity -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Learning Velocity Line Chart -->
+<div class="md:col-span-12 lg:col-span-8 bg-surface-container-low p-8 rounded-xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Learning Velocity</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-secondary mt-1">Mastery growth relative to cohort</p>
+</div>
+<div class="flex space-x-4">
+<div class="flex items-center space-x-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="font-label text-[10px] uppercase text-secondary">You</span>
+</div>
+<div class="flex items-center space-x-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="font-label text-[10px] uppercase text-secondary">Top 10%</span>
+</div>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between space-x-2 px-4 relative">
+<!-- Abstract Line Representation -->
+<svg class="absolute inset-x-0 bottom-0 h-48 w-full" preserveaspectratio="none">
+<path d="M0,48 Q100,40 200,45 T400,30 T600,20 T800,10" fill="none" opacity="0.8" stroke="#CCC6B9" stroke-width="3"></path>
+<path d="M0,42 Q100,38 200,35 T400,25 T600,15 T800,5" fill="none" opacity="0.4" stroke="#9D9E9E" stroke-dasharray="4" stroke-width="2"></path>
+</svg>
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-5">
+<div class="border-t border-on-surface w-full"></div>
+<div class="border-t border-on-surface w-full"></div>
+<div class="border-t border-on-surface w-full"></div>
+<div class="border-t border-on-surface w-full"></div>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute -bottom-6 w-full flex justify-between px-2 font-label text-[10px] uppercase text-secondary/60">
+<span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span>
+</div>
+</div>
+</div>
+<!-- Time-Management Heatmap (Matrix visualization) -->
+<div class="md:col-span-12 lg:col-span-4 bg-surface-container-high p-8 rounded-xl border border-outline-variant/10">
+<h3 class="font-headline text-2xl font-bold tracking-tight text-on-surface">Effort Heatmap</h3>
+<p class="font-label text-[10px] uppercase tracking-widest text-secondary mt-1 mb-8">Difficulty vs. Latency</p>
+<div class="grid grid-cols-4 gap-2">
+<!-- Simulated Matrix -->
+<div class="aspect-square bg-primary-container rounded-sm opacity-20"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-40"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-60"></div>
+<div class="aspect-square bg-primary rounded-sm"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-10"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-30"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-80"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-50"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-5"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-20"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-40"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-70"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-0 border border-outline-variant/10"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-5"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-10"></div>
+<div class="aspect-square bg-primary-container rounded-sm opacity-30"></div>
+</div>
+<div class="mt-6 flex justify-between text-[9px] font-label uppercase tracking-tighter text-secondary">
+<span>Low Latency</span>
+<span>High Latency</span>
+</div>
+</div>
+</section>
+<!-- Section 6: Recent Progress Feed -->
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="font-headline text-3xl font-bold tracking-tighter text-on-surface">Recent Progress</h3>
+<p class="font-label text-[11px] uppercase tracking-[0.2em] text-secondary mt-1">Audit trail of late performance</p>
+</div>
+<button class="text-primary font-label text-[10px] uppercase tracking-widest flex items-center hover:translate-x-1 transition-transform">
+                        View Archive <span class="material-symbols-outlined text-sm ml-2" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex items-center bg-surface-container-low p-6 rounded-xl hover:bg-surface-container-high transition-all border border-outline-variant/10 group">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mr-6">
+<span class="material-symbols-outlined" data-icon="science">science</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Physics: Fluid Dynamics Mock</h4>
+<p class="font-label text-[10px] text-secondary uppercase tracking-widest mt-0.5">Completed 2h ago • Score: 92/100</p>
+</div>
+<button class="px-4 py-2 text-[10px] font-label font-bold uppercase tracking-widest text-primary border border-primary/20 rounded-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                            Review Mistakes
+                        </button>
+</div>
+<div class="flex items-center bg-surface-container-low p-6 rounded-xl hover:bg-surface-container-high transition-all border border-outline-variant/10 group opacity-80">
+<div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary mr-6">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Algorithmic Complexity Level 4</h4>
+<p class="font-label text-[10px] text-secondary uppercase tracking-widest mt-0.5">Completed 18h ago • Score: 78/100</p>
+</div>
+<button class="px-4 py-2 text-[10px] font-label font-bold uppercase tracking-widest text-primary border border-primary/20 rounded-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                            Review Mistakes
+                        </button>
+</div>
+<div class="flex items-center bg-surface-container-low p-6 rounded-xl hover:bg-surface-container-high transition-all border border-outline-variant/10 group">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mr-6">
+<span class="material-symbols-outlined" data-icon="biotech">biotech</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Organic Chem: Alkanes Quiz</h4>
+<p class="font-label text-[10px] text-secondary uppercase tracking-widest mt-0.5">Completed yesterday • Score: 88/100</p>
+</div>
+<button class="px-4 py-2 text-[10px] font-label font-bold uppercase tracking-widest text-primary border border-primary/20 rounded-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                            Review Mistakes
+                        </button>
+</div>
+<div class="flex items-center bg-surface-container-low p-6 rounded-xl hover:bg-surface-container-high transition-all border border-outline-variant/10 group opacity-80">
+<div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary mr-6">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-on-surface">Full Length Mock Test #08</h4>
+<p class="font-label text-[10px] text-secondary uppercase tracking-widest mt-0.5">Completed 3d ago • Score: 81/100</p>
+</div>
+<button class="px-4 py-2 text-[10px] font-label font-bold uppercase tracking-widest text-primary border border-primary/20 rounded-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                            Review Mistakes
+                        </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Accent -->
+<footer class="px-8 py-12 border-t border-outline-variant/10 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-secondary opacity-60">
+<p class="font-label text-[10px] uppercase tracking-widest">© 2024 The Digital Atelier • Cognify Intelligence</p>
+<div class="flex space-x-8 mt-4 md:mt-0 font-label text-[10px] uppercase tracking-widest">
+<a class="hover:text-on-surface" href="#">Neural Privacy</a>
+<a class="hover:text-on-surface" href="#">System Status</a>
+<a class="hover:text-on-surface" href="#">Architectural Log</a>
+</div>
+</footer>
+</main>
+<!-- Mobile Navigation (Bottom Bar) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#252626]/90 backdrop-blur-xl flex justify-around items-center py-4 px-6 border-t border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary" data-icon="psychology">psychology</span>
+<span class="material-symbols-outlined text-primary" data-icon="analytics">analytics</span>
+<span class="material-symbols-outlined text-secondary" data-icon="collections_bookmark">collections_bookmark</span>
+<span class="material-symbols-outlined text-secondary" data-icon="group">group</span>
+<span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+</nav>
+</body></html>
