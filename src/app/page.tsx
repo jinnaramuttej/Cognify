@@ -384,19 +384,19 @@ export default function LandingPage() {
                 <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Platform</h4>
                 <ul className="space-y-3 text-sm text-on-surface-variant">
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/cogni">
                       Cogni AI
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/arena">
                       The Arena
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/library">
                       Digital Library
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -404,19 +404,19 @@ export default function LandingPage() {
                 <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Community</h4>
                 <ul className="space-y-3 text-sm text-on-surface-variant">
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/blog">
                       Journal
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/partners">
                       Forums
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/contact">
                       Events
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -424,14 +424,14 @@ export default function LandingPage() {
                 <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Legal</h4>
                 <ul className="space-y-3 text-sm text-on-surface-variant">
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/privacy-policy">
                       Privacy Policy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="transition-colors hover:text-primary" href="#">
+                    <Link className="transition-colors hover:text-primary" href="/terms-of-service">
                       Terms of Use
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -441,10 +441,10 @@ export default function LandingPage() {
           <div className="mx-auto mt-24 flex max-w-[1400px] items-center justify-between border-t border-white/5 pt-10 text-[10px] font-bold uppercase tracking-[0.3em] text-on-surface-variant/40">
             <span>© 2026 Cognify Labs</span>
             <div className="flex gap-8">
-              <a className="transition-colors hover:text-primary" href="#">
+              <a className="transition-colors hover:text-primary" href="https://twitter.com/cognify" target="_blank" rel="noopener noreferrer">
                 Twitter
               </a>
-              <a className="transition-colors hover:text-primary" href="#">
+              <a className="transition-colors hover:text-primary" href="https://linkedin.com/company/cognify" target="_blank" rel="noopener noreferrer">
                 LinkedIn
               </a>
             </div>
