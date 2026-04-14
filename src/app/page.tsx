@@ -1,6 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 const phrases = ['Study Smarter.', 'Rank Higher.', 'Think Deeper.']
 
@@ -49,6 +52,8 @@ function animateCount(el: HTMLElement) {
 
 export default function LandingPage() {
   const [typedText, setTypedText] = useState('')
+  const { isAuthenticated, loading } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     let phraseIndex = 0
@@ -135,23 +140,57 @@ export default function LandingPage() {
     <div className="monograph-scope text-on-background selection:bg-primary-container selection:text-on-primary-container">
       <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-between border-b border-white/5 bg-[#131313]/90 px-8 backdrop-blur-xl">
         <div className="font-newsreader text-2xl font-semibold tracking-tight text-[#CCC6B9]">Cognify</div>
-        <nav className="hidden items-center gap-10 md:flex">
-          <a className="font-newsreader text-sm font-bold uppercase tracking-widest text-[#E8E2D4] transition-colors hover:text-[#E8E2D4]" href="#">
-            Dashboard
-          </a>
-          <a className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="#">
-            Tests
-          </a>
-          <a className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="#">
-            Library
-          </a>
-          <a className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="#">
-            Arena
-          </a>
-        </nav>
+
+        {!loading && !isAuthenticated && (
+          <nav className="hidden items-center gap-10 md:flex">
+            <Link className="font-newsreader text-sm font-bold uppercase tracking-widest text-[#E8E2D4] transition-colors hover:text-[#E8E2D4]" href="/partners">
+              Community
+            </Link>
+            <Link className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="/blog">
+              Blog
+            </Link>
+            <Link className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="/pricing">
+              Pricing
+            </Link>
+          </nav>
+        )}
+
+        {!loading && isAuthenticated && (
+          <nav className="hidden items-center gap-10 md:flex">
+            <Link className="font-newsreader text-sm font-bold uppercase tracking-widest text-[#E8E2D4] transition-colors hover:text-[#E8E2D4]" href="/dashboard">
+              Dashboard
+            </Link>
+          </nav>
+        )}
+
         <div className="flex items-center gap-4 text-[#CCC6B9]">
-          <button className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high">notifications</button>
-          <button className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high">account_circle</button>
+          {!loading && isAuthenticated && (
+            <>
+              <button
+                onClick={() => router.push('/support')}
+                className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high"
+              >
+                notifications
+              </button>
+              <button
+                onClick={() => router.push('/settings')}
+                className="material-symbols-outlined rounded-full p-2 transition-colors hover:bg-surface-container-high"
+              >
+                account_circle
+              </button>
+            </>
+          )}
+
+          {!loading && !isAuthenticated && (
+            <>
+              <Link href="/auth/login" className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]">
+                Login
+              </Link>
+              <Link href="/auth/signup" className="rounded-md bg-primary-container px-4 py-2 text-xs font-semibold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-105">
+                Register
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -177,10 +216,16 @@ export default function LandingPage() {
               A monograph-inspired learning ecosystem designed for deep cognitive rigor. Harness the power of generative intelligence to master the world's most demanding academic domains.
             </p>
             <div className="flex flex-wrap gap-6 pt-6">
-              <button className="rounded-md bg-primary-container px-10 py-5 font-semibold text-on-primary-container shadow-xl shadow-black/40 transition-all hover:brightness-105">
+              <button
+                onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/login')}
+                className="rounded-md bg-primary-container px-10 py-5 font-semibold text-on-primary-container shadow-xl shadow-black/40 transition-all hover:brightness-105"
+              >
                 Begin Examination
               </button>
-              <button className="rounded-md border border-outline-variant bg-transparent px-10 py-5 font-semibold text-primary-fixed transition-all hover:bg-white/5">
+              <button
+                onClick={() => document.getElementById('ecosystem')?.scrollIntoView({ behavior: 'smooth' })}
+                className="rounded-md border border-outline-variant bg-transparent px-10 py-5 font-semibold text-primary-fixed transition-all hover:bg-white/5"
+              >
                 Watch Monograph
               </button>
             </div>
@@ -237,7 +282,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1400px] px-8 py-32 md:px-24">
+        <section id="ecosystem" className="mx-auto max-w-[1400px] px-8 py-32 md:px-24">
           <div className="fade-up mb-24 space-y-6">
             <h2 className="font-newsreader text-primary-fixed text-6xl">The Ecosystem.</h2>
             <p className="max-w-2xl text-lg leading-relaxed text-on-surface-variant font-body">
@@ -293,7 +338,10 @@ export default function LandingPage() {
             <h2 className="font-newsreader text-6xl leading-[1.1] tracking-tight text-[#333027] md:text-7xl">Ready to transcend standard learning?</h2>
             <p className="mx-auto max-w-2xl text-xl leading-relaxed text-[#565248] font-body">Join the 2026 cohort and experience the future of intellectual growth. Refined, rigorous, and result-oriented.</p>
             <div className="pt-8">
-              <button className="rounded-md bg-[#333027] px-14 py-6 text-xl font-bold text-[#F5F3EF] shadow-2xl transition-all hover:scale-105 hover:bg-black">
+              <button
+                onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/signup')}
+                className="rounded-md bg-[#333027] px-14 py-6 text-xl font-bold text-[#F5F3EF] shadow-2xl transition-all hover:scale-105 hover:bg-black"
+              >
                 Apply for Early Access
               </button>
             </div>
