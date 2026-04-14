@@ -1,4 +1,5 @@
 import { AppLayout } from '@/components/layout/AppLayout'
+import ProfileDropdown from '@/components/ui/ProfileDropdown'
 
 const pathways = [
   {
@@ -53,7 +54,7 @@ export default function DashboardPage() {
             </button>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-[#A1A1A1]">Uttej A.</span>
-              <span className="material-symbols-outlined text-[#CCC6B9]">account_circle</span>
+              <ProfileDropdown />
             </div>
           </div>
         ),
