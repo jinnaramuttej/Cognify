@@ -92,6 +92,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     const router = useRouter();
     const shell = getShell(pathname || '/');
     const isRootLanding = (pathname || '/') === '/';
+    const isAuthRoute = (pathname || '/').startsWith('/auth');
 
     // Auth guard for protected shells
     React.useEffect(() => {
@@ -104,6 +105,11 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
     if (shell === 'public') {
         // The root landing page now owns its full visual chrome.
         if (isRootLanding) {
+            return <PageAnimate>{children}</PageAnimate>;
+        }
+
+        // Auth screens own their own UI and should not render legacy header/footer chrome.
+        if (isAuthRoute) {
             return <PageAnimate>{children}</PageAnimate>;
         }
 

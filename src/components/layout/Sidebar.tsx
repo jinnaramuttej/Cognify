@@ -28,7 +28,7 @@ export function Sidebar() {
           className="hidden font-headline text-xl font-semibold tracking-tight text-[#CCC6B9] md:block"
           style={{ fontFamily: 'Newsreader, Georgia, serif' }}
         >
-          Cogni-Ed
+          Cognify
         </Link>
       </div>
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { Facebook, Linkedin, Mail, MapPin, Phone, Twitter, Youtube } from 'lucide-react'
 
 const phrases = ['Study Smarter.', 'Rank Higher.', 'Think Deeper.']
 
@@ -414,82 +415,156 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <footer className="fade-up border-t border-white/5 bg-[#0e0e0e] px-8 py-24 md:px-24">
-          <div className="mx-auto flex max-w-[1400px] flex-col justify-between gap-20 md:flex-row">
-            <div className="space-y-8">
-              <div className="font-newsreader text-primary text-4xl tracking-tighter">Cognify</div>
-              <p className="max-w-sm text-base leading-relaxed text-on-surface-variant/70 font-body">
-                Cognify. Precision AI preparation for the world's most demanding academic examinations.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-16 md:grid-cols-3">
-              <div className="space-y-6">
-                <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Platform</h4>
-                <ul className="space-y-3 text-sm text-on-surface-variant">
+        <footer className="fade-up bg-[#0e0e0e] px-8 py-20 md:px-24">
+          <div className="mx-auto max-w-[1400px]">
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-5">
+              <div className="space-y-6 md:col-span-1">
+                <h3 className="font-newsreader text-4xl tracking-tight text-primary-fixed">Cognify</h3>
+                <p className="max-w-xs text-base leading-relaxed text-on-surface-variant font-body">
+                  Empowering education through AI.
+                  <br />
+                  Learn smarter, achieve more.
+                </p>
+                <div className="flex items-center gap-5 text-on-surface-variant/80">
+                  <a href="https://linkedin.com/company/cognify" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary-fixed" aria-label="LinkedIn">
+                    <Linkedin size={22} />
+                  </a>
+                  <a href="https://twitter.com/cognify" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary-fixed" aria-label="Twitter">
+                    <Twitter size={22} />
+                  </a>
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary-fixed" aria-label="YouTube">
+                    <Youtube size={22} />
+                  </a>
+                  <a href="https://facebook.com/cognify" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary-fixed" aria-label="Facebook">
+                    <Facebook size={22} />
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="mb-6 text-2xl font-semibold text-primary-fixed md:text-3xl">Product</h4>
+                <ul className="space-y-4 text-on-surface-variant font-body">
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/cogni">
-                      Cogni AI
+                    <Link className="transition-colors hover:text-primary-fixed" href="/features">
+                      Features
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/arena">
-                      The Arena
+                    <Link className="transition-colors hover:text-primary-fixed" href="/pricing">
+                      Pricing
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/library">
-                      Digital Library
+                    <Link className="transition-colors hover:text-primary-fixed" href="/practice-quizzes">
+                      Practice Quizzes
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/progress-analytics">
+                      Progress Analytics
                     </Link>
                   </li>
                 </ul>
               </div>
-              <div className="space-y-6">
-                <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Community</h4>
-                <ul className="space-y-3 text-sm text-on-surface-variant">
+
+              <div>
+                <h4 className="mb-6 text-2xl font-semibold text-primary-fixed md:text-3xl">Company</h4>
+                <ul className="space-y-4 text-on-surface-variant font-body">
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/blog">
-                      Journal
+                    <Link className="transition-colors hover:text-primary-fixed" href="/about">
+                      About Us
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/partners">
-                      Forums
+                    <Link className="transition-colors hover:text-primary-fixed" href="/blog">
+                      Blog
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/contact">
-                      Events
+                    <Link className="transition-colors hover:text-primary-fixed" href="/careers">
+                      Careers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/contact">
+                      Contact
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/partners">
+                      Partners
                     </Link>
                   </li>
                 </ul>
               </div>
-              <div className="space-y-6">
-                <h4 className="text-primary-fixed/40 text-xs font-bold uppercase tracking-[0.25em]">Legal</h4>
-                <ul className="space-y-3 text-sm text-on-surface-variant">
+
+              <div>
+                <h4 className="mb-6 text-2xl font-semibold text-primary-fixed md:text-3xl">Legal</h4>
+                <ul className="space-y-4 text-on-surface-variant font-body">
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/privacy-policy">
+                    <Link className="transition-colors hover:text-primary-fixed" href="/privacy-policy">
                       Privacy Policy
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary" href="/terms-of-service">
-                      Terms of Use
+                    <Link className="transition-colors hover:text-primary-fixed" href="/terms-of-service">
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/cookie-policy">
+                      Cookie Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/data-protection">
+                      Data Protection
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="transition-colors hover:text-primary-fixed" href="/compliance">
+                      Compliance
                     </Link>
                   </li>
                 </ul>
               </div>
-            </div>
-          </div>
 
-          <div className="mx-auto mt-24 flex max-w-[1400px] items-center justify-between border-t border-white/5 pt-10 text-[10px] font-bold uppercase tracking-[0.3em] text-on-surface-variant/40">
-            <span>© 2026 Cognify Labs</span>
-            <div className="flex gap-8">
-              <a className="transition-colors hover:text-primary" href="https://twitter.com/cognify" target="_blank" rel="noopener noreferrer">
-                Twitter
-              </a>
-              <a className="transition-colors hover:text-primary" href="https://linkedin.com/company/cognify" target="_blank" rel="noopener noreferrer">
-                LinkedIn
-              </a>
+              <div>
+                <h4 className="mb-6 text-2xl font-semibold text-primary-fixed md:text-3xl">Contact</h4>
+                <ul className="space-y-4 text-on-surface-variant font-body">
+                  <li className="flex items-center gap-3">
+                    <Mail size={18} className="text-primary" />
+                    <a className="transition-colors hover:text-primary-fixed" href="mailto:support@cognify.com">
+                      support@cognify.com
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <Phone size={18} className="text-primary" />
+                    <a className="transition-colors hover:text-primary-fixed" href="tel:+917207842641">
+                      +91 7207842641
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <MapPin size={18} className="text-primary" />
+                    <span>Medchal, Telangana</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-on-surface-variant md:flex-row">
+              <p className="text-sm font-body">© 2026 Cognify. All rights reserved. | Founder: Jinnaram Uttej</p>
+              <div className="flex items-center gap-8 text-sm font-body">
+                <Link className="transition-colors hover:text-primary-fixed" href="/privacy-policy">
+                  Privacy
+                </Link>
+                <Link className="transition-colors hover:text-primary-fixed" href="/terms-of-service">
+                  Terms
+                </Link>
+                <Link className="transition-colors hover:text-primary-fixed" href="/cookie-policy">
+                  Cookies
+                </Link>
+              </div>
             </div>
           </div>
         </footer>
