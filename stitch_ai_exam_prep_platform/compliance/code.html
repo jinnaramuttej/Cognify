@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#49473f",
+                        "on-primary-fixed": "#1e1b13",
+                        "secondary-container": "#494949",
+                        "tertiary-fixed-dim": "#cac5cc",
+                        "secondary": "#c8c6c5",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary": "#322f35",
+                        "primary-container": "#ccc6b9",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-secondary-fixed": "#1b1c1b",
+                        "surface-bright": "#3a3939",
+                        "on-surface-variant": "#cbc6bc",
+                        "outline": "#959087",
+                        "surface-variant": "#353534",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-highest": "#353534",
+                        "tertiary-fixed": "#e6e1e8",
+                        "primary-fixed-dim": "#ccc6b9",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary-fixed": "#1c1b20",
+                        "tertiary-container": "#cac5cc",
+                        "surface-dim": "#131313",
+                        "error-container": "#93000a",
+                        "secondary-fixed": "#e4e2e1",
+                        "on-primary-fixed-variant": "#4a473d",
+                        "on-secondary": "#303030",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed": "#e8e2d4",
+                        "on-tertiary-fixed-variant": "#48464b",
+                        "tertiary": "#e6e1e8",
+                        "on-primary": "#333027",
+                        "on-secondary-container": "#b9b8b7",
+                        "on-tertiary-container": "#545157",
+                        "error": "#ffb4ab",
+                        "surface": "#131313",
+                        "primary": "#e8e2d4",
+                        "on-primary-container": "#565248",
+                        "surface-container": "#201f1f",
+                        "on-surface": "#e5e2e1",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-tint": "#ccc6b9",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-primary": "#625e54",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "background": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        body {
+            background-color: #131313;
+            background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="font-body text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-serif text-[#CCC6B9] tracking-tighter font-['Newsreader']">Cognify</div>
+<div class="hidden md:flex gap-10 items-center">
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors font-['Newsreader'] tracking-tight" href="#">Features</a>
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors font-['Newsreader'] tracking-tight" href="#">Pricing</a>
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1 font-['Newsreader'] tracking-tight" href="#">Compliance</a>
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors font-['Newsreader'] tracking-tight" href="#">About</a>
+</div>
+<div class="flex gap-6 items-center">
+<button class="text-neutral-500 hover:text-[#CCC6B9] transition-all duration-200 font-['Newsreader'] tracking-tight">Sign In</button>
+<button class="bg-[#CCC6B9] text-[#333027] px-6 py-2 rounded-md font-['Inter'] font-medium text-sm transition-all active:scale-95 duration-150">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-screen-2xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-24 max-w-3xl">
+<div class="inline-flex items-center gap-2 mb-6 px-3 py-1 bg-surface-container-high rounded-full border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-size: 14px;">verified_user</span>
+<span class="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant">Global Trust Infrastructure</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-headline font-light tracking-tighter leading-none mb-8">
+                Trust by <span class="italic text-primary-fixed-dim">Architectural</span> Design.
+            </h1>
+<p class="text-xl text-on-surface-variant font-light leading-relaxed">
+                Our platform is engineered for absolute compliance within the educational sector. We maintain rigorous international standards to ensure your institution's data remains sovereign and secure.
+            </p>
+</header>
+<!-- Compliance Grid -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+<!-- Major Pillar: GDPR -->
+<div class="md:col-span-8 bg-surface-container-high rounded-md p-10 flex flex-col justify-between min-h-[400px]">
+<div>
+<div class="flex justify-between items-start mb-12">
+<span class="material-symbols-outlined text-primary-fixed-dim text-4xl">policy</span>
+<div class="bg-surface-variant px-4 py-1 rounded-full">
+<span class="text-[10px] font-label tracking-widest text-primary-fixed-dim uppercase">Standard: EU 2016/679</span>
+</div>
+</div>
+<h3 class="text-4xl font-headline font-medium mb-6">General Data Protection Regulation</h3>
+<p class="text-on-surface-variant max-w-xl leading-relaxed mb-8">
+                        Our infrastructure was born in the era of high-privacy standards. We implement Data Protection by Design and Default (Art. 25) across all educational modules, ensuring student identity remains shielded at every touchpoint.
+                    </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-outline-variant/10 pt-8">
+<div>
+<div class="text-[10px] font-label text-outline mb-1 uppercase tracking-tighter">Status</div>
+<div class="text-sm font-medium">Fully Compliant</div>
+</div>
+<div>
+<div class="text-[10px] font-label text-outline mb-1 uppercase tracking-tighter">Audit Cycle</div>
+<div class="text-sm font-medium">Continuous</div>
+</div>
+<div>
+<div class="text-[10px] font-label text-outline mb-1 uppercase tracking-tighter">Region</div>
+<div class="text-sm font-medium">Global / EEA</div>
+</div>
+<div>
+<div class="text-[10px] font-label text-outline mb-1 uppercase tracking-tighter">Encryption</div>
+<div class="text-sm font-medium">AES-256-GCM</div>
+</div>
+</div>
+</div>
+<!-- SOC2 -->
+<div class="md:col-span-4 bg-surface-container rounded-md p-10 flex flex-col">
+<span class="material-symbols-outlined text-primary-fixed-dim text-3xl mb-8">security</span>
+<h3 class="text-3xl font-headline mb-4">SOC2 Type II</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed flex-grow">
+                    Independent verification of our operational controls. We manage data based on five "trust service principles"—security, availability, processing integrity, confidentiality, and privacy.
+                </p>
+<div class="mt-8 pt-8 border-t border-outline-variant/10">
+<button class="flex items-center gap-2 text-xs font-label uppercase tracking-widest text-primary-fixed-dim group">
+                        Request Report
+                        <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Educational Regulations Column -->
+<div class="md:col-span-4 space-y-6">
+<!-- FERPA -->
+<div class="bg-surface-container-low p-8 rounded-md">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary-fixed-dim">school</span>
+<h4 class="font-headline text-xl">FERPA</h4>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        Strict adherence to the Family Educational Rights and Privacy Act, protecting the privacy of student education records.
+                    </p>
+</div>
+<!-- COPPA -->
+<div class="bg-surface-container-low p-8 rounded-md">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary-fixed-dim">child_care</span>
+<h4 class="font-headline text-xl">COPPA</h4>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        Verifiable parental consent mechanisms and stringent data collection limitations for users under 13.
+                    </p>
+</div>
+</div>
+<!-- Visual Break / Image -->
+<div class="md:col-span-8 h-full min-h-[300px] relative overflow-hidden rounded-md">
+<img alt="Server hardware" class="absolute inset-0 w-full h-full object-cover grayscale opacity-40 mix-blend-luminosity" data-alt="Close up of high-tech server racks with glowing blue and white led indicators in a dark moody data center environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSMoN6kfx8yyNiEPRkxlUBLtVw9MrhB3Qp6ghPv0S-x-qDmP5YFGRVnJgRVyV8Ahj2ySFS9jA8ajMgpMQ8eXE8leUE0SX_xOZNP0gytAiF5qbFnvqzpMkPdd4ZpaX_xYLvltO7TpThVij4E_8AKVi0K-7x3T1z5NF1Te4Y46jfAMTu9Nh6kdmliWKqxxXdSrWxm9KDvXQbchMDS7KmVbb3FxFkGmwbXGCCLrZoznoJGpspA0jIE4y9SHgSzEL6bl__KmrRf_Jx651-"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute bottom-8 left-8">
+<h4 class="text-2xl font-headline italic">Sovereign Cloud Infrastructure</h4>
+<p class="text-sm text-on-surface-variant">Primary hosting in Zurich, Switzerland.</p>
+</div>
+</div>
+<!-- ISO Standards -->
+<div class="md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-highest/50 p-10 rounded-md outline outline-1 outline-outline-variant/10">
+<div class="text-4xl font-headline text-primary-fixed-dim mb-4">27001</div>
+<h5 class="text-lg font-headline mb-2">ISO/IEC Information Security</h5>
+<p class="text-sm text-on-surface-variant font-light">Certified management system for overseeing data security and legal compliance.</p>
+</div>
+<div class="bg-surface-container-highest/50 p-10 rounded-md outline outline-1 outline-outline-variant/10">
+<div class="text-4xl font-headline text-primary-fixed-dim mb-4">27018</div>
+<h5 class="text-lg font-headline mb-2">Cloud Privacy Protection</h5>
+<p class="text-sm text-on-surface-variant font-light">Specific controls for protecting PII (Personally Identifiable Information) in public clouds.</p>
+</div>
+<div class="bg-surface-container-highest/50 p-10 rounded-md outline outline-1 outline-outline-variant/10">
+<div class="text-4xl font-headline text-primary-fixed-dim mb-4">9001</div>
+<h5 class="text-lg font-headline mb-2">Quality Management</h5>
+<p class="text-sm text-on-surface-variant font-light">Consistent delivery of pedagogical services that meet regulatory requirements.</p>
+</div>
+</div>
+</section>
+<!-- Call to Action -->
+<section class="mt-32 py-24 border-t border-outline-variant/15 text-center">
+<h2 class="text-4xl md:text-5xl font-headline mb-8">Need a detailed Compliance Package?</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto mb-12">
+                We provide comprehensive documentation for institutional review boards and IT security departments. Download our standard disclosure pack or schedule a security audit.
+            </p>
+<div class="flex flex-col md:flex-row justify-center gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-md font-medium text-sm transition-all hover:brightness-110 active:scale-95">Download Trust Bundle</button>
+<button class="border border-outline-variant/30 text-on-surface px-8 py-4 rounded-md font-medium text-sm transition-all hover:bg-surface-container-high active:scale-95">Contact Security Officer</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-24 px-12 bg-[#0E0E0E] border-t border-[#49473F]/15">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-screen-2xl mx-auto">
+<div>
+<div class="font-serif text-lg text-[#CCC6B9] mb-6">Cognify</div>
+<p class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 max-w-xs">
+                    © 2024 Cognify. Editorial precision in education.
+                </p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-opacity" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-opacity" href="#">Security</a>
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-opacity" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

@@ -16,9 +16,8 @@ export default function Footer() {
   const productLinks = [
     { href: '/features', label: 'Features' },
     { href: '/pricing', label: 'Pricing' },
-
-    { href: '/practice-quizzes', label: 'Practice Quizzes' },
-    { href: '/progress-analytics', label: 'Progress Analytics' },
+    { href: '/tests', label: 'Practice Tests' },
+    { href: '/analytics', label: 'Progress Analytics' },
   ];
 
   const companyLinks = [
@@ -40,7 +39,7 @@ export default function Footer() {
   const pathname = usePathname();
   const isAppPage = [
     '/dashboard', '/settings', '/leaderboard', '/tests',
-    '/admin', '/lectures', '/practice-quizzes', '/progress-analytics', '/recommendations',
+    '/admin', '/lectures', '/analytics', '/recommendations',
     '/library', '/cogni', '/teacher', '/arena'
   ].some(path => pathname?.startsWith(path));
 

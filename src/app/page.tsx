@@ -57,6 +57,8 @@ export default function LandingPage() {
   const { isAuthenticated, loading, logout } = useAuth()
   const router = useRouter()
   const profileMenuRef = useRef<HTMLDivElement | null>(null)
+  const navLinkClass =
+    'font-newsreader text-sm uppercase tracking-[0.18em] text-[#CBC6BC] transition-colors duration-150 hover:text-[#E8E2D4]'
 
   useEffect(() => {
     if (!isProfileMenuOpen) return
@@ -160,13 +162,13 @@ export default function LandingPage() {
 
         {!loading && !isAuthenticated && (
           <nav className="hidden items-center gap-10 md:flex">
-            <Link className="font-newsreader text-sm font-bold uppercase tracking-widest text-[#E8E2D4] transition-colors hover:text-[#E8E2D4]" href="/partners">
+            <Link className={navLinkClass} href="/partners">
               Community
             </Link>
-            <Link className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="/blog">
+            <Link className={navLinkClass} href="/blog">
               Blog
             </Link>
-            <Link className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]" href="/pricing">
+            <Link className={navLinkClass} href="/pricing">
               Pricing
             </Link>
           </nav>
@@ -174,7 +176,7 @@ export default function LandingPage() {
 
         {!loading && isAuthenticated && (
           <nav className="hidden items-center gap-10 md:flex">
-            <Link className="font-newsreader text-sm font-bold uppercase tracking-widest text-[#E8E2D4] transition-colors hover:text-[#E8E2D4]" href="/dashboard">
+            <Link className={navLinkClass} href="/dashboard">
               Dashboard
             </Link>
           </nav>
@@ -226,14 +228,14 @@ export default function LandingPage() {
           )}
 
           {!loading && !isAuthenticated && (
-            <>
-              <Link href="/auth/login" className="font-newsreader text-sm uppercase tracking-widest text-[#A1A1A1] transition-colors hover:text-[#E8E2D4]">
+            <div className="flex items-center gap-6">
+              <Link href="/auth/login" className={navLinkClass}>
                 Login
               </Link>
-              <Link href="/auth/signup" className="rounded-md bg-primary-container px-4 py-2 text-xs font-semibold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-105">
+              <Link href="/auth/signup" className={navLinkClass}>
                 Register
               </Link>
-            </>
+            </div>
           )}
         </div>
       </header>
@@ -282,7 +284,7 @@ export default function LandingPage() {
                 <span className="material-symbols-outlined text-primary/40">groups</span>
               </div>
               <div className="font-newsreader text-primary-fixed text-3xl">12,400+ scholars</div>
-              <p className="mt-2 text-sm italic text-on-surface-variant">Active candidates in the 2026 cohort.</p>
+              <p className="mt-2 text-sm italic text-on-surface-variant">Active candidates learning with Cognify.</p>
             </div>
 
             <div className="fade-up glass-card relative z-[2] w-full max-w-sm translate-x-4 rounded-xl border border-white/10 p-8 shadow-2xl">
@@ -380,7 +382,7 @@ export default function LandingPage() {
         <section className="relative flex flex-col items-center justify-center overflow-hidden bg-[#F5F3EF] px-8 py-40 text-center">
           <div className="fade-up relative z-10 max-w-3xl space-y-10">
             <h2 className="font-newsreader text-6xl leading-[1.1] tracking-tight text-[#333027] md:text-7xl">Ready to transcend standard learning?</h2>
-            <p className="mx-auto max-w-2xl text-xl leading-relaxed text-[#565248] font-body">Join the 2026 cohort and experience the future of intellectual growth. Refined, rigorous, and result-oriented.</p>
+            <p className="mx-auto max-w-2xl text-xl leading-relaxed text-[#565248] font-body">Join the Cognify learning community and experience the future of intellectual growth. Refined, rigorous, and result-oriented.</p>
             <div className="pt-8">
               <button
                 onClick={() => router.push(isAuthenticated ? '/dashboard' : '/auth/signup')}
@@ -455,12 +457,12 @@ export default function LandingPage() {
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary-fixed" href="/practice-quizzes">
-                      Practice Quizzes
+                    <Link className="transition-colors hover:text-primary-fixed" href="/tests">
+                      Practice Tests
                     </Link>
                   </li>
                   <li>
-                    <Link className="transition-colors hover:text-primary-fixed" href="/progress-analytics">
+                    <Link className="transition-colors hover:text-primary-fixed" href="/analytics">
                       Progress Analytics
                     </Link>
                   </li>
@@ -553,7 +555,7 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-on-surface-variant md:flex-row">
-              <p className="text-sm font-body">© 2026 Cognify. All rights reserved. | Founder: Jinnaram Uttej</p>
+              <p className="text-sm font-body">© {new Date().getFullYear()} Cognify. All rights reserved. | Founder: Jinnaram Uttej</p>
               <div className="flex items-center gap-8 text-sm font-body">
                 <Link className="transition-colors hover:text-primary-fixed" href="/privacy-policy">
                   Privacy

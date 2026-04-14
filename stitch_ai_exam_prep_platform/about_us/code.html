@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#322f35",
+                    "tertiary-fixed": "#e6e1e8",
+                    "on-primary-fixed": "#1e1b13",
+                    "on-surface": "#e5e2e1",
+                    "on-tertiary-fixed": "#1c1b20",
+                    "surface-container": "#201f1f",
+                    "on-error": "#690005",
+                    "surface-variant": "#353534",
+                    "on-secondary": "#303030",
+                    "on-primary-container": "#565248",
+                    "tertiary-fixed-dim": "#cac5cc",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "surface-dim": "#131313",
+                    "on-tertiary-fixed-variant": "#48464b",
+                    "on-error-container": "#ffdad6",
+                    "inverse-on-surface": "#313030",
+                    "background": "#131313",
+                    "primary-container": "#ccc6b9",
+                    "on-secondary-fixed": "#1b1c1b",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary": "#c8c6c5",
+                    "on-primary-fixed-variant": "#4a473d",
+                    "on-primary": "#333027",
+                    "surface-container-highest": "#353534",
+                    "error-container": "#93000a",
+                    "primary": "#e8e2d4",
+                    "surface-bright": "#3a3939",
+                    "primary-fixed": "#e8e2d4",
+                    "surface-container-low": "#1c1b1b",
+                    "on-secondary-container": "#b9b8b7",
+                    "on-tertiary-container": "#545157",
+                    "outline-variant": "#49473f",
+                    "surface-container-lowest": "#0e0e0e",
+                    "secondary-container": "#494949",
+                    "on-background": "#e5e2e1",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-surface-variant": "#cbc6bc",
+                    "surface": "#131313",
+                    "surface-tint": "#ccc6b9",
+                    "primary-fixed-dim": "#ccc6b9",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#cac5cc",
+                    "outline": "#959087",
+                    "tertiary": "#e6e1e8",
+                    "inverse-surface": "#e5e2e1",
+                    "secondary-fixed": "#e4e2e1",
+                    "inverse-primary": "#625e54"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader", "serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["Inter", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .editorial-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+        }
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-stone-950/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="font-serif text-2xl font-bold tracking-tighter text-stone-200">Cognify</div>
+<div class="hidden md:flex items-center space-x-12">
+<a class="text-stone-100 border-b-2 border-stone-300 pb-1 font-serif tracking-tight text-lg" href="#">About Us</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Careers</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Contact</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Partners</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200">Sign In</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label text-sm font-semibold hover:opacity-90 transition-opacity">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24">
+<!-- Hero Section: Editorial Monograph style -->
+<section class="px-12 max-w-screen-2xl mx-auto mb-40">
+<div class="editorial-grid">
+<div class="col-span-12 md:col-span-8">
+<span class="font-label text-xs uppercase tracking-[0.3em] text-on-surface-variant mb-6 block">The Digital Monograph — Vol. 01</span>
+<h1 class="font-headline text-7xl md:text-9xl font-light tracking-tighter leading-[0.85] text-primary mb-12">
+                        The art of<br/>
+<span class="italic font-normal">intellectual</span> rigor.
+                    </h1>
+</div>
+<div class="col-span-12 md:col-span-4 flex items-end">
+<p class="font-body text-on-surface-variant text-lg leading-relaxed border-l border-outline-variant/30 pl-8 pb-4">
+                        Cognify is not a tool; it is a companion for the deep thinker. We are redefining the landscape of competitive preparation through the ancient wisdom of Socratic inquiry, powered by the frontiers of artificial intelligence.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Mission Section: Asymmetric Layout -->
+<section class="mb-48 bg-surface-container-low py-32">
+<div class="px-12 max-w-screen-2xl mx-auto">
+<div class="editorial-grid">
+<div class="col-span-12 md:col-span-5 relative">
+<div class="aspect-[4/5] bg-surface-container-highest overflow-hidden rounded-md group">
+<img class="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" data-alt="Moody dark interior of an ancient library with tall wooden shelves filled with old leather-bound books and soft warm lantern light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2cQU69nNY_3EXxU1dDAbz0fJUZ0bcoK2AZklW7HOI9QONj3SavDhaA7vJ6QbteKKpXDQg7IBENTE2x0jQj5BORn0NUv9Rv8HBCaGqGtCiDRB6Uxd_C3T32WA-rH4UdFL0EuxVNmWADeq24Q3ZKyu4An7xFmbcTO6aF-51_ERLqhZ6mbBALfohWRMVvpgJyRiQEjGqHFWno_czzGngKpeiz4N36Pq1ahv7JrsdzWJQ2ncuJt6tLDBIZuzoSu9cEECwTtQiIuQlqeSr"/>
+</div>
+<div class="absolute -bottom-10 -right-10 bg-primary-container p-12 hidden lg:block">
+<h3 class="font-headline text-4xl text-on-primary-container leading-tight">01. Our Mission</h3>
+</div>
+</div>
+<div class="col-span-12 md:col-span-6 md:col-start-7 flex flex-col justify-center">
+<h2 class="font-headline text-5xl mb-8 leading-tight">A Return to Deep Focus</h2>
+<div class="space-y-8 font-body text-on-surface-variant text-xl leading-relaxed">
+<p>
+                                In an era of bite-sized content and superficial learning, we believe the path to mastery remains unchanged: sustained concentration and active interrogation.
+                            </p>
+<p>
+                                Our Socratic AI doesn't just provide answers; it asks the right questions. It mimics the world's finest tutors, nudging students toward their own "Aha!" moments rather than feeding them rote solutions.
+                            </p>
+<div class="pt-8">
+<a class="inline-flex items-center gap-4 text-primary-fixed-dim group" href="#">
+<span class="font-label text-sm uppercase tracking-widest border-b border-primary-fixed-dim pb-1">View the full manifesto</span>
+<span class="material-symbols-outlined text-lg group-hover:translate-x-2 transition-transform">arrow_right_alt</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Philosophy Section: Tonal Layering (Bento Style) -->
+<section class="px-12 max-w-screen-2xl mx-auto mb-48">
+<h2 class="font-headline text-5xl mb-20 text-center">Core Philosophies</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-high p-12 rounded-md h-[450px] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl text-primary">auto_stories</span>
+<div>
+<h4 class="font-headline text-3xl mb-4">Inquiry First</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">
+                            Learning starts with a question, not an explanation. We prioritize the Socratic method to build neural pathways that last.
+                        </p>
+</div>
+</div>
+<!-- Card 2 (Accented) -->
+<div class="bg-surface-container-highest p-12 rounded-md h-[450px] flex flex-col justify-between border-t-2 border-primary-container">
+<span class="material-symbols-outlined text-4xl text-primary">psychology</span>
+<div>
+<h4 class="font-headline text-3xl mb-4">Cognitive Load</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">
+                            We design for the human mind. Our interface minimizes distractions to maximize the student's available bandwidth for problem-solving.
+                        </p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-high p-12 rounded-md h-[450px] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl text-primary">architecture</span>
+<div>
+<h4 class="font-headline text-3xl mb-4">Precision Logic</h4>
+<p class="font-body text-on-surface-variant leading-relaxed">
+                            Competitive exams require more than knowledge; they require a structural understanding of logic. Our AI maps your mental architecture.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- The Team Section: Editorial Spread -->
+<section class="px-12 max-w-screen-2xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-baseline mb-20 border-b border-outline-variant/20 pb-8">
+<h2 class="font-headline text-6xl italic">The Curators</h2>
+<p class="font-label text-xs uppercase tracking-[0.4em] text-on-surface-variant">Oxford • Stanford • MIT • DeepMind</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+<!-- Team Member 1 -->
+<div class="group">
+<div class="aspect-square bg-surface-container mb-6 overflow-hidden rounded-md">
+<img class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Black and white professional portrait of a man in his 40s with glasses, soft cinematic lighting, minimalist office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlUKHFJAAC0ZfjJC0uyHfLYKZUxTwKXVSmPm67FJnmZLcQqpqnesz_gKZzlj22JnqqtlisMUbQoqauLKc3XvBm7GlnDzXnNVox3pa97pphuVAxGjgGuQWLQ-4CI-y88PIBR1S45LXtq13oJB65e3jLK2fXDwgQkh14l_TIqgZhjaDhCMDOxER2UzTkhGYJ6B_vCzU4Q5hKQF4mwZjp2PQ6AjuxHLvMVL7NRpZkmYeXEmW1faD4dXWYWaC-gANG8J3BNuMDmsBwNPaz"/>
+</div>
+<h5 class="font-headline text-2xl mb-1">Dr. Aris Thorne</h5>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-widest">Founder &amp; Chief Cognitive Scientist</p>
+</div>
+<!-- Team Member 2 -->
+<div class="group">
+<div class="aspect-square bg-surface-container mb-6 overflow-hidden rounded-md">
+<img class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Sophisticated portrait of a woman with dark hair in a simple black sweater, studio lighting with deep shadows, high-end editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUHA2y1PoGfnvyYiw1joqvzo6hL-vFfoo9zCquvd5UE7zDeDvVZ8VG1aOmoEUGieZn2ji2eXV1lVCEjhc6vF5wzOPkMGFf-epgEEkOPLwk_MhyBvDNQCsdRY9TJ_hYnwhoOqkx96ezcR0MhqzWveIjNj9caFE79g2nvieVpIX7sNPzhGZA-2hGC9zlppfa6JnEww5hWYjFJb3kyQtc60leFqBrLM2e1siDTrEHZJRH16rRtDRSf0prIvkJRBCCDKHPJTwlJjDucUr0"/>
+</div>
+<h5 class="font-headline text-2xl mb-1">Elena Vance</h5>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-widest">Head of Socratic AI Systems</p>
+</div>
+<!-- Team Member 3 -->
+<div class="group">
+<div class="aspect-square bg-surface-container mb-6 overflow-hidden rounded-md">
+<img class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Close-up portrait of a thoughtful man looking away from the camera, dark background with subtle texture, high contrast photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGMqyGXRJCcuBZBI1Iae1tVJ9qsUJk0YLV0RKB24q3uMoCP7d3O0AlIOHwabkY1uUvTayNmmvsaDfXRPS8TjobUCPC7a-JcZStXLkZy5nVEQKiLDQTZ6Lk5jSV8dSEOTef3O8g4opu2BwnZHWswWfxKCLHNyC8WUc_ZYVP5bnWDnamwBdy9IR9JoxaB20-JHifk937AJzv5Kh6sd6IBiXPwl6eaZdjp9HE-mhET5XXG5yyF3TlFsIvuO9D6q5SoWJjTZdIzmysJQaC"/>
+</div>
+<h5 class="font-headline text-2xl mb-1">Marcus Aurel</h5>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-widest">Director of Pedagogy</p>
+</div>
+<!-- Team Member 4 -->
+<div class="group">
+<div class="aspect-square bg-surface-container mb-6 overflow-hidden rounded-md">
+<img class="w-full h-full object-cover grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Editorial portrait of a creative professional woman in a bright white room with large windows, soft diffused natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzwikeZOXJscUnC2ebbxi5xWRcS5KRnNioYfoxS1rCmrG3mhglWGhneLHc5TEycpyIAlaqtC-JCWMYsvk_XrH2qbOD9KqU6-fGbPdFEfXC_7e72ykQeesO40Fjq8g5a9NWn6Rbfn-QhVwosKOHxjQV78KJmuCnMoOTSt08Yp_DvLeX5w9A7lzNRHAl9CMpLQLgyl9L2Yr5a-ITsxkmrYoFnWRZIdVB6EDdTsKZz5DzWAUQdlxsEdzFHdNoBgUM899D092uiurf53Lz"/>
+</div>
+<h5 class="font-headline text-2xl mb-1">Sarah Chen</h5>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-widest">Experience Design Lead</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-stone-800/30 bg-stone-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<div class="font-serif italic text-xl text-stone-300 mb-8 md:mb-0">Cognify AI EdTech</div>
+<div class="flex flex-wrap justify-center gap-10 mb-8 md:mb-0">
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Terms of Service</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Cookie Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Accessibility</a>
+</div>
+<div class="font-sans text-xs tracking-wide text-stone-400">
+                © 2024 Cognify AI EdTech. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

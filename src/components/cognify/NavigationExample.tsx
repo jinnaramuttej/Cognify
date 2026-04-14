@@ -11,9 +11,9 @@ export default function NavigationExample() {
       textColor: '#2563EB',
       links: [
         { label: 'Notes Library', href: '/notes', ariaLabel: 'View Notes Library' },
-        { label: 'Video Lectures', href: '/videos', ariaLabel: 'View Video Lectures' },
-        { label: 'Practice Papers', href: '/practice-quizzes', ariaLabel: 'View Practice Papers' },
-        { label: 'Formula Sheets', href: '#formulas', ariaLabel: 'View Formula Sheets' },
+        { label: 'Video Lectures', href: '/library', ariaLabel: 'View Video Lectures' },
+        { label: 'Practice Papers', href: '/tests', ariaLabel: 'View Practice Papers' },
+        { label: 'Formula Sheets', href: '/library', ariaLabel: 'View Formula Sheets' },
       ]
     },
     {
@@ -21,9 +21,9 @@ export default function NavigationExample() {
       bgColor: '#ffffff',
       textColor: '#2563EB',
       links: [
-        { label: 'Progress Tracker', href: '/progress-analytics', ariaLabel: 'View Progress Tracker' },
-        { label: 'Weak Area Analysis', href: '#weaknesses', ariaLabel: 'View Weak Area Analysis' },
-        { label: 'Performance Reports', href: '#reports', ariaLabel: 'View Performance Reports' },
+        { label: 'Progress Tracker', href: '/analytics', ariaLabel: 'View Progress Tracker' },
+        { label: 'Weak Area Analysis', href: '/analytics', ariaLabel: 'View Weak Area Analysis' },
+        { label: 'Performance Reports', href: '/analytics', ariaLabel: 'View Performance Reports' },
       ]
     },
     {
@@ -31,9 +31,9 @@ export default function NavigationExample() {
       bgColor: '#ffffff',
       textColor: '#2563EB',
       links: [
-        { label: 'Leaderboard', href: '#leaderboard', ariaLabel: 'View Leaderboard' },
-        { label: 'Study Groups', href: '#groups', ariaLabel: 'View Study Groups' },
-        { label: 'Discussions', href: '#discussions', ariaLabel: 'View Discussions' },
+        { label: 'Leaderboard', href: '/leaderboard', ariaLabel: 'View Leaderboard' },
+        { label: 'Study Groups', href: '/arena', ariaLabel: 'View Study Groups' },
+        { label: 'Discussions', href: '/cogni', ariaLabel: 'View Discussions' },
       ]
     }
   ];

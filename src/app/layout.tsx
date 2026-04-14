@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster as AppToaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import StudyTracker from "@/components/cognify/StudyTracker";
@@ -63,7 +64,8 @@ export default function RootLayout({
             <AuthProvider>
               <StudyTracker />
               <LayoutShell>{children}</LayoutShell>
-              <Toaster />
+              <AppToaster />
+              <SonnerToaster position="top-right" richColors />
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>

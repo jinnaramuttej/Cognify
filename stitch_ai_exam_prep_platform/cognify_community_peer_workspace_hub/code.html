@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#201f1f",
+                    "outline-variant": "#49473f",
+                    "surface-container-low": "#1c1b1b",
+                    "on-secondary": "#303030",
+                    "error-container": "#93000a",
+                    "on-surface-variant": "#cbc6bc",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-tertiary-fixed": "#1c1b20",
+                    "tertiary-fixed-dim": "#cac5cc",
+                    "on-primary": "#333027",
+                    "on-error-container": "#ffdad6",
+                    "surface-variant": "#353534",
+                    "on-error": "#690005",
+                    "inverse-surface": "#e5e2e1",
+                    "inverse-primary": "#625e54",
+                    "inverse-on-surface": "#313030",
+                    "surface-container-highest": "#353534",
+                    "primary-fixed-dim": "#ccc6b9",
+                    "surface-tint": "#ccc6b9",
+                    "secondary-fixed": "#e4e2e1",
+                    "on-tertiary-container": "#545157",
+                    "on-background": "#e5e2e1",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-container": "#ccc6b9",
+                    "on-secondary-fixed-variant": "#474746",
+                    "primary": "#e8e2d4",
+                    "on-tertiary-fixed-variant": "#48464b",
+                    "error": "#ffb4ab",
+                    "tertiary": "#e6e1e8",
+                    "surface-dim": "#131313",
+                    "on-primary-container": "#565248",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-surface": "#e5e2e1",
+                    "on-primary-fixed-variant": "#4a473d",
+                    "secondary": "#c8c6c5",
+                    "outline": "#959087",
+                    "on-tertiary": "#322f35",
+                    "surface": "#131313",
+                    "secondary-container": "#494949",
+                    "on-secondary-fixed": "#1b1c1b",
+                    "tertiary-container": "#cac5cc",
+                    "background": "#131313",
+                    "surface-bright": "#3a3939",
+                    "primary-fixed": "#e8e2d4",
+                    "on-secondary-container": "#b9b8b7",
+                    "on-primary-fixed": "#1e1b13",
+                    "tertiary-fixed": "#e6e1e8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+        }
+        .serif { font-family: 'Newsreader', serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-surface selection:bg-primary-container selection:text-on-primary-container">
+<div class="fixed inset-0 noise-overlay z-[60]"></div>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#201F1F] flex flex-col py-8 space-y-6 z-50 transition-all duration-150 ease-in-out">
+<div class="px-8 flex items-center space-x-3 mb-4">
+<div class="w-8 h-8 bg-primary-container rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</div>
+<div>
+<h1 class="text-xl font-['Newsreader'] text-[#CCC6B9] leading-none">Cognify</h1>
+<p class="font-['Inter'] tracking-wide text-[10px] uppercase text-zinc-500 mt-1">Digital Monograph</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center px-4 py-3 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:bg-zinc-800/50 hover:text-zinc-300 transition-all duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-4 opacity-70 group-hover:opacity-100">home</span> Home
+            </a>
+<a class="flex items-center px-4 py-3 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:bg-zinc-800/50 hover:text-zinc-300 transition-all duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-4 opacity-70 group-hover:opacity-100">menu_book</span> Readings
+            </a>
+<a class="flex items-center px-4 py-3 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:bg-zinc-800/50 hover:text-zinc-300 transition-all duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-4 opacity-70 group-hover:opacity-100">group</span> Study Groups
+            </a>
+<a class="flex items-center py-3 text-[#E8E2D4] border-l-2 border-[#CCC6B9] pl-4 font-['Inter'] tracking-wide text-xs uppercase transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">forum</span> Community
+            </a>
+<a class="flex items-center px-4 py-3 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:bg-zinc-800/50 hover:text-zinc-300 transition-all duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-4 opacity-70 group-hover:opacity-100">analytics</span> Benchmarks
+            </a>
+<a class="flex items-center px-4 py-3 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:bg-zinc-800/50 hover:text-zinc-300 transition-all duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-4 opacity-70 group-hover:opacity-100">settings</span> Settings
+            </a>
+</nav>
+<div class="px-6 pt-6 mt-auto">
+<div class="p-4 bg-surface-container-high rounded-md">
+<p class="text-[10px] uppercase tracking-widest text-zinc-500 mb-2 font-bold">Pro Access</p>
+<p class="text-xs text-on-surface-variant mb-4">Unlock advanced analytics and scholarly networks.</p>
+<button class="w-full py-2 bg-primary text-on-primary text-xs font-bold rounded-md hover:brightness-110 transition-all">Upgrade to Pro</button>
+</div>
+</div>
+<div class="px-4 space-y-1">
+<a class="flex items-center px-4 py-2 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:text-zinc-300 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-sm">help_outline</span> Support
+            </a>
+<a class="flex items-center px-4 py-2 text-zinc-500 font-['Inter'] tracking-wide text-xs uppercase hover:text-zinc-300 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-4 text-sm">logout</span> Log Out
+            </a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 left-64 right-0 z-40 bg-[#131313]/90 backdrop-blur-xl transition-all duration-200">
+<div class="flex justify-between items-center w-full px-12 py-6 max-w-screen-2xl mx-auto">
+<h2 class="text-3xl font-['Newsreader'] italic font-bold tracking-tight text-[#CCC6B9]">Scholarly Commons</h2>
+<div class="flex items-center space-x-12">
+<nav class="hidden lg:flex items-center space-x-8">
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1 font-['Inter'] font-medium text-sm transition-colors duration-200" href="#">Discussions</a>
+<a class="text-zinc-500 font-['Inter'] font-medium text-sm hover:text-zinc-200 transition-colors duration-200" href="#">Scholars</a>
+<a class="text-zinc-500 font-['Inter'] font-medium text-sm hover:text-zinc-200 transition-colors duration-200" href="#">Resources</a>
+</nav>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">search</span>
+<input class="bg-surface-container-highest border-none rounded-full pl-10 pr-4 py-1.5 text-xs focus:ring-1 focus:ring-primary-container w-48 placeholder:text-zinc-600" placeholder="Search threads..." type="text"/>
+</div>
+<img alt="Student Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="close-up portrait of a young male student in a library setting with warm academic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgJFhcFxxpoK3IFLeD1UDBdBLdgfNLfmMPu6uoovdlrpHKjqq51OekO0uBbNfrVJfCyAKHyBZK3Jvj3SIurzXFoOmOtgiOBhMTWNMjPfsUPJIWiaZ_3NbwYhCrq9cFQoOv2-duNExbOrq0ZkarhXqNyCXfgEjbzh9MaxFi3mbWP3YsDYskV2ScvNKXGxUiQRI4mKcu35dr_KXftG2nZoiTMl6FQ5W_4rp3K0PCRnYYODQIaGptQo-MSamjYM8oOpUErdNuJQsMTTaw"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-32 pb-24 px-12">
+<div class="max-w-7xl mx-auto grid grid-cols-12 gap-12">
+<!-- Left Feed (Center in logic) -->
+<div class="col-span-12 lg:col-span-8 space-y-12">
+<!-- Subject Filters -->
+<div class="flex items-center space-x-4 overflow-x-auto no-scrollbar pb-2">
+<button class="px-6 py-2 bg-primary text-on-primary rounded-full text-xs font-bold shrink-0">All Topics</button>
+<button class="px-6 py-2 bg-surface-container-high text-on-surface-variant rounded-full text-xs font-medium hover:bg-surface-variant transition-colors shrink-0">Organic Chemistry</button>
+<button class="px-6 py-2 bg-surface-container-high text-on-surface-variant rounded-full text-xs font-medium hover:bg-surface-variant transition-colors shrink-0">Theoretical Physics</button>
+<button class="px-6 py-2 bg-surface-container-high text-on-surface-variant rounded-full text-xs font-medium hover:bg-surface-variant transition-colors shrink-0">Calculus III</button>
+<button class="px-6 py-2 bg-surface-container-high text-on-surface-variant rounded-full text-xs font-medium hover:bg-surface-variant transition-colors shrink-0">Macroeconomics</button>
+</div>
+<!-- Discussion Feed -->
+<section class="space-y-8">
+<!-- Post 1 -->
+<article class="bg-surface-container-high rounded-md p-8 group relative">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="professional headshot of a female scholar in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGCK6nMwrYiqBNerSSvII_NwDrwWv-62p2ldAbENo8PhRRlDLIHTEWZMrmoCSv8NAi5eH4_vnza_Th4TzsaflP-5uN86BYlHcQ94ws5bxJrz1-4tUOmaOQ6ZiMV4eNTetb3TSpa8SztVhaNyd59ffv3wCAM1nPNYvbtOXews7m8nKbUeeCqcd1Zpkk2fDro6UoulrQVjs7sSk1gOewDqSwDLDvZfuIdLB3y31jcW1Ovs0krWyiNH0AbtWMKTZy-A1h7xEmL1ZiyPnu"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Dr. Elena Vance</p>
+<p class="text-[10px] uppercase tracking-widest text-zinc-500">2 hours ago · CHEMISTRY</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-zinc-500 cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+<h3 class="serif text-2xl font-bold text-primary mb-4 leading-tight group-hover:underline decoration-1 underline-offset-4 cursor-pointer">Essential Tips for Mastering Organic Chemistry Synthesis</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm mb-6 line-clamp-3">
+                            Synthesis is often the most daunting part of O-Chem. The key isn't memorization but understanding electron flow. Focus on retrosynthetic analysis: look at the target molecule and work backward. Here are five mechanisms that appear in 80% of exams...
+                        </p>
+<div class="flex items-center justify-between pt-6">
+<div class="flex items-center space-x-6">
+<button class="flex items-center space-x-2 text-zinc-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">thumb_up</span>
+<span class="text-xs font-bold">142</span>
+</button>
+<button class="flex items-center space-x-2 text-zinc-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">comment</span>
+<span class="text-xs font-bold">38</span>
+</button>
+<button class="flex items-center space-x-2 text-zinc-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">share</span>
+<span class="text-xs font-bold">12</span>
+</button>
+</div>
+<div class="flex space-x-2">
+<span class="px-3 py-1 bg-surface-variant text-[10px] font-bold text-zinc-400 rounded-full uppercase tracking-tighter">Guide</span>
+<span class="px-3 py-1 bg-surface-variant text-[10px] font-bold text-zinc-400 rounded-full uppercase tracking-tighter">Exam Prep</span>
+</div>
+</div>
+</article>
+<!-- Post 2 (Asymmetric Image Lead) -->
+<article class="grid grid-cols-1 md:grid-cols-12 gap-8 bg-surface-container rounded-md overflow-hidden p-1">
+<div class="md:col-span-4 h-full min-h-[200px]">
+<img class="w-full h-full object-cover rounded-sm" data-alt="top-down shot of a messy study desk with open notebooks, highlighters, and a cup of coffee in moody light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3-CWpibxWSvkIlv56uqSrKzU7CEg_AVEaTmAuVRqX7_9Z8QWxgbDuc7Y8ymNyQXkzPcbeLZbZcu0Vomd8f0seNOCWIEW3DtVNQjmMDYNmFS2OznOJ3FSFFe2igaWHQHLPgnMMncKoOm6QHg9ROD3iEWLKsXhUebLTg737iMRRM87ES8kBa6kCG84hmgc8C5EQk6fXPQk6GMPXQo087LiDKW6zWiVnUcsljCpZ5dj_apPn0NI8pOstdjbVitW9Bf2M51jMA8T4MKx1"/>
+</div>
+<div class="md:col-span-8 p-6 flex flex-col justify-center">
+<div class="flex items-center space-x-2 mb-4">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+<p class="text-[10px] uppercase tracking-[0.2em] text-primary-fixed-dim font-bold italic">Top Strategy Thread</p>
+</div>
+<h3 class="serif text-2xl font-bold text-on-surface mb-3 leading-tight">Best Mock Test Strategies for High-Performance Environments</h3>
+<p class="text-on-surface-variant text-sm mb-6">How do you handle the final 15 minutes? A breakdown of time allocation techniques used by top 1% performers.</p>
+<div class="flex items-center space-x-4">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border border-surface-container ring-1 ring-outline-variant" data-alt="avatar of student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbjnS6YlSMVx01HhCqFFmBh_nDScHQicmD39qlBd5XOYVuETKjLgXd3v9CAcQgTBuu2Hfb9war9xj3cMv4J1rfLqAfIEpXddBlVUEK5yO8rC23-_SyCgwsipFmYrohYG5-u7UBPDU2sDXHTm27EvRr8fHAAdolQQ6FMmekwGdX9rHtwTKUnniUZ_Y4vqbcPw603libqGRju-UteDCuvg_Hy816_4psNQ9eONJtEiMSy8ZBedNwWxj2TcCQERyHwADMPooBPQi_AB93"/>
+<img class="w-6 h-6 rounded-full border border-surface-container ring-1 ring-outline-variant" data-alt="avatar of student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR2aVu00Orc5TR39i8Xfys1USI3fkMQxVbjzz-imAICdAfMoWgDy5io-9NL-SOXnk1H7irjXYJJrmX9BfkkUM2_ajOClsm5vGFJeeE8-lSbEug_azNQZ9TbzXgk1S6cbmmSGrXKnHz3YzZAHrIFwJ7eZHchXe--65Vx_cq56qZE4KGSIZfqD6pjIMc7Iq0-GP_MxLa1ITubk5YmKDLmrDl5sktZubxmKBAH8ln-95Nej4PBw2wMIYRbI6lZYHet_iPGnzoH5GddETY"/>
+<img class="w-6 h-6 rounded-full border border-surface-container ring-1 ring-outline-variant" data-alt="avatar of student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp9NsQVoTPa4aT1YZKQxrdQ5NolpglJXwmN_mf_HWfjYsXRPTQUxGl6Cy7OPc9JQVLluDPuMEN4foR6AVlsHtZ_MhKYEKLaPvymFnY3uBx0AJ8cL5SYWM44qgkFYYFDBpWLhPe_ttf9pzUYaBzEG1TwZVmSlNUL2qE42eul7FhC07h3orSH74ggUbKOGw0QTI1UeTlyqK2jA-bsyplyI1_buDNE-la6smx9O6MN-v_LtNrUAm2fkcyCEZ9bXe0DbsLXgoLm4NlCUPv"/>
+</div>
+<span class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">+56 Contributors</span>
+</div>
+</div>
+</article>
+<!-- Post 3 -->
+<article class="bg-surface-container-high rounded-md p-8 group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-primary font-bold">JD</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Julian D.</p>
+<p class="text-[10px] uppercase tracking-widest text-zinc-500">6 hours ago · PHYSICS</p>
+</div>
+</div>
+</div>
+<h3 class="serif text-xl font-bold text-on-surface mb-4 leading-tight">Quantum Mechanics: Visualizing the Wave Function</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm mb-6">Does anyone have a good mental model for the Schrodinger equation beyond just the math? Looking for conceptual analogies for my upcoming seminar.</p>
+<div class="flex items-center space-x-6 pt-4 border-t border-outline-variant/10">
+<button class="flex items-center space-x-2 text-zinc-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">thumb_up</span>
+<span class="text-xs font-bold">89</span>
+</button>
+<button class="flex items-center space-x-2 text-zinc-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">comment</span>
+<span class="text-xs font-bold">124</span>
+</button>
+</div>
+</article>
+</section>
+</div>
+<!-- Right Sidebar (Trending/Stats) -->
+<div class="hidden lg:block lg:col-span-4 space-y-12">
+<!-- Active Study Squads -->
+<div class="space-y-6">
+<h4 class="serif text-xl font-bold text-[#CCC6B9] flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" style="font-variation-settings: 'FILL' 1;">groups</span>
+                        Active Study Squads
+                    </h4>
+<div class="space-y-4">
+<div class="p-4 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border-l-2 border-primary/20 hover:border-primary">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-bold text-on-surface uppercase tracking-tight">MCAT Spring Grind</p>
+<span class="px-2 py-0.5 bg-green-900/30 text-green-400 text-[8px] font-bold uppercase rounded">Live Now</span>
+</div>
+<p class="text-[11px] text-zinc-500">8 members studying Cardiology &amp; Biochemistry. Deep focus session.</p>
+</div>
+<div class="p-4 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border-l-2 border-outline-variant/30 hover:border-primary">
+<p class="text-xs font-bold text-on-surface uppercase tracking-tight mb-2">Linear Algebra Lab</p>
+<p class="text-[11px] text-zinc-500">Working through problem sets for Midterm 2. Join the voice channel.</p>
+</div>
+<div class="p-4 rounded-md bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer border-l-2 border-outline-variant/30 hover:border-primary">
+<p class="text-xs font-bold text-on-surface uppercase tracking-tight mb-2">Philosophy &amp; Ethics</p>
+<p class="text-[11px] text-zinc-500">Weekly reading circle on Kantian deontology. Next meeting in 4h.</p>
+</div>
+</div>
+<button class="w-full py-3 text-xs font-bold uppercase tracking-widest text-primary hover:bg-primary/5 rounded-md transition-all">View All Squads</button>
+</div>
+<!-- Top Contributors -->
+<div class="space-y-6">
+<h4 class="serif text-xl font-bold text-[#CCC6B9] flex items-center">
+<span class="material-symbols-outlined mr-2 text-primary" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+                        Top Contributors
+                    </h4>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="portrait of a male student wearing glasses in a thoughtful pose" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEuaoohzeiLdJCn04wZyCd5i4Jtu7urGmtRz03Y0_QA_ZbinF_ak1Eqt9WqV2vU3KTt0ePoAmz3xUHzQIUkZXJ_rKm7BCk0i91MONM8cPWhFlUJXtL0-nIzlo7b51dvMHn1MOrXp3_jprw2KBQDWfbPEfOkbNqciZNEvXKXiATKsy1W6NlpKOxnNQvpxDDZG_lwmGZZOF45WPv9mHZB2In9wQZbxU46yYOvK8NzZGBMJyC2jdWdtiCdEFMzvJg7UKJellHZcLIoppQ"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Marcus Thorne</p>
+<p class="text-[10px] text-zinc-500">Physics Mentor</p>
+</div>
+</div>
+<p class="text-xs font-mono text-primary">2.4k pts</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="smiling female student portrait in a modern campus environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXMPlT6z-KcHw8NmmqwQGcMjFoAD-Ki-Kmq7lhaxx_exqd54FZDJnpp5lCtvNqpeADApnZSz0DEj2zvUBA0Zuu6iI_3_AS95H2or8Fq_-dwsxOfJf7ZuNN_2Dhw8IkXyH6RzK7iwW9DkMZwMML2us4zaX-sNUv4L4g5lIMOt-B3b6QD_5SjJOJMYvPzwYS6j-RIVTeCPmgXcPKuk43KCul-jyGhdD8ndKvcIv_wweiDhVxk4VO1wz-ONTHJRaA95iAwcGyLIdajPis"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Sarah J.</p>
+<p class="text-[10px] text-zinc-500">Bio-Chem Specialist</p>
+</div>
+</div>
+<p class="text-xs font-mono text-primary">1.9k pts</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="portrait of a young male professional in a library" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3mxxy5JE2lt5r6w4CGIT8vyo4xVpoIdQW523EyPfTPjMCo3D4O9ZcM9SbVoRliFt_3AG3sOVJYFH0ERv3REuT4hHARsjwVNgTDecSeb_q2g20uMpoh7FdWzvHNi0sb5ZS4uGxKG6d6pdI5r0HAhK0kOEJ_aXM9TTGJJcUD19otXFsNgXGe2xMYin6iPd_F_xKCO_CAZZLzGqYMcilDn6Ma-djbkEgA5ZbTAjsJsdOnsCwrwNGM5zOF1A1ZKrPE3gbXIajW8piKqrd"/>
+<div>
+<p class="text-xs font-bold text-on-surface">David Chen</p>
+<p class="text-[10px] text-zinc-500">Math Olympiad</p>
+</div>
+</div>
+<p class="text-xs font-mono text-primary">1.7k pts</p>
+</div>
+</div>
+</div>
+<!-- Trending Topics -->
+<div class="p-8 bg-primary-container rounded-md">
+<p class="text-[10px] font-bold text-on-primary-container uppercase tracking-[0.2em] mb-4">Trending Now</p>
+<div class="space-y-4">
+<a class="block text-on-primary-container hover:underline italic serif text-lg font-bold" href="#">#MidtermSurvivalGuide</a>
+<a class="block text-on-primary-container hover:underline italic serif text-lg font-bold" href="#">#LateNightDeepWork</a>
+<a class="block text-on-primary-container hover:underline italic serif text-lg font-bold" href="#">#AIGeneratedSummaries</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) - Suppressed as per Task Logic for specific focused community browsing, but keeping the "Post" button contextually in the community feed -->
+<button class="fixed bottom-12 right-12 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Footer -->
+<footer class="w-full py-12 mt-24 bg-[#0E0E0E] flex flex-col items-center space-y-8 z-10 relative">
+<div class="max-w-7xl mx-auto px-8 flex flex-col items-center space-y-8">
+<h5 class="text-lg font-['Newsreader'] text-[#CCC6B9] opacity-50 uppercase tracking-[0.1em]">Cognify</h5>
+<div class="flex space-x-8">
+<a class="text-zinc-600 font-['Inter'] text-[10px] uppercase tracking-[0.1em] hover:text-zinc-300 transition-colors" href="#">Ethics Policy</a>
+<a class="text-zinc-600 font-['Inter'] text-[10px] uppercase tracking-[0.1em] hover:text-zinc-300 transition-colors" href="#">Scholarly Standards</a>
+<a class="text-zinc-600 font-['Inter'] text-[10px] uppercase tracking-[0.1em] hover:text-zinc-300 transition-colors" href="#">Privacy</a>
+<a class="text-zinc-600 font-['Inter'] text-[10px] uppercase tracking-[0.1em] hover:text-zinc-300 transition-colors" href="#">Terms</a>
+</div>
+<p class="text-zinc-500 font-['Inter'] text-[10px] uppercase tracking-[0.1em]">© 2024 Cognify AI. All intellectual rights reserved.</p>
+</div>
+</footer>
+</body></html>

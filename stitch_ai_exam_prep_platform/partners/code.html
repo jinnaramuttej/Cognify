@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#322f35",
+                    "tertiary-fixed": "#e6e1e8",
+                    "on-primary-fixed": "#1e1b13",
+                    "on-surface": "#e5e2e1",
+                    "on-tertiary-fixed": "#1c1b20",
+                    "surface-container": "#201f1f",
+                    "on-error": "#690005",
+                    "surface-variant": "#353534",
+                    "on-secondary": "#303030",
+                    "on-primary-container": "#565248",
+                    "tertiary-fixed-dim": "#cac5cc",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "surface-dim": "#131313",
+                    "on-tertiary-fixed-variant": "#48464b",
+                    "on-error-container": "#ffdad6",
+                    "inverse-on-surface": "#313030",
+                    "background": "#131313",
+                    "primary-container": "#ccc6b9",
+                    "on-secondary-fixed": "#1b1c1b",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary": "#c8c6c5",
+                    "on-primary-fixed-variant": "#4a473d",
+                    "on-primary": "#333027",
+                    "surface-container-highest": "#353534",
+                    "error-container": "#93000a",
+                    "primary": "#e8e2d4",
+                    "surface-bright": "#3a3939",
+                    "primary-fixed": "#e8e2d4",
+                    "surface-container-low": "#1c1b1b",
+                    "on-secondary-container": "#b9b8b7",
+                    "on-tertiary-container": "#545157",
+                    "outline-variant": "#49473f",
+                    "surface-container-lowest": "#0e0e0e",
+                    "secondary-container": "#494949",
+                    "on-background": "#e5e2e1",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-surface-variant": "#cbc6bc",
+                    "surface": "#131313",
+                    "surface-tint": "#ccc6b9",
+                    "primary-fixed-dim": "#ccc6b9",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#cac5cc",
+                    "outline": "#959087",
+                    "tertiary": "#e6e1e8",
+                    "inverse-surface": "#e5e2e1",
+                    "secondary-fixed": "#e4e2e1",
+                    "inverse-primary": "#625e54"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px",
+                    "md": "12px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader", "serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["Inter", "sans-serif"],
+                    "serif": ["Newsreader", "serif"],
+                    "sans": ["Inter", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+        }
+        .grain {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary-container selection:text-on-primary-container">
+<div class="grain"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-stone-950/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="font-serif text-2xl font-bold tracking-tighter text-stone-200">Cognify</div>
+<div class="hidden md:flex items-center gap-10">
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">About Us</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Careers</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Contact</a>
+<a class="text-stone-100 border-b-2 border-stone-300 pb-1 font-sans uppercase tracking-widest text-xs" href="#">Partners</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-stone-400 font-sans text-xs uppercase tracking-widest hover:text-stone-200 transition-colors">Sign In</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-sans text-xs font-bold uppercase tracking-widest hover:bg-primary-container transition-all">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24">
+<!-- Hero Section -->
+<header class="px-12 max-w-screen-2xl mx-auto mb-32">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+<div class="lg:col-span-8">
+<span class="inline-block py-1 px-3 mb-6 rounded-full bg-surface-container-highest text-on-surface-variant font-sans text-[10px] uppercase tracking-[0.2em] font-semibold">Ecosystem Partnership</span>
+<h1 class="font-serif text-7xl md:text-8xl lg:text-9xl text-primary tracking-tighter leading-[0.9] mb-8">
+                        The Science <br/><span class="italic text-on-surface-variant">of Synergy.</span>
+</h1>
+<p class="font-sans text-lg md:text-xl text-on-surface-variant max-w-2xl leading-relaxed">
+                        Cognify bridges the gap between neural research and classroom application. We partner with elite institutions to redefine the architecture of human learning.
+                    </p>
+</div>
+<div class="lg:col-span-4 hidden lg:block">
+<div class="aspect-[4/5] rounded-md overflow-hidden grayscale contrast-125 opacity-80">
+<img class="w-full h-full object-cover" data-alt="minimalist architectural shot of concrete and glass showing strong shadows and clean geometric lines in black and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlFC1gusn_qZEcBCwNREIZPSGRlOpisuIs_X8fZ-xxPzduY9pEwL9QAzP_i6N-ubOvYAErHuRoCnNdRqDD_c8QrE0GqTuLyafLpWgFc2nh4sIaVugML7sYaH_FLSUYEOAjT3OwNyWv1g5gbFLZZBn6lULBDiWaa6RePS-uvS10haGT59DZhUUIa_EYCjlKlSYr3v3DveoxCUJ0IX8ECJSP2M6jzDiZPB3eORc3fRryNikxWNLV5ovbxTJKXtNJN3OvgCyaiyTWSO5u"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Institutional Partnerships (Asymmetric Bento) -->
+<section class="px-12 max-w-screen-2xl mx-auto mb-48">
+<div class="flex flex-col md:flex-row justify-between items-baseline gap-4 mb-16">
+<h2 class="font-serif text-5xl text-stone-200 tracking-tight">Institutional <br/>Partnerships</h2>
+<div class="h-px flex-grow bg-outline-variant/20 mx-8 hidden md:block"></div>
+<span class="font-sans text-xs uppercase tracking-widest text-stone-500">01 — Scale &amp; Impact</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<div class="md:col-span-7 bg-surface-container rounded-md p-12 flex flex-col justify-between min-h-[400px]">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-8" data-icon="school">school</span>
+<h3 class="font-serif text-3xl text-primary mb-4">University Integration</h3>
+<p class="text-on-surface-variant leading-relaxed max-w-md">Deploy Cognify’s neural-adaptive engine across entire campuses. We provide the infrastructure for personalized degree paths that evolve with student performance.</p>
+</div>
+<div class="mt-8 flex gap-4">
+<span class="bg-surface-variant text-on-surface-variant px-4 py-1.5 rounded-full text-[10px] uppercase tracking-wider font-medium">LMS Sync</span>
+<span class="bg-surface-variant text-on-surface-variant px-4 py-1.5 rounded-full text-[10px] uppercase tracking-wider font-medium">API Access</span>
+</div>
+</div>
+<div class="md:col-span-5 bg-surface-container-high rounded-md p-12">
+<div class="aspect-square mb-8 rounded-md overflow-hidden bg-stone-900 grayscale">
+<img class="w-full h-full object-cover opacity-60" data-alt="stark black and white photo of a modern university library with high ceilings and rows of study desks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_ODM0XqD4-QAIWeAnWBZ3QtH-8tnTERcMtK2XhLglKN_8C1cMaJ7cDx2wbnsHineOcLupZPdGDAcA7LRZl8O9FkbgW2qG3l5AznDQ9gXrwsNrsJdza8htb6zyPdDgA4ah-nWe1D0ufpbw4zLUMFzljrNs-6P6wL8jlcm09kZXYuU2zW-yboembfQarQXtsdXv8Sa9LzjkW0Bxj0DmzPimK3HhgPi_KXY8pQw9c5C74WBDC_CAbwJFNnCJv2DClIriOmkPscOl2jwj"/>
+</div>
+<h3 class="font-serif text-2xl text-stone-200 mb-2">Corporate Training</h3>
+<p class="text-sm text-stone-400">High-fidelity reskilling for Fortune 500 teams using cognitive load management.</p>
+</div>
+<div class="md:col-span-4 bg-surface-container-low rounded-md p-12 border border-outline-variant/10">
+<span class="material-symbols-outlined text-3xl text-stone-500 mb-6" data-icon="hub">hub</span>
+<h3 class="font-serif text-2xl text-stone-200 mb-4">Global K-12 Consortia</h3>
+<p class="text-sm text-stone-400">Standardizing cognitive assessment tools across international school networks.</p>
+</div>
+<div class="md:col-span-8 bg-primary-container rounded-md p-12 text-on-primary-container flex items-center justify-between group overflow-hidden relative">
+<div class="relative z-10">
+<h3 class="font-serif text-4xl mb-4 leading-tight">Empowering the <br/>Future of Faculty</h3>
+<p class="max-w-sm text-on-primary-container/80 text-sm mb-6 font-medium">Advanced analytics dashboards for educators to visualize class-wide cognitive fatigue and focus intervals.</p>
+<a class="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-widest border-b border-on-primary-container/30 pb-1" href="#">Request Case Study</a>
+</div>
+<div class="absolute right-[-10%] top-[-10%] opacity-10 group-hover:rotate-12 transition-transform duration-700">
+<span class="material-symbols-outlined text-[300px]" data-icon="psychology">psychology</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Research Collaborations (Tonal Shift) -->
+<section class="bg-surface-container-lowest py-32 px-12 w-full border-y border-stone-800/30">
+<div class="max-w-screen-2xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
+<div>
+<span class="font-sans text-xs uppercase tracking-widest text-stone-500 mb-4 block">02 — Scientific Foundation</span>
+<h2 class="font-serif text-6xl text-stone-200 tracking-tighter mb-8 leading-tight">Research <br/><span class="italic">Collaborations</span></h2>
+<p class="text-on-surface-variant text-lg mb-12 max-w-lg leading-relaxed">
+                            We open our anonymized data streams to neuroscience labs and cognitive psychologists. Together, we validate the efficacy of AI-driven pedagogy through peer-reviewed rigor.
+                        </p>
+<div class="space-y-12">
+<div class="flex gap-8 group">
+<span class="font-serif text-4xl text-primary/30 group-hover:text-primary transition-colors">01</span>
+<div>
+<h4 class="font-serif text-xl text-stone-200 mb-2">Neural Data Access</h4>
+<p class="text-sm text-stone-500 max-w-sm">Access the world's largest longitudinal dataset on digital learning engagement and cognitive retention.</p>
+</div>
+</div>
+<div class="flex gap-8 group">
+<span class="font-serif text-4xl text-primary/30 group-hover:text-primary transition-colors">02</span>
+<div>
+<h4 class="font-serif text-xl text-stone-200 mb-2">Grant Support</h4>
+<p class="text-sm text-stone-500 max-w-sm">Cognify sponsors post-doctoral fellowships focused on adaptive neuro-education systems.</p>
+</div>
+</div>
+<div class="flex gap-8 group">
+<span class="font-serif text-4xl text-primary/30 group-hover:text-primary transition-colors">03</span>
+<div>
+<h4 class="font-serif text-xl text-stone-200 mb-2">Joint Publication</h4>
+<p class="text-sm text-stone-500 max-w-sm">Co-authoring industry-defining white papers on the intersection of LLMs and human memory.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="bg-surface-container-high aspect-square rounded-md p-1 flex flex-col">
+<div class="flex-grow rounded overflow-hidden grayscale contrast-125">
+<img class="w-full h-full object-cover" data-alt="close up of sophisticated scientific equipment in a dark lab setting with moody lighting and professional aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXlFhhQhzPKT2XstTPmMqWKcV04TWNYdEn00oCmHAQCtSj5y_jgOI4FG9L0lL-Aqn8V13TJMe4cPszfcqMtyNC6jijS0AIXBMnnaN8iJTnOBlqjQr1yr-LeHZwxfA6U-u0Mg8v9w65LqZqVRR_AxYNHb157cFvNkBCASXqUzT-R4DycXotLe7-Hhggr3qPt_wHQo3hzlDHBA-wonMvPM9fgcd6jAUqVXaGMVZdbC0wmjgacKOVMam-lrsEnIn-2HxK2Du8BR4J4WAt"/>
+</div>
+<div class="p-8 flex justify-between items-center">
+<div>
+<p class="font-serif italic text-stone-300">"The partnership with Cognify has accelerated our study of retention patterns by nearly three years."</p>
+<p class="text-[10px] uppercase tracking-widest text-stone-500 mt-4 font-bold">— Dr. Elena Vance, Neuro-Ed Lab</p>
+</div>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute -bottom-8 -left-8 bg-primary-fixed-dim text-on-primary-fixed p-6 rounded-md shadow-2xl hidden xl:block">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-4xl" data-icon="experiment">experiment</span>
+<div>
+<div class="text-2xl font-serif font-bold">14</div>
+<div class="text-[10px] uppercase tracking-widest font-bold opacity-70">Active Lab Collabs</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Become a Partner CTA -->
+<section class="px-12 max-w-screen-2xl mx-auto pt-48 pb-24 text-center">
+<div class="max-w-3xl mx-auto">
+<span class="font-sans text-xs uppercase tracking-widest text-stone-500 mb-6 block">Joining the Collective</span>
+<h2 class="font-serif text-6xl md:text-8xl text-stone-100 tracking-tighter mb-12">Become a <span class="italic font-normal">Partner.</span></h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+<input class="bg-surface-container-highest border-none rounded-md px-6 py-4 text-sm focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-stone-600" placeholder="Institution Name" type="text"/>
+<input class="bg-surface-container-highest border-none rounded-md px-6 py-4 text-sm focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-stone-600" placeholder="Professional Email" type="email"/>
+<select class="bg-surface-container-highest border-none rounded-md px-6 py-4 text-sm text-stone-400 focus:ring-1 focus:ring-primary outline-none md:col-span-2">
+<option>Partnership Type</option>
+<option>Academic Institution</option>
+<option>Research Laboratory</option>
+<option>Corporate Enterprise</option>
+</select>
+</div>
+<button class="bg-primary text-on-primary px-12 py-5 rounded-full font-sans text-sm font-bold uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-[0.98] transition-all">Submit Application</button>
+<p class="mt-8 text-stone-500 text-xs font-sans max-w-sm mx-auto leading-relaxed">Applications are reviewed on a rolling basis. All partnerships are subject to our strict data ethics and privacy protocols.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-stone-800/30 bg-stone-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<div class="font-serif italic text-xl text-stone-300 mb-8 md:mb-0">Cognify</div>
+<div class="flex flex-wrap justify-center gap-8 md:gap-12 mb-8 md:mb-0">
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Terms of Service</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Cookie Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Accessibility</a>
+</div>
+<div class="font-sans text-xs tracking-wide text-stone-400">
+                © 2024 Cognify AI EdTech. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

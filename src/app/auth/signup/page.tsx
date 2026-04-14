@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
+import { createLocalAccount } from '@/lib/auth-storage'
 
 type SignupForm = {
   firstName: string
@@ -19,6 +20,8 @@ export default function SignupPage() {
   const { login } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const inputClassName =
+    'mt-2 w-full rounded-md bg-surface-container-lowest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-outline transition focus:ring-2 focus:ring-primary'
 
   const {
     register,
@@ -35,12 +38,14 @@ export default function SignupPage() {
 
     setLoading(true)
     try {
-      login({
-        id: crypto.randomUUID(),
+      const newUser = createLocalAccount({
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email,
-        full_name: `${data.firstName} ${data.lastName}`,
-        role: 'student',
+        password: data.password,
       })
+
+      login(newUser)
 
       toast.success('Account created successfully.')
       router.push('/dashboard')
@@ -97,8 +102,9 @@ export default function SignupPage() {
                     <input
                       id="firstName"
                       type="text"
+                      placeholder="John"
                       {...register('firstName', { required: 'First name is required' })}
-                      className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                      className={inputClassName}
                     />
                     {errors.firstName && <p className="mt-2 text-xs text-error">{errors.firstName.message}</p>}
                   </div>
@@ -110,8 +116,9 @@ export default function SignupPage() {
                     <input
                       id="lastName"
                       type="text"
+                      placeholder="Doe"
                       {...register('lastName', { required: 'Last name is required' })}
-                      className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                      className={inputClassName}
                     />
                     {errors.lastName && <p className="mt-2 text-xs text-error">{errors.lastName.message}</p>}
                   </div>
@@ -126,7 +133,7 @@ export default function SignupPage() {
                     type="email"
                     placeholder="you@example.com"
                     {...register('email', { required: 'Email is required' })}
-                    className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                    className={inputClassName}
                   />
                   {errors.email && <p className="mt-2 text-xs text-error">{errors.email.message}</p>}
                 </div>
@@ -138,11 +145,12 @@ export default function SignupPage() {
                   <input
                     id="password"
                     type="password"
+                    placeholder="At least 8 characters"
                     {...register('password', {
                       required: 'Password is required',
                       minLength: { value: 8, message: 'Password must be at least 8 characters' },
                     })}
-                    className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                    className={inputClassName}
                   />
                   {errors.password && <p className="mt-2 text-xs text-error">{errors.password.message}</p>}
                 </div>
@@ -154,11 +162,12 @@ export default function SignupPage() {
                   <input
                     id="confirm"
                     type="password"
+                    placeholder="Re-enter your password"
                     {...register('confirm', {
                       required: 'Please confirm your password',
                       validate: (value) => value === watch('password') || 'Passwords do not match',
                     })}
-                    className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                    className={inputClassName}
                   />
                   {errors.confirm && <p className="mt-2 text-xs text-error">{errors.confirm.message}</p>}
                 </div>

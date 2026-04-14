@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#49473f",
+                    "on-primary-fixed": "#1e1b13",
+                    "secondary-container": "#494949",
+                    "tertiary-fixed-dim": "#cac5cc",
+                    "secondary": "#c8c6c5",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary": "#322f35",
+                    "primary-container": "#ccc6b9",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-secondary-fixed": "#1b1c1b",
+                    "surface-bright": "#3a3939",
+                    "on-surface-variant": "#cbc6bc",
+                    "outline": "#959087",
+                    "surface-variant": "#353534",
+                    "inverse-on-surface": "#313030",
+                    "surface-container-highest": "#353534",
+                    "tertiary-fixed": "#e6e1e8",
+                    "primary-fixed-dim": "#ccc6b9",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-tertiary-fixed": "#1c1b20",
+                    "tertiary-container": "#cac5cc",
+                    "surface-dim": "#131313",
+                    "error-container": "#93000a",
+                    "secondary-fixed": "#e4e2e1",
+                    "on-primary-fixed-variant": "#4a473d",
+                    "on-secondary": "#303030",
+                    "on-background": "#e5e2e1",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed": "#e8e2d4",
+                    "on-tertiary-fixed-variant": "#48464b",
+                    "tertiary": "#e6e1e8",
+                    "on-primary": "#333027",
+                    "on-secondary-container": "#b9b8b7",
+                    "on-tertiary-container": "#545157",
+                    "error": "#ffb4ab",
+                    "surface": "#131313",
+                    "primary": "#e8e2d4",
+                    "on-primary-container": "#565248",
+                    "surface-container": "#201f1f",
+                    "on-surface": "#e5e2e1",
+                    "on-error": "#690005",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-tint": "#ccc6b9",
+                    "surface-container-low": "#1c1b1b",
+                    "inverse-primary": "#625e54",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "background": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #131313; color: #e5e2e1; }
+        .font-serif { font-family: 'Newsreader', serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .noise-bg { position: relative; }
+        .noise-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="noise-bg">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-serif text-[#CCC6B9] tracking-tighter">Cognify</div>
+<div class="hidden md:flex gap-12 font-['Newsreader'] tracking-tight">
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors" href="#">Features</a>
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1" href="#">Pricing</a>
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors" href="#">Compliance</a>
+<a class="text-neutral-500 hover:text-[#CCC6B9] transition-colors" href="#">About</a>
+</div>
+<div class="flex items-center gap-8">
+<button class="text-[#CCC6B9] font-['Newsreader'] hover:opacity-80 transition-opacity">Sign In</button>
+<button class="bg-[#CCC6B9] text-[#333027] px-6 py-2 rounded-md font-['Inter'] font-semibold hover:scale-95 duration-150">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-screen-2xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-24 flex flex-col md:flex-row justify-between items-end gap-8">
+<div class="max-w-2xl">
+<span class="font-['Inter'] text-xs tracking-widest uppercase text-primary-fixed-dim mb-4 block">Investment &amp; Value</span>
+<h1 class="text-6xl md:text-8xl font-serif font-light leading-none tracking-tighter text-on-surface">
+                    Refined <span class="italic text-primary-container">access</span> to deep focus.
+                </h1>
+</div>
+<p class="max-w-sm text-on-surface-variant font-['Inter'] leading-relaxed mb-2">
+                Choose the layer of depth that suits your intellectual journey. No rigid contracts, just pure editorial precision.
+            </p>
+</header>
+<!-- Pricing Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32 items-stretch">
+<!-- Free Tier -->
+<div class="group relative flex flex-col bg-surface-container border-0 rounded-md overflow-hidden transition-all duration-300 hover:bg-surface-container-high">
+<div class="h-48 relative overflow-hidden">
+<img alt="" class="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-500" data-alt="Abstract minimalist photography of a single stone on a dark textured surface with soft overhead cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzjzPuwIEoR-Pr4_b5ll3qDia07dXTdnuUMo3ZWQGoHsqstBJ1FmhJ6BMUN9OQv3TM6OB31gGdtGNkQhzzATUWwtJIxCqWTMLuWdiJOFTo81cgtdyclIGA591gLZVwmtD_G5B53HZ2k1E-d9ISLaaRHeUbo6cTVnVEPdFvDTcdCkB7yElMNd0eF75nbITwhjoo6AhGf4CMUvssv6iwXscwa5e1QzPcIRT1cloNSUQHf0KMThuLzciulSWGGRvWWIcon6dHzRR21OQV"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<h3 class="text-2xl font-serif text-on-surface mb-2">Free</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-serif text-on-surface">$0</span>
+<span class="text-sm text-on-surface-variant">/lifetime</span>
+</div>
+<ul class="space-y-4 mb-12 flex-1">
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">check</span>
+                            Limited focus sessions
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">check</span>
+                            Standard monograph export
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">check</span>
+                            Basic community access
+                        </li>
+</ul>
+<button class="w-full py-4 border border-outline-variant rounded-md text-on-surface hover:bg-surface-container-highest transition-colors">Start Reading</button>
+</div>
+</div>
+<!-- Elite Tier (Featured) -->
+<div class="group relative flex flex-col bg-surface-container-high border-0 rounded-md overflow-hidden ring-1 ring-primary-container/20 scale-105 z-10 shadow-2xl">
+<div class="absolute top-4 right-4 z-20">
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">Most Popular</span>
+</div>
+<div class="h-48 relative overflow-hidden">
+<img alt="" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Dramatic close-up of premium fountain pen ink spreading in water with gold flecks and deep charcoal shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY11X2ccWn7qzhzjtgoscv1W6xg43vVgCJvGl2KILCw153S_pOEHjhO3BlWl9Pnyemc1YH8P6hseSOqLlhak0P3HV33wUsYW8ZGHsJo7lgqBIxphnpBit2VuGvVa4bhhR9xyvpcVhCpluDHO88HjDqb8BmJ-UBLNp_LJCZDsIDnvjfJe4GOh1UEO9IQGbb31-ZZhYH2A-DtT2t_SzCNF-CV_apBhxdSwS5jNXhGMThbQ0pzkU8zqt-uVAV_P8m5-yFOOQOZ4z5da-w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-high to-transparent"></div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<h3 class="text-2xl font-serif text-primary-container mb-2">Elite</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-serif text-on-surface">$24</span>
+<span class="text-sm text-on-surface-variant">/monthly</span>
+</div>
+<ul class="space-y-4 mb-12 flex-1">
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-xs text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                            Unlimited Focus Streams
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-xs text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                            Advanced AI Synthesis
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-xs text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                            Priority Editorial Support
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface">
+<span class="material-symbols-outlined text-xs text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+                            Exclusive Typeface Library
+                        </li>
+</ul>
+<button class="w-full py-4 bg-primary-container text-on-primary-container rounded-md font-bold hover:brightness-110 transition-all">Select Elite</button>
+</div>
+</div>
+<!-- Institution Tier -->
+<div class="group relative flex flex-col bg-surface-container border-0 rounded-md overflow-hidden transition-all duration-300 hover:bg-surface-container-high">
+<div class="h-48 relative overflow-hidden">
+<img alt="" class="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-500" data-alt="Modern architectural detail of a brutalist library concrete facade with sharp geometric shadows and high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4u7o8CbykHTyn3lPHQmFuTQZD5kar-TZ7ygHB4SWn6xS2DsYb9poz2UzdXW5rLJvERNnUyDPbaBG2H-Qs6fWJF0QZmPNN2PLK7gte7P_DwH-x4USsj9t3d8W0rfeOcofdz7c2s79S8z1OmllKlZr9sdl9ISdbW4i2KDuArwn2xbhtE-EVf-SHOP5OmTZcDmV7wud1ODgbjtxIUJJt0-siGU1nwCU9r9HPje3m_b7OaC3WJqUNWBu1ma5qAEDWlPmc3ftwFOxGBy4W"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+</div>
+<div class="p-8 flex-1 flex flex-col">
+<h3 class="text-2xl font-serif text-on-surface mb-2">Institution</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-serif text-on-surface">$199</span>
+<span class="text-sm text-on-surface-variant">/monthly</span>
+</div>
+<ul class="space-y-4 mb-12 flex-1">
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">domain</span>
+                            Up to 50 active curators
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">domain</span>
+                            Enterprise SSO &amp; Compliance
+                        </li>
+<li class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim">domain</span>
+                            Custom Knowledge Graphs
+                        </li>
+</ul>
+<button class="w-full py-4 border border-outline-variant rounded-md text-on-surface hover:bg-surface-container-highest transition-colors">Request Demo</button>
+</div>
+</div>
+</div>
+<!-- Comparison Section -->
+<section class="max-w-4xl mx-auto pt-16">
+<h2 class="text-4xl font-serif text-on-surface mb-12 text-center md:text-left">Detailed Comparison</h2>
+<div class="w-full space-y-0">
+<!-- Table Header -->
+<div class="grid grid-cols-4 pb-6 border-b border-outline-variant/30 text-[10px] uppercase tracking-[0.2em] font-['Inter'] text-on-surface-variant">
+<div class="col-span-1">Feature</div>
+<div class="text-center">Free</div>
+<div class="text-center text-primary-container">Elite</div>
+<div class="text-center">Institution</div>
+</div>
+<!-- Row 1 -->
+<div class="grid grid-cols-4 py-8 items-center border-b border-outline-variant/10">
+<div class="col-span-1 text-sm font-medium text-on-surface">Daily Focus Sessions</div>
+<div class="text-center text-sm text-on-surface-variant">3 Sessions</div>
+<div class="text-center text-sm text-on-surface">Unlimited</div>
+<div class="text-center text-sm text-on-surface">Unlimited</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-4 py-8 items-center border-b border-outline-variant/10">
+<div class="col-span-1 text-sm font-medium text-on-surface">AI Monograph Synthesis</div>
+<div class="text-center text-sm text-on-surface-variant">Basic</div>
+<div class="text-center text-sm text-on-surface">Advanced</div>
+<div class="text-center text-sm text-on-surface">Custom Models</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-4 py-8 items-center border-b border-outline-variant/10">
+<div class="col-span-1 text-sm font-medium text-on-surface">Knowledge Graphing</div>
+<div class="text-center"><span class="material-symbols-outlined text-on-surface-variant/30 text-base">close</span></div>
+<div class="text-center"><span class="material-symbols-outlined text-primary-container text-base">check_circle</span></div>
+<div class="text-center"><span class="material-symbols-outlined text-on-surface text-base">check_circle</span></div>
+</div>
+<!-- Row 4 -->
+<div class="grid grid-cols-4 py-8 items-center border-b border-outline-variant/10">
+<div class="col-span-1 text-sm font-medium text-on-surface">Collaboration Tools</div>
+<div class="text-center text-sm text-on-surface-variant">View only</div>
+<div class="text-center text-sm text-on-surface">Shared Libraries</div>
+<div class="text-center text-sm text-on-surface">Full Org Access</div>
+</div>
+<!-- Row 5 -->
+<div class="grid grid-cols-4 py-8 items-center">
+<div class="col-span-1 text-sm font-medium text-on-surface">SLA Support</div>
+<div class="text-center"><span class="material-symbols-outlined text-on-surface-variant/30 text-base">close</span></div>
+<div class="text-center"><span class="material-symbols-outlined text-on-surface-variant/30 text-base">close</span></div>
+<div class="text-center text-sm text-on-surface">24/7 Priority</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0E0E0E] w-full py-24 px-12 border-t border-[#49473F]/15">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-screen-2xl mx-auto">
+<div>
+<div class="font-serif text-lg text-[#CCC6B9] mb-6">Cognify</div>
+<p class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600">© 2024 Cognify. Editorial precision in education.</p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-colors" href="#">Security</a>
+<a class="font-['Inter'] text-sm tracking-wide uppercase text-neutral-600 hover:text-[#CCC6B9] underline underline-offset-4 transition-colors" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

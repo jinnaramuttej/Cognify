@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
+import { authenticateLocalAccount } from '@/lib/auth-storage'
 
 type LoginForm = {
   email: string
@@ -19,6 +20,8 @@ export default function LoginPage() {
   const { login } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const inputClassName =
+    'mt-2 w-full rounded-md bg-surface-container-lowest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-outline transition focus:ring-2 focus:ring-primary'
 
   const {
     register,
@@ -31,18 +34,24 @@ export default function LoginPage() {
     try {
       const isAdmin = data.email === ADMIN_EMAIL && data.password === ADMIN_PASSWORD
 
-      login({
-        id: crypto.randomUUID(),
-        email: data.email,
-        role: isAdmin ? 'admin' : 'student',
-        isAdmin,
-        full_name: isAdmin ? 'Admin' : undefined,
-      })
-
       if (isAdmin) {
+        login({
+          id: crypto.randomUUID(),
+          email: data.email,
+          role: 'admin',
+          isAdmin: true,
+          full_name: 'Admin',
+        })
         toast.success('Welcome back, Admin.')
         router.push('/admin')
       } else {
+        const matchedAccount = authenticateLocalAccount(data.email, data.password)
+        if (!matchedAccount) {
+          toast.error('Account not found. Please create an account first.')
+          return
+        }
+
+        login(matchedAccount)
         toast.success('Welcome back to Cognify.')
         router.push('/dashboard')
       }
@@ -100,7 +109,7 @@ export default function LoginPage() {
                     type="email"
                     placeholder="you@example.com"
                     {...register('email', { required: 'Email is required' })}
-                    className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                    className={inputClassName}
                   />
                   {errors.email && <p className="mt-2 text-xs text-error">{errors.email.message}</p>}
                 </div>
@@ -112,8 +121,9 @@ export default function LoginPage() {
                   <input
                     id="password"
                     type="password"
+                    placeholder="Enter your password"
                     {...register('password', { required: 'Password is required' })}
-                    className="mt-2 w-full rounded-md bg-surface-container-highest px-4 py-3 text-sm text-on-surface outline-none ring-1 ring-transparent transition focus:ring-outline"
+                    className={inputClassName}
                   />
                   {errors.password && <p className="mt-2 text-xs text-error">{errors.password.message}</p>}
                 </div>

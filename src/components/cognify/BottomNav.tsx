@@ -73,8 +73,8 @@ export function BottomNav() {
                                             />
                                             <QuickActionItem
                                                 icon={Zap}
-                                                label="Take Quiz"
-                                                href="/practice-quizzes"
+                                                label="Take Test"
+                                                href="/tests"
                                                 color="bg-purple-500/10 text-purple-500"
                                             />
 

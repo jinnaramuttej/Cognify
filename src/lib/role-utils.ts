@@ -23,7 +23,7 @@ export const ROUTE_ACCESS: Record<string, RoleConfig> = {
   '/notes-converter': { allowedRoles: ['student', 'admin'] },
   '/arena': { allowedRoles: ['student', 'admin'] },
   '/leaderboard': { allowedRoles: ['student', 'admin'] },
-  '/progress-analytics': { allowedRoles: ['student', 'admin'] },
+  '/analytics': { allowedRoles: ['student', 'admin'] },
   '/recommendations': { allowedRoles: ['student', 'admin'] },
   
   // Teacher-only routes

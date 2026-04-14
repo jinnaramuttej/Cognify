@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us | Cognify</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&amp;family=Newsreader:opsz,ital,wght@6..72,0,400;6..72,0,700;6..72,1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#322f35",
+                        "tertiary-fixed": "#e6e1e8",
+                        "on-primary-fixed": "#1e1b13",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#1c1b20",
+                        "surface-container": "#201f1f",
+                        "on-error": "#690005",
+                        "surface-variant": "#353534",
+                        "on-secondary": "#303030",
+                        "on-primary-container": "#565248",
+                        "tertiary-fixed-dim": "#cac5cc",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-dim": "#131313",
+                        "on-tertiary-fixed-variant": "#48464b",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#313030",
+                        "background": "#131313",
+                        "primary-container": "#ccc6b9",
+                        "on-secondary-fixed": "#1b1c1b",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary": "#c8c6c5",
+                        "on-primary-fixed-variant": "#4a473d",
+                        "on-primary": "#333027",
+                        "surface-container-highest": "#353534",
+                        "error-container": "#93000a",
+                        "primary": "#e8e2d4",
+                        "surface-bright": "#3a3939",
+                        "primary-fixed": "#e8e2d4",
+                        "surface-container-low": "#1c1b1b",
+                        "on-secondary-container": "#b9b8b7",
+                        "on-tertiary-container": "#545157",
+                        "outline-variant": "#49473f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "secondary-container": "#494949",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-surface-variant": "#cbc6bc",
+                        "surface": "#131313",
+                        "surface-tint": "#ccc6b9",
+                        "primary-fixed-dim": "#ccc6b9",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#cac5cc",
+                        "outline": "#959087",
+                        "tertiary": "#e6e1e8",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-fixed": "#e4e2e1",
+                        "inverse-primary": "#625e54"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "serif": ["Fraunces", "serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+    vertical-align: middle
+    }
+body {
+    background-color: #131313;
+    color: #e5e2e1;
+    font-family: "Inter", sans-serif
+    }
+.grain-overlay {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDdO3rkqswmioop9tgCRKasYCpO_zBeWCLPzRqIErnX3eJNPxnn1uKasNz2x5zAqAPRF3MQM1T22TO98unM7HqHWiznbsb7xOJKncigJ32VzQZ0QodhxTi9ITDKYjMLspqTu60qFF9YuXVBOzxC5mC0Go6HJF57BAgGRyKCBHVn8BNZtgRQqB9vWuboTczmOmycA1qc6DcP96Q9B10W_Z4qj60wgfkg4lEvGSqH85YRl9SLZYJxPdRDKm4DvLBfe1biaCCJ2ynqQscG);
+    opacity: 0.02;
+    pointer-events: none
+    }</style>
+</head>
+<body class="antialiased overflow-x-hidden">
+<div class="fixed inset-0 grain-overlay z-[100]"></div>
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-stone-950/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="font-serif text-2xl font-bold tracking-tighter text-stone-200">Cognify</div>
+<div class="hidden md:flex gap-10 items-center">
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">About Us</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Careers</a>
+<a class="text-stone-100 border-b-2 border-stone-300 pb-1 font-sans uppercase tracking-widest text-xs" href="#">Contact</a>
+<a class="text-stone-500 font-sans uppercase tracking-widest text-xs hover:text-stone-200 transition-colors duration-200" href="#">Partners</a>
+</div>
+<div class="flex gap-6 items-center">
+<button class="text-stone-400 font-sans uppercase tracking-widest text-xs hover:text-stone-200">Sign In</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-xs uppercase tracking-widest font-bold hover:brightness-110 transition-all">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-8 md:px-12 max-w-7xl mx-auto">
+<!-- Hero Header -->
+<header class="mb-24">
+<h1 class="font-headline text-7xl md:text-8xl text-primary leading-none tracking-tight mb-8">
+                Connect with <br/>
+<span class="italic font-light">Precision.</span>
+</h1>
+<p class="text-on-surface-variant max-w-xl text-lg font-light leading-relaxed">
+                Whether you’re seeking academic guidance or professional partnership, our team is ready to provide the intellectual support your journey demands.
+            </p>
+</header>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+<!-- Left: Contact Form -->
+<section class="lg:col-span-7 space-y-12">
+<div>
+<h2 class="font-headline text-3xl mb-12">Get in Touch</h2>
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 font-semibold px-4">Full Name</label>
+<input class="w-full bg-surface-container-highest border-none rounded-md px-6 py-4 text-on-surface focus:ring-1 focus:ring-outline placeholder:text-on-surface-variant/30" placeholder="Julianne Moore" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 font-semibold px-4">Email Address</label>
+<input class="w-full bg-surface-container-highest border-none rounded-md px-6 py-4 text-on-surface focus:ring-1 focus:ring-outline placeholder:text-on-surface-variant/30" placeholder="julianne@institution.edu" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 font-semibold px-4">Inquiry Type</label>
+<select class="w-full bg-surface-container-highest border-none rounded-md px-6 py-4 text-on-surface focus:ring-1 focus:ring-outline appearance-none">
+<option>Academic Support</option>
+<option>Business Partnership</option>
+<option>Careers &amp; Internships</option>
+<option>Other Inquiry</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 font-semibold px-4">Your Message</label>
+<textarea class="w-full bg-surface-container-highest border-none rounded-md px-6 py-4 text-on-surface focus:ring-1 focus:ring-outline placeholder:text-on-surface-variant/30" placeholder="How can we assist your research or learning process?" rows="6"></textarea>
+</div>
+<button class="bg-primary text-on-primary px-12 py-5 rounded-md font-bold tracking-widest text-xs uppercase hover:bg-primary-fixed transition-colors" type="submit">
+                            Send Message
+                        </button>
+</form>
+</div>
+</section>
+<!-- Right: Office & Support Cards -->
+<aside class="lg:col-span-5 space-y-20">
+<!-- Office Section -->
+<div class="group">
+<h3 class="font-headline text-2xl mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+                        Our Office
+                    </h3>
+<div class="bg-surface-container rounded-md overflow-hidden relative group-hover:bg-surface-container-high transition-colors">
+<div class="h-64 w-full relative overflow-hidden grayscale contrast-125 opacity-80">
+<img class="w-full h-full object-cover" data-alt="Modern architectural building facade in Medchal Telangana during twilight with soft interior lights reflecting on glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_YiF1ucwdAelF9_D0QGnDFjl3VAWge3HwOG2SeRSAnWFd1UpZP352yRZhDgiObZnmXW-C-B8vehjAbcGYSl6dVfD1pRHsSlUS7RE5fFGxDB3mXPpCVqlRzCbDIp1QWs43YaKYHTRmAgYMNVYvj070BnLg7iYS_SVfwEPzQhmrGXWlDH9uSYXYdah9av2BRFGKiRIqQsENgKpiNtezaNl9MFlVaE61zq6MpgohZdKncUIdDXB-t3ZWUU72kZkp-ChJiqvWLNXIx6k2"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container to-transparent"></div>
+</div>
+<div class="p-8">
+<h4 class="font-serif text-xl mb-2 text-primary">Hyderabad Campus</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">
+                                Survey No. 44, Medchal,<br/>
+                                Telangana 501401, India
+                            </p>
+<a class="text-xs uppercase tracking-widest font-bold text-primary-fixed-dim border-b border-outline-variant/30 pb-1 hover:border-primary transition-all" href="#">
+                                View on Map
+                            </a>
+</div>
+</div>
+</div>
+<!-- Academic Support Section -->
+<div class="space-y-8">
+<h3 class="font-headline text-2xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+                        Academic Support
+                    </h3>
+<div class="space-y-12">
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-container" data-icon="help_center">help_center</span>
+</div>
+<div>
+<h4 class="font-serif text-lg mb-1">Learner Helpline</h4>
+<p class="text-on-surface-variant text-sm mb-2">Dedicated support for enrolled students and active researchers.</p>
+<span class="text-primary font-mono text-xs">support@cognify.ai</span>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-container" data-icon="import_contacts">import_contacts</span>
+</div>
+<div>
+<h4 class="font-serif text-lg mb-1">Library &amp; Resources</h4>
+<p class="text-on-surface-variant text-sm mb-2">Inquiries regarding digital assets and intellectual property.</p>
+<span class="text-primary font-mono text-xs">resources@cognify.ai</span>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-container" data-icon="history_edu">history_edu</span>
+</div>
+<div>
+<h4 class="font-serif text-lg mb-1">Ethics Committee</h4>
+<p class="text-on-surface-variant text-sm mb-2">Concerns regarding AI methodologies and pedagogical ethics.</p>
+<span class="text-primary font-mono text-xs">ethics@cognify.ai</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full border-t border-stone-800/30 bg-stone-950">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<div class="font-serif italic text-xl text-stone-300 mb-8 md:mb-0">Cognify</div>
+<div class="flex flex-wrap justify-center gap-8 md:gap-12 mb-8 md:mb-0">
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Terms of Service</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Cookie Policy</a>
+<a class="font-sans text-xs tracking-wide text-stone-500 hover:text-stone-300 transition-opacity" href="#">Accessibility</a>
+</div>
+<div class="font-sans text-xs tracking-wide text-stone-400">
+                © 2024 Cognify AI EdTech. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

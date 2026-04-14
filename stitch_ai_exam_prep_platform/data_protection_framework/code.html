@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Data Protection Framework | Cognify</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c8c6c5",
+                        "inverse-on-surface": "#313030",
+                        "on-surface": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-secondary-fixed": "#1b1c1b",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-fixed": "#e8e2d4",
+                        "on-background": "#e5e2e1",
+                        "on-primary-fixed": "#1e1b13",
+                        "secondary-container": "#494949",
+                        "on-surface-variant": "#cbc6bc",
+                        "surface-container-highest": "#353534",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary": "#322f35",
+                        "tertiary-fixed": "#e6e1e8",
+                        "surface-tint": "#ccc6b9",
+                        "tertiary": "#e6e1e8",
+                        "on-primary": "#333027",
+                        "secondary-fixed": "#e4e2e1",
+                        "on-primary-container": "#565248",
+                        "surface": "#131313",
+                        "on-primary-fixed-variant": "#4a473d",
+                        "outline-variant": "#49473f",
+                        "tertiary-container": "#cac5cc",
+                        "primary": "#e8e2d4",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-error": "#690005",
+                        "inverse-primary": "#625e54",
+                        "primary-fixed-dim": "#ccc6b9",
+                        "surface-bright": "#3a3939",
+                        "on-tertiary-fixed": "#1c1b20",
+                        "outline": "#959087",
+                        "surface-container-high": "#2a2a2a",
+                        "on-tertiary-container": "#545157",
+                        "on-tertiary-fixed-variant": "#48464b",
+                        "on-secondary-container": "#b9b8b7",
+                        "surface-variant": "#353534",
+                        "error-container": "#93000a",
+                        "background": "#131313",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1c1b1b",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#ccc6b9",
+                        "tertiary-fixed-dim": "#cac5cc",
+                        "surface-container": "#201f1f",
+                        "on-secondary": "#303030"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>body {
+    font-family: "Inter", sans-serif;
+    background-color: #131313;
+    color: #e5e2e1
+    }
+.font-serif {
+    font-family: "Newsreader", serif
+    }
+.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24
+    }
+.grain-overlay {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBagIdosSWyVkRHwKSY10kqeJH2SA1g7fjxR8xpXb1nKdmCk9yZZ5S7LKL5LoAHBncQUYkBxpAaNGaYUXWytrmr1Og8PW5dyZs79i6I02GcELeK7CBMg5Y-usszbdsErYf-UGLhfNGtluD_O1dWyku-HMeWueyO4mBYuyy6El08OO5b-x6nCDMWabgZbIQzusDIplWi_YemhaEMRmclbepzk2dSidxICh3FsWdtK0_qb3QCVrb_mIO3IWJkx16nRH5xQD2z_tsnbRRJ);
+    opacity: 0.03;
+    z-index: 100
+    }</style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<div class="grain-overlay"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/90 backdrop-blur-xl flex justify-between items-center px-8 h-20 w-full">
+<div class="text-2xl font-serif font-bold text-[#CCC6B9]">Cognify</div>
+<div class="hidden md:flex items-center gap-8 font-['Newsreader'] tracking-tight">
+<a class="text-[#CCC6B9]/60 hover:text-[#CCC6B9] transition-colors" href="#">Governance</a>
+<a class="text-[#CCC6B9] border-b-2 border-[#CCC6B9] pb-1" href="#">Neural Safety</a>
+<a class="text-[#CCC6B9]/60 hover:text-[#CCC6B9] transition-colors" href="#">Encryption</a>
+<a class="text-[#CCC6B9]/60 hover:text-[#CCC6B9] transition-colors" href="#">Privacy</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 bg-primary text-on-primary text-xs font-medium rounded-full uppercase tracking-widest hover:bg-primary-fixed-dim transition-all duration-150">
+                Compliance Portal
+            </button>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<header class="mb-24 lg:mb-40">
+<div class="max-w-4xl">
+<span class="font-label text-xs tracking-[0.3em] uppercase text-primary-fixed-dim mb-6 block">Institutional Protocol v2.4</span>
+<h1 class="font-serif text-6xl md:text-8xl font-bold text-on-surface leading-[1.1] tracking-tight mb-8">
+                    Data Protection <br/>Framework
+                </h1>
+<p class="font-body text-xl md:text-2xl text-on-surface-variant leading-relaxed max-w-2xl font-light">
+                    The absolute stewardship of intellectual and neural assets. At Cognify, we treat every byte of cognitive data with the same sanctity as a physical archive.
+                </p>
+</div>
+</header>
+<!-- Bento Grid: Governance & Neural Data -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-32">
+<!-- Data Governance -->
+<div class="lg:col-span-7 bg-surface-container-high rounded-md p-10 flex flex-col justify-between">
+<div>
+<h2 class="font-serif text-3xl font-semibold mb-6">Governance Model</h2>
+<p class="text-on-surface-variant leading-relaxed mb-8">
+                        Our governance is built on the core principle of <span class="text-primary italic">Data Sovereignty</span>. Users maintain exclusive authority over their neural signatures. We operate under a strict non-extractive policy where insights are generated without compromising individual identity.
+                    </p>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">account_balance</span>
+<div>
+<h4 class="font-semibold text-on-surface">Decentralized Custody</h4>
+<p class="text-sm text-on-surface-variant">Proprietary logic ensures data is fragmented across secure nodes.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">verified_user</span>
+<div>
+<h4 class="font-semibold text-on-surface">Audited Access</h4>
+<p class="text-sm text-on-surface-variant">Real-time logging of every query against the framework.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="mt-12 pt-8 border-t border-outline-variant/10">
+<button class="text-primary-fixed-dim font-label text-sm uppercase tracking-widest hover:underline">View Governance Docs</button>
+</div>
+</div>
+<!-- Neural Data Image / Graphic -->
+<div class="lg:col-span-5 bg-surface-container rounded-md overflow-hidden min-h-[400px] relative group">
+<img class="w-full h-full object-cover opacity-60 grayscale group-hover:scale-105 transition-transform duration-700" data-alt="Abstract visualization of neural networks with fine silver lines on a deep black background, cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAExlUujTHvxMGzk49i7C1W5XnLgXoJNAhVsIqQvWXBJNfdN9b_y07KnfPtpqPTqcW_pZ1buQihDBDw9eJrhtaNcNmIuj7pLap3Afcty4OjqfaOdHpznji852vDtM4dS7S9vCw2Gxoah3i5Y1E4gfMl081Oggmi05PWhZU-wFc3iJOBx1C7zyd9FxifP7O8kA8gwmFQx7NESXcVDq4bPIwEVr0-Bp68EpT7qcUOiQ2GSSoLWJv1Yqpgh1jTYJcZvsfGSRl4ASjFIe2L"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-80"></div>
+<div class="absolute bottom-8 left-8 right-8">
+<p class="font-serif italic text-2xl text-on-surface leading-tight">
+                        "The mapping of a student’s learning process is the most intimate data we collect."
+                    </p>
+</div>
+</div>
+</section>
+<!-- Encryption & Neural Standards -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-24 mb-32 items-center">
+<div>
+<h3 class="font-serif text-4xl mb-8">Neural Data Handling</h3>
+<p class="text-on-surface-variant leading-loose mb-6">
+                    Cognitive patterns and educational materials are processed through our proprietary 'Neural Shield' pipeline. This ensures that while we understand *how* a student learns, we never possess *who* they are as a biological entity.
+                </p>
+<div class="flex flex-wrap gap-3">
+<span class="px-4 py-1.5 rounded-full bg-surface-container-highest text-xs text-on-surface-variant font-label tracking-wide">PATE Differential Privacy</span>
+<span class="px-4 py-1.5 rounded-full bg-surface-container-highest text-xs text-on-surface-variant font-label tracking-wide">Homomorphic Encryption</span>
+<span class="px-4 py-1.5 rounded-full bg-surface-container-highest text-xs text-on-surface-variant font-label tracking-wide">Zero-Knowledge Proofs</span>
+</div>
+</div>
+<div class="space-y-12">
+<div class="p-8 bg-surface-container-high rounded-md border-l-2 border-primary">
+<h4 class="font-serif text-xl mb-4">Encryption Standards</h4>
+<div class="grid grid-cols-2 gap-8">
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-primary-fixed-dim mb-2">Data At-Rest</span>
+<p class="font-mono text-lg text-on-surface">AES-256-GCM</p>
+</div>
+<div>
+<span class="block text-[10px] uppercase tracking-widest text-primary-fixed-dim mb-2">Data In-Transit</span>
+<p class="font-mono text-lg text-on-surface">TLS 1.3 (eHSTS)</p>
+</div>
+</div>
+</div>
+<div class="p-8 bg-surface-container-high rounded-md border-l-2 border-primary">
+<h4 class="font-serif text-xl mb-4">Student Privacy Commitment</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                        Full alignment with <span class="text-on-surface font-semibold">FERPA</span> and <span class="text-on-surface font-semibold">COPPA</span> regulations. Our infrastructure is purpose-built to exceed federal standards for K-12 and Higher Education environments.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Compliance Checklist (Asymmetric Layout) -->
+<section class="mb-32">
+<h3 class="font-serif text-4xl mb-16 text-center">Certified Standards</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-8 bg-surface-container-low hover:bg-surface-container transition-colors rounded-md text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4">security</span>
+<h5 class="font-bold mb-2">SOC 2 Type II</h5>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Certified 2024</p>
+</div>
+<div class="p-8 bg-surface-container-low hover:bg-surface-container transition-colors rounded-md text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4">gavel</span>
+<h5 class="font-bold mb-2">GDPR / CCPA</h5>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Global Compliance</p>
+</div>
+<div class="p-8 bg-surface-container-low hover:bg-surface-container transition-colors rounded-md text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4">school</span>
+<h5 class="font-bold mb-2">FERPA / COPPA</h5>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Education Priority</p>
+</div>
+<div class="p-8 bg-surface-container-low hover:bg-surface-container transition-colors rounded-md text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-4">verified</span>
+<h5 class="font-bold mb-2">ISO 27001</h5>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Risk Management</p>
+</div>
+</div>
+</section>
+<!-- Inquiry Section (CTA) -->
+<section class="relative bg-primary-container p-12 md:p-20 rounded-md overflow-hidden">
+<div class="relative z-10 max-w-2xl">
+<h2 class="font-serif text-4xl md:text-5xl text-on-primary font-bold mb-6">Have concerns about the framework?</h2>
+<p class="text-on-primary-container text-lg mb-10 leading-relaxed">
+                    Our stewardship team is available for deep-dive technical reviews with institutional partners. Transparent protection is the foundation of our partnership.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-on-primary text-primary-fixed rounded-md font-label font-bold text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform">
+                        Request Framework Audit
+                    </button>
+<button class="px-8 py-4 border border-on-primary-container/20 text-on-primary-container rounded-md font-label font-bold text-sm uppercase tracking-widest hover:bg-on-primary/5 transition-colors">
+                        Contact Ethical AI Dept
+                    </button>
+</div>
+</div>
+<!-- Subtle geometric pattern in background -->
+<div class="absolute right-0 top-0 h-full w-1/3 bg-on-primary/5 -skew-x-12 transform origin-top"></div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0E0E0E] w-full py-12 flex flex-col items-center gap-6 px-8">
+<div class="font-serif italic text-[#CCC6B9] text-xl">Cognify</div>
+<div class="flex flex-wrap justify-center gap-8 font-['Inter'] text-xs tracking-widest uppercase">
+<a class="text-[#CCC6B9]/50 hover:text-[#CCC6B9] underline" href="#">Privacy Policy</a>
+<a class="text-[#CCC6B9]/50 hover:text-[#CCC6B9] underline" href="#">Terms of Service</a>
+<a class="text-[#CCC6B9]/50 hover:text-[#CCC6B9] underline" href="#">Ethical AI Manifesto</a>
+<a class="text-[#CCC6B9]/50 hover:text-[#CCC6B9] underline" href="#">Contact</a>
+</div>
+<div class="text-[#CCC6B9] text-[10px] tracking-widest font-['Inter'] opacity-40">
+            © 2024 Cognify AI. A Digital Monograph on Data Stewardship.
+        </div>
+</footer>
+<!-- SideNavBar (Suppressed on Mobile as per UI mandate, only for high-level ecosystem pages) -->
+<aside class="hidden xl:flex h-screen w-64 fixed left-0 top-0 bg-[#201F1F] flex-col py-8 gap-y-6 z-40">
+<div class="px-8 mb-4">
+<h4 class="text-lg font-serif text-[#CCC6B9]">Protection Framework</h4>
+<p class="text-[10px] uppercase tracking-tighter text-[#CCC6B9]/40">v2.4 Editorial Edition</p>
+</div>
+<nav class="flex flex-col gap-y-4 font-['Inter'] text-sm font-medium">
+<a class="text-[#CCC6B9]/40 pl-4 hover:text-[#CCC6B9] flex items-center gap-3 transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-sm">security</span> Overview
+            </a>
+<a class="text-[#CCC6B9] border-l-2 border-[#CCC6B9] pl-4 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">account_balance</span> Data Sovereignty
+            </a>
+<a class="text-[#CCC6B9]/40 pl-4 hover:text-[#CCC6B9] flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-sm">psychology</span> Neural Ethics
+            </a>
+<a class="text-[#CCC6B9]/40 pl-4 hover:text-[#CCC6B9] flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-sm">dns</span> Infrastructure
+            </a>
+<a class="text-[#CCC6B9]/40 pl-4 hover:text-[#CCC6B9] flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-sm">verified_user</span> Audit Logs
+            </a>
+</nav>
+<div class="mt-auto px-8 space-y-4">
+<div class="pt-6 border-t border-outline-variant/10">
+<a class="text-[#CCC6B9]/40 hover:text-[#CCC6B9] text-xs flex items-center gap-2 mb-3" href="#">
+<span class="material-symbols-outlined text-sm">help</span> Support
+                </a>
+<a class="text-[#CCC6B9]/40 hover:text-[#CCC6B9] text-xs flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm">policy</span> Legal
+                </a>
+</div>
+<button class="w-full py-2 border border-primary-fixed-dim/20 text-primary-fixed-dim text-xs uppercase tracking-widest hover:bg-primary-fixed-dim/5">
+                Download PDF
+            </button>
+</div>
+</aside>
+</body></html>
